@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import nl.hearteye.elearning.ui.components.navbar.NavBar
+import nl.hearteye.elearning.ui.components.navbar.NavBarItemData
 import nl.hearteye.elearning.ui.theme.ElearningTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +21,26 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ElearningTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        NavBar(
+                            navItems = listOf(
+                                NavBarItemData(R.drawable.ic_home, "Home") {},
+                                NavBarItemData(R.drawable.ic_courses, "Courses") {},
+                                NavBarItemData(R.drawable.ic_discussions, "Discussions") {},
+                                NavBarItemData(R.drawable.ic_more, "More") {}
+                            )
+                        )
+                    }
+                ) { paddingValues ->
+                    Text(
+                        text = "Main content goes here",
+                        modifier = Modifier
+                            .padding(paddingValues)
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ElearningTheme {
-        Greeting("Android")
     }
 }
