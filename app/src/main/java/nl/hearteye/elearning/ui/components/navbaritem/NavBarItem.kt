@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,7 +25,7 @@ import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
 fun NavBarItem(
-    iconRes: Int,
+    iconRes: ImageVector,
     label: String,
     selected: Boolean,
     onClick: () -> Unit,
@@ -48,11 +49,10 @@ fun NavBarItem(
         ) {
             IconButton(onClick = onClick) {
                 Icon(
-                    painter = painterResource(id = iconRes),
+                    imageVector = iconRes,
                     contentDescription = label,
                     tint = ForegroundPrimary,
-                    modifier = Modifier
-                        .size(24.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }

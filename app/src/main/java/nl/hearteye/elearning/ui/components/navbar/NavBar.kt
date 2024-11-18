@@ -6,6 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ChatBubbleOutline
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.ImportContacts
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -34,7 +39,7 @@ fun NavBar(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             NavBarItem(
-                iconRes = R.drawable.ic_home,
+                iconRes = Icons.Rounded.Home,
                 label = "Home",
                 selected = selectedTab == "home",
                 onClick = {
@@ -46,7 +51,7 @@ fun NavBar(
             )
 
             NavBarItem(
-                iconRes = R.drawable.ic_courses,
+                iconRes = Icons.Rounded.ImportContacts,
                 label = "Courses",
                 selected = selectedTab == "courses",
                 onClick = {
@@ -58,7 +63,7 @@ fun NavBar(
             )
 
             NavBarItem(
-                iconRes = R.drawable.ic_discussions,
+                iconRes = Icons.Rounded.ChatBubbleOutline,
                 label = "Discussions",
                 selected = selectedTab == "discussions",
                 onClick = {
@@ -70,7 +75,7 @@ fun NavBar(
             )
 
             NavBarItem(
-                iconRes = R.drawable.ic_more,
+                iconRes = Icons.Rounded.Menu,
                 label = "More",
                 selected = selectedTab == "more",
                 onClick = {
