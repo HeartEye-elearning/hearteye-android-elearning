@@ -34,7 +34,6 @@ fun SearchBar(
             )
             .clip(RoundedCornerShape(8.dp))
             .background(Color.White)
-            .height(40.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -45,7 +44,6 @@ fun SearchBar(
                 contentDescription = "Search Icon",
                 modifier = Modifier.padding(start = 8.dp)
             )
-            Spacer(modifier = Modifier.width(2.dp))
             TextField(
                 value = value,
                 onValueChange = onValueChange,

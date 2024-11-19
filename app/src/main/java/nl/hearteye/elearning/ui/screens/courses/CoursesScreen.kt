@@ -33,7 +33,7 @@ fun CoursesScreen(
         SearchBar(
             value = TextFieldValue(searchQuery.value),
             onValueChange = { searchQuery.value = it.text },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(20.dp)
         )
 
         LazyVerticalGrid(
