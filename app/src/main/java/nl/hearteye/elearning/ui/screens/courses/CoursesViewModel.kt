@@ -21,11 +21,25 @@ class CoursesViewModel @Inject constructor(
     private val _filteredCourses = mutableStateOf<List<Course>>(emptyList())
     val filteredCourses: State<List<Course>> = _filteredCourses
 
+    private val _isLoading = mutableStateOf(false)
+    val isLoading: State<Boolean> = _isLoading
+
+    private val _errorMessage = mutableStateOf<String?>(null)
+    val errorMessage: State<String?> = _errorMessage
+
     fun getCourses(language: String = "eng") {
+        _isLoading.value = true
+        _errorMessage.value = null
         viewModelScope.launch {
-            val fetchedCourses = courseRepository.getCourses(language)
-            _courses.value = fetchedCourses
-            _filteredCourses.value = fetchedCourses
+            try {
+                val fetchedCourses = courseRepository.getCourses(language)
+                _courses.value = fetchedCourses
+                _filteredCourses.value = fetchedCourses
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to load courses: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -39,4 +53,5 @@ class CoursesViewModel @Inject constructor(
         }
     }
 }
+
 
