@@ -2,6 +2,7 @@ package nl.hearteye.elearning.ui.components.coursecard
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,11 +33,13 @@ import nl.hearteye.elearning.ui.theme.typography
 @Composable
 fun CourseCard(
     title: String,
-    time: String
+    time: String,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .padding(16.dp)
+            .clickable {onClick()}
             .width(300.dp),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(CornerSize(10.dp)),
         colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color.White),

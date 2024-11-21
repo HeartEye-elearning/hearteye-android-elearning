@@ -22,7 +22,8 @@ import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
 @Composable
 fun CoursesScreen(
-    courseViewModel: CoursesViewModel = hiltViewModel()
+    courseViewModel: CoursesViewModel = hiltViewModel(),
+    onCourseSelected: (String) -> Unit
 ) {
     val courses = courseViewModel.filteredCourses.value
     val isLoading = courseViewModel.isLoading.value
@@ -46,7 +47,7 @@ fun CoursesScreen(
                 )
             }
             errorMessage != null -> {
-                ErrorView (
+                ErrorView(
                     message = errorMessage,
                     onRetry = { courseViewModel.getCourses(language = "eng") }
                 )
@@ -76,7 +77,8 @@ fun CoursesScreen(
                             val course = courses[index]
                             CourseCard(
                                 title = course.title,
-                                time = "${course.duration}"
+                                time = "${course.duration}",
+                                onClick = { onCourseSelected(course.id) }
                             )
                         }
                     }
@@ -85,8 +87,3 @@ fun CoursesScreen(
         }
     }
 }
-
-
-
-
-
