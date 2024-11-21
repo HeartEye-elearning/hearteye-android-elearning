@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
 @Composable
 fun CourseDetailScreen(
@@ -32,7 +33,8 @@ fun CourseDetailScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         when {
             isLoading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center),
+                    color = ForegroundPrimary)
             }
             errorMessage != null -> {
                 Text(
@@ -46,7 +48,6 @@ fun CourseDetailScreen(
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    // If not started, show course title with "Start" button
                     if (!isStarted.value) {
                         Text(
                             text = courseDetail.title,
@@ -56,14 +57,13 @@ fun CourseDetailScreen(
                         Button(
                             onClick = {
                                 isStarted.value = true
-                                currentPageIndex.value = 0  // Start from the first information page
+                                currentPageIndex.value = 0
                             },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
                             Text(text = "Start")
                         }
                     } else {
-                        // Show current information page content
                         val currentInformationPage = courseDetail.informationPages.getOrNull(currentPageIndex.value)
                         if (currentInformationPage != null) {
                             Text(
@@ -77,7 +77,6 @@ fun CourseDetailScreen(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            // Back button
                             if (currentPageIndex.value > 0) {
                                 Button(
                                     onClick = { currentPageIndex.value-- }
@@ -86,7 +85,6 @@ fun CourseDetailScreen(
                                 }
                             }
 
-                            // Next button
                             if (currentPageIndex.value < courseDetail.informationPages.size - 1) {
                                 Button(
                                     onClick = { currentPageIndex.value++ }
