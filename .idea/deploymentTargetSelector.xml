@@ -4,6 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="elearning.app">
         <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2024-11-22T10:06:49.360777400Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=KJDQAIS8VGYPEAXO" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="PreviewNavBar">
         <option name="selectionMode" value="DROPDOWN" />

@@ -47,24 +47,48 @@ fun CoursesScreen(
                 )
             }
             errorMessage != null -> {
-                ErrorView(
-                    message = errorMessage,
-                    onRetry = { courseViewModel.getCourses(language = "eng") }
-                )
+
+                Column(modifier = Modifier.fillMaxSize()) {
+                    SearchBar(
+                        value = searchQuery.value,
+                        onValueChange = { searchQuery.value = it },
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    ErrorView(
+                        message = errorMessage,
+                        onRetry = { courseViewModel.getCourses(language = "eng") }
+                    )
+                }
             }
             courses.isEmpty() -> {
-                Text(
-                    text = "No courses available",
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color.Gray
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    SearchBar(
+                        value = searchQuery.value,
+                        onValueChange = { searchQuery.value = it },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No courses available",
+                            color = Color.Gray
+                        )
+                    }
+                }
             }
             else -> {
                 Column(modifier = Modifier.fillMaxSize()) {
                     SearchBar(
-                        value = TextFieldValue(searchQuery.value),
-                        onValueChange = { searchQuery.value = it.text },
-                        modifier = Modifier.padding(20.dp)
+                        value = searchQuery.value,
+                        onValueChange = { searchQuery.value = it },
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
                     )
 
                     LazyVerticalGrid(
@@ -87,3 +111,4 @@ fun CoursesScreen(
         }
     }
 }
+
