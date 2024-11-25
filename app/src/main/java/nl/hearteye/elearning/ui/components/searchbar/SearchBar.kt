@@ -15,15 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit
+    value: String,
+    onValueChange: (String) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -36,7 +35,7 @@ fun SearchBar(
             .background(Color.White)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -50,8 +49,7 @@ fun SearchBar(
                 placeholder = {
                     Text(text = "Search Courses...")
                 },
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
@@ -67,5 +65,5 @@ fun SearchBar(
 @Preview(showBackground = true)
 @Composable
 fun SearchBarPreview() {
-    SearchBar(value = TextFieldValue(""), onValueChange = {})
+    SearchBar(value = "", onValueChange = {})
 }

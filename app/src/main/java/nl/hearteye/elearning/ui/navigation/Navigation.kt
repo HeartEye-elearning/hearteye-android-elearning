@@ -10,8 +10,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import nl.hearteye.elearning.ui.components.navbar.NavBar
+import nl.hearteye.elearning.ui.components.topbar.TopBar
 import nl.hearteye.elearning.ui.screens.coursedetail.CourseDetailScreen
 import nl.hearteye.elearning.ui.screens.courses.CoursesScreen
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionsScreen
@@ -21,14 +23,28 @@ import nl.hearteye.elearning.ui.screens.more.MoreScreen
 @Composable
 fun Navigation(navController: NavHostController) {
     val selectedTab = remember { mutableStateOf("home") }
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry.value?.destination?.route
 
     Scaffold(
-        bottomBar = {
-            NavBar(
-                navController = navController,
-                selectedTab = selectedTab.value,
-                onTabSelected = { newTab -> selectedTab.value = newTab }
+        topBar = {
+            TopBar(
+                showBackButton = currentRoute == "courseDetail/{courseId}",
+                onBackButtonClick = {
+                    navController.navigate("courses") {
+                        popUpTo("courses") { inclusive = true }
+                    }
+                }
             )
+        },
+        bottomBar = {
+            if (currentRoute !in listOf("courseDetail/{courseId}")) {
+                NavBar(
+                    navController = navController,
+                    selectedTab = selectedTab.value,
+                    onTabSelected = { newTab -> selectedTab.value = newTab }
+                )
+            }
         }
     ) { innerPadding ->
         NavHost(
@@ -45,7 +61,6 @@ fun Navigation(navController: NavHostController) {
             composable("discussions") { DiscussionsScreen() }
             composable("more") { MoreScreen() }
 
-            // New CourseDetailScreen route
             composable(
                 route = "courseDetail/{courseId}",
                 arguments = listOf(navArgument("courseId") { type = NavType.StringType })
@@ -56,3 +71,5 @@ fun Navigation(navController: NavHostController) {
         }
     }
 }
+
+
