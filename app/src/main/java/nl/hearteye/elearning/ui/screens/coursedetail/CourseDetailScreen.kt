@@ -1,7 +1,5 @@
 package nl.hearteye.elearning.ui.screens.coursedetail
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,10 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import nl.hearteye.elearning.R
+import nl.hearteye.elearning.ui.components.InformationPage
+import nl.hearteye.elearning.ui.components.QuestionPage
 import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
@@ -34,7 +32,9 @@ fun CourseDetailScreen(
     val errorMessage = courseDetailViewModel.errorMessage.value
 
     val currentPageIndex = remember { mutableStateOf(0) }
+    val currentQuestionIndex = remember { mutableStateOf(0) }
     val isStarted = remember { mutableStateOf(false) }
+    val isInformationPagesDone = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         courseDetailViewModel.fetchCourseDetails(courseId)
@@ -67,106 +67,55 @@ fun CourseDetailScreen(
                         .padding(16.dp)
                 ) {
                     if (!isStarted.value) {
-                        Column(
-                            modifier = Modifier
-                                .padding(16.dp)
-                        ) {
-                            Text(
-                                text = courseDetail.title,
-                                modifier = Modifier
-                                    .padding(bottom = 16.dp),
-                                style = typography.headlineSmall
+                        val currentInformationPage = courseDetail.informationPages.getOrNull(currentPageIndex.value)
+                        if (currentInformationPage != null) {
+                            InformationPage(
+                                title = courseDetail.title,
+                                content = currentInformationPage.content["eng"] ?: "No content available",
+                                onNext = {
+                                    currentPageIndex.value++
+                                },
+                                onBack = {
+                                    currentPageIndex.value--
+                                },
+                                canGoBack = currentPageIndex.value > 0,
+                                canGoNext = currentPageIndex.value < courseDetail.informationPages.size - 1
                             )
-                            Text(
-                                text = "Press the Start button to start the course.",
-                                modifier = Modifier
-                                    .padding(bottom = 32.dp)
-                            )
-                            Image(
-                                painter = painterResource(id = R.drawable.quiz_start),
-                                contentDescription = "Course Cover",
-                                modifier = Modifier
-                                    .height(350.dp)
-                                    .width(330.dp)
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
+                        }
+
+                        if (currentPageIndex.value == courseDetail.informationPages.size - 1) {
                             Button(
                                 onClick = {
                                     isStarted.value = true
-                                    currentPageIndex.value = 0
+                                    isInformationPagesDone.value = true
                                 },
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .fillMaxWidth(0.5f),
+                                modifier = Modifier.width(140.dp),
                                 shape = RoundedCornerShape(10.dp),
-                                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                                    containerColor = ForegroundPrimary
-                                )
+                                colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = ForegroundPrimary)
                             ) {
-                                Text(
-                                    text = "Start",
-                                    color = Color.White,
-                                    style = typography.bodyLarge
-                                )
+                                Text(text = "Start Quiz", color = Color.White, style = typography.bodyLarge)
                             }
                         }
-                    } else {
-                        val currentInformationPage = courseDetail.informationPages.getOrNull(currentPageIndex.value)
-                        if (currentInformationPage != null) {
-                            Text(
-                                text = courseDetail.title,
-                                style = typography.titleMedium,
-                                modifier = Modifier.padding(bottom = 16.dp)
+                    }
+
+                    if (isStarted.value) {
+                        val currentQuestion = courseDetail.questions.getOrNull(currentQuestionIndex.value)
+                        if (currentQuestion != null) {
+                            QuestionPage(
+                                question = currentQuestion,
+                                onNext = {
+                                    if (currentQuestionIndex.value < courseDetail.questions.size - 1) {
+                                        currentQuestionIndex.value++
+                                    }
+                                },
+                                onBack = {
+                                    if (currentQuestionIndex.value > 0) {
+                                        currentQuestionIndex.value--
+                                    }
+                                },
+                                canGoBack = currentQuestionIndex.value > 0,
+                                canGoNext = currentQuestionIndex.value < courseDetail.questions.size - 1
                             )
-                            Text(
-                                text = currentInformationPage.content["eng"] ?: "No content available",
-                                modifier = Modifier.padding(bottom = 16.dp),
-                                style = typography.bodyLarge
-
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (currentPageIndex.value > 0) {
-                                Button(
-                                    onClick = { currentPageIndex.value-- },
-                                    modifier = Modifier.width(140.dp),
-                                    shape = RoundedCornerShape(10.dp),
-                                    border = BorderStroke(1.dp, Color.Red),
-                                    colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(contentColor = ForegroundPrimary),
-                                ) {
-                                    Text(
-                                        text = "Back",
-                                        color = ForegroundPrimary,
-                                        style = typography.bodyLarge
-                                    )
-                                }
-                            } else {
-                                Spacer(modifier = Modifier.width(140.dp))
-                            }
-
-                            Spacer(modifier = Modifier.width(16.dp))
-
-                            if (currentPageIndex.value < courseDetail.informationPages.size - 1) {
-                                Button(
-                                    onClick = { currentPageIndex.value++ },
-                                    modifier = Modifier.width(140.dp),
-                                    shape = RoundedCornerShape(10.dp),
-                                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = ForegroundPrimary)
-                                ) {
-                                    Text(text = "Next", color = Color.White, style = typography.bodyLarge)
-                                }
-                            } else {
-                                Text(
-                                    text = "You've seen all information pages!",
-                                )
-                            }
                         }
                     }
                 }
@@ -174,4 +123,5 @@ fun CourseDetailScreen(
         }
     }
 }
+
 
