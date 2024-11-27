@@ -3,24 +3,25 @@ package nl.hearteye.elearning.ui.screens.coursedetail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import nl.hearteye.elearning.ui.components.InformationPage
 import nl.hearteye.elearning.ui.components.QuestionPage
+import nl.hearteye.elearning.ui.components.StartPage
+import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
-import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
 fun CourseDetailScreen(
@@ -31,10 +32,12 @@ fun CourseDetailScreen(
     val isLoading = courseDetailViewModel.isLoading.value
     val errorMessage = courseDetailViewModel.errorMessage.value
 
-    val currentPageIndex = remember { mutableStateOf(0) }
-    val currentQuestionIndex = remember { mutableStateOf(0) }
+    val currentPageIndex = remember { mutableIntStateOf(0) }
+    val currentQuestionIndex = remember { mutableIntStateOf(0) }
     val isStarted = remember { mutableStateOf(false) }
     val isInformationPagesDone = remember { mutableStateOf(false) }
+
+    val isCourseStarted = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         courseDetailViewModel.fetchCourseDetails(courseId)
@@ -48,73 +51,91 @@ fun CourseDetailScreen(
                     color = ForegroundPrimary
                 )
             }
+
             errorMessage != null -> {
                 ErrorView(
                     message = errorMessage,
-                    onRetry = { courseDetailViewModel.fetchCourseDetails(courseId = courseId, language = "eng") }
+                    onRetry = {
+                        courseDetailViewModel.fetchCourseDetails(
+                            courseId = courseId,
+                            language = "eng"
+                        )
+                    }
                 )
             }
+
             courseDetail != null -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp)
+                        .padding(top = 8.dp, start = 16.dp, end = 16.dp)
+                        .windowInsetsPadding(WindowInsets.systemBars)
+                        .shadow(5.dp, shape = RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .background(
                             Color.White,
                             shape = RoundedCornerShape(10.dp)
                         )
-                        .shadow(5.dp, shape = RoundedCornerShape(10.dp))
-                        .padding(16.dp)
                 ) {
-                    if (!isStarted.value) {
-                        val currentInformationPage = courseDetail.informationPages.getOrNull(currentPageIndex.value)
+                    // Show StartPage if course is selected
+                    if (!isCourseStarted.value) {
+                        StartPage(
+                            title = courseDetail.title,
+                            onStart = {
+                                isCourseStarted.value = true
+                            }
+                        )
+                    }
+
+                    if (isCourseStarted.value && !isStarted.value) {
+                        val currentInformationPage =
+                            courseDetail.informationPages.getOrNull(currentPageIndex.intValue)
                         if (currentInformationPage != null) {
                             InformationPage(
                                 title = courseDetail.title,
-                                content = currentInformationPage.content["eng"] ?: "No content available",
+                                content = currentInformationPage.content["eng"]
+                                    ?: "No content available",
                                 onNext = {
-                                    currentPageIndex.value++
+                                    currentPageIndex.intValue++
                                 },
                                 onBack = {
-                                    currentPageIndex.value--
+                                    currentPageIndex.intValue--
                                 },
-                                canGoBack = currentPageIndex.value > 0,
-                                canGoNext = currentPageIndex.value < courseDetail.informationPages.size - 1
+                                canGoBack = currentPageIndex.intValue > 0,
+                                canGoNext = currentPageIndex.intValue < courseDetail.informationPages.size - 1
                             )
                         }
 
-                        if (currentPageIndex.value == courseDetail.informationPages.size - 1) {
-                            Button(
+                        if (currentPageIndex.intValue == courseDetail.informationPages.size - 1) {
+                            RegularButton(
                                 onClick = {
                                     isStarted.value = true
                                     isInformationPagesDone.value = true
                                 },
-                                modifier = Modifier.width(140.dp),
-                                shape = RoundedCornerShape(10.dp),
-                                colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = ForegroundPrimary)
-                            ) {
-                                Text(text = "Start Quiz", color = Color.White, style = typography.bodyLarge)
-                            }
+                                text = "Start Quiz",
+                                modifier = Modifier.width(140.dp)
+                            )
                         }
                     }
 
                     if (isStarted.value) {
-                        val currentQuestion = courseDetail.questions.getOrNull(currentQuestionIndex.value)
+                        val currentQuestion =
+                            courseDetail.questions.getOrNull(currentQuestionIndex.intValue)
                         if (currentQuestion != null) {
                             QuestionPage(
                                 question = currentQuestion,
                                 onNext = {
-                                    if (currentQuestionIndex.value < courseDetail.questions.size - 1) {
-                                        currentQuestionIndex.value++
+                                    if (currentQuestionIndex.intValue < courseDetail.questions.size - 1) {
+                                        currentQuestionIndex.intValue++
                                     }
                                 },
                                 onBack = {
-                                    if (currentQuestionIndex.value > 0) {
-                                        currentQuestionIndex.value--
+                                    if (currentQuestionIndex.intValue > 0) {
+                                        currentQuestionIndex.intValue--
                                     }
                                 },
-                                canGoBack = currentQuestionIndex.value > 0,
-                                canGoNext = currentQuestionIndex.value < courseDetail.questions.size - 1
+                                canGoBack = currentQuestionIndex.intValue > 0,
+                                canGoNext = currentQuestionIndex.intValue < courseDetail.questions.size - 1
                             )
                         }
                     }
@@ -123,5 +144,3 @@ fun CourseDetailScreen(
         }
     }
 }
-
-

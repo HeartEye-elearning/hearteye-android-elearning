@@ -62,17 +62,17 @@ fun AnswerBar(
 @Composable
 fun AnswerBarPreview() {
     Column {
-    AnswerBar(
-        id = "1",
-        answer = "The QRS-axis is horizontally left-centered so this is a really long test item to see what happens when the text is really long",
-        isSelected = false,
-        onCheckedChange = {}
-    )
-    AnswerBar(
-        id = "2",
-        answer = "The P-waves are less visible",
-        isSelected = true,
-        onCheckedChange = {}
-    )
-        }
+        AnswerBar(
+            id = "1",
+            answer = "The QRS-axis is horizontally left-centered so this is a really long test item to see what happens when the text is really long",
+            isSelected = false,
+            onCheckedChange = {}
+        )
+        AnswerBar(
+            id = "2",
+            answer = "The P-waves are less visible",
+            isSelected = true,
+            onCheckedChange = {}
+        )
+    }
 }
