@@ -1,5 +1,6 @@
-package nl.hearteye.elearning.ui.components
+package nl.hearteye.elearning.ui.components.course
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,7 +40,7 @@ fun StartPage(
             style = typography.bodyLarge,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        androidx.compose.foundation.Image(
+        Image(
             painter = painterResource(id = R.drawable.quiz_start),
             contentDescription = "Start Quiz Image",
             modifier = Modifier

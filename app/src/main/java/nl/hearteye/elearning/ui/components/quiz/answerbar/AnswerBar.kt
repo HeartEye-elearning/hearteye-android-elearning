@@ -1,10 +1,11 @@
-package nl.hearteye.elearning.ui.components.answerbar
+package nl.hearteye.elearning.ui.components.quiz.answerbar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,7 +14,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
@@ -60,7 +60,7 @@ fun AnswerBar(
             Checkbox(
                 checked = isSelected,
                 onCheckedChange = null,
-                colors = androidx.compose.material3.CheckboxDefaults.colors(
+                colors = CheckboxDefaults.colors(
                     checkedColor = ForegroundPrimary,
                     checkmarkColor = Color.White,
                     uncheckedColor = Color.Transparent

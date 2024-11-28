@@ -16,9 +16,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import nl.hearteye.elearning.ui.components.InformationPage
-import nl.hearteye.elearning.ui.components.QuestionPage
-import nl.hearteye.elearning.ui.components.StartPage
+import nl.hearteye.elearning.ui.components.course.InformationPage
+import nl.hearteye.elearning.ui.components.quiz.QuestionPage
+import nl.hearteye.elearning.ui.components.course.StartPage
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
@@ -32,11 +32,10 @@ fun CourseDetailScreen(
     val isLoading = courseDetailViewModel.isLoading.value
     val errorMessage = courseDetailViewModel.errorMessage.value
 
-    val currentPageIndex = remember { mutableIntStateOf(0) }
-    val currentQuestionIndex = remember { mutableIntStateOf(0) }
-    val isStarted = remember { mutableStateOf(false) }
-    val isInformationPagesDone = remember { mutableStateOf(false) }
-
+    val currentInformationPageIndex = remember { mutableIntStateOf(0) }
+    val currentQuizQuestionIndex = remember { mutableIntStateOf(0) }
+    val hasCompletedInformationPages = remember { mutableStateOf(false) }
+    val isQuizReady = remember { mutableStateOf(false) }
     val isCourseStarted = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -86,30 +85,30 @@ fun CourseDetailScreen(
                         )
                     }
 
-                    if (isCourseStarted.value && !isStarted.value) {
+                    if (isCourseStarted.value && !hasCompletedInformationPages.value) {
                         val currentInformationPage =
-                            courseDetail.informationPages.getOrNull(currentPageIndex.intValue)
+                            courseDetail.informationPages.getOrNull(currentInformationPageIndex.intValue)
                         if (currentInformationPage != null) {
                             InformationPage(
                                 title = courseDetail.title,
                                 content = currentInformationPage.content["eng"]
                                     ?: "No content available",
                                 onNext = {
-                                    currentPageIndex.intValue++
+                                    currentInformationPageIndex.intValue++
                                 },
                                 onBack = {
-                                    currentPageIndex.intValue--
+                                    currentInformationPageIndex.intValue--
                                 },
-                                canGoBack = currentPageIndex.intValue > 0,
-                                canGoNext = currentPageIndex.intValue < courseDetail.informationPages.size - 1
+                                canGoBack = currentInformationPageIndex.intValue > 0,
+                                canGoNext = currentInformationPageIndex.intValue < courseDetail.informationPages.size - 1
                             )
                         }
 
-                        if (currentPageIndex.intValue == courseDetail.informationPages.size - 1) {
+                        if (currentInformationPageIndex.intValue == courseDetail.informationPages.size - 1) {
                             RegularButton(
                                 onClick = {
-                                    isStarted.value = true
-                                    isInformationPagesDone.value = true
+                                    hasCompletedInformationPages.value = true
+                                    isQuizReady.value = true
                                 },
                                 text = "Start Quiz",
                                 modifier = Modifier.width(140.dp)
@@ -117,26 +116,26 @@ fun CourseDetailScreen(
                         }
                     }
 
-                    if (isStarted.value) {
+                    if (isQuizReady.value) {
                         val currentQuestion =
-                            courseDetail.questions.getOrNull(currentQuestionIndex.intValue)
+                            courseDetail.questions.getOrNull(currentQuizQuestionIndex.intValue)
                         if (currentQuestion != null) {
                             QuestionPage(
                                 question = currentQuestion,
-                                currentQuestionIndex = currentQuestionIndex.intValue,
+                                currentQuestionIndex = currentQuizQuestionIndex.intValue,
                                 totalQuestions = courseDetail.questions.size,
                                 onNext = {
-                                    if (currentQuestionIndex.intValue < courseDetail.questions.size - 1) {
-                                        currentQuestionIndex.intValue++
+                                    if (currentQuizQuestionIndex.intValue < courseDetail.questions.size - 1) {
+                                        currentQuizQuestionIndex.intValue++
                                     }
                                 },
                                 onBack = {
-                                    if (currentQuestionIndex.intValue > 0) {
-                                        currentQuestionIndex.intValue--
+                                    if (currentQuizQuestionIndex.intValue > 0) {
+                                        currentQuizQuestionIndex.intValue--
                                     }
                                 },
-                                canGoBack = currentQuestionIndex.intValue > 0,
-                                canGoNext = currentQuestionIndex.intValue < courseDetail.questions.size - 1
+                                canGoBack = currentQuizQuestionIndex.intValue > 0,
+                                canGoNext = currentQuizQuestionIndex.intValue < courseDetail.questions.size - 1
                             )
                         }
                     }

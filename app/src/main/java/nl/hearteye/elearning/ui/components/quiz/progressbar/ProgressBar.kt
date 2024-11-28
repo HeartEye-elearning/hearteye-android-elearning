@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.components.progressbar
+package nl.hearteye.elearning.ui.components.quiz.progressbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

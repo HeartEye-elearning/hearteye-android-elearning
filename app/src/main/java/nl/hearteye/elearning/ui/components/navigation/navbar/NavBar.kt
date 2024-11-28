@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.components.navbar
+package nl.hearteye.elearning.ui.components.navigation.navbar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import nl.hearteye.elearning.ui.components.navbaritem.NavBarItem
+import nl.hearteye.elearning.ui.components.navigation.navbaritem.NavBarItem
+import nl.hearteye.elearning.ui.navigation.NavRoutes
 
 @Composable
 fun NavBar(
@@ -40,11 +41,11 @@ fun NavBar(
             NavBarItem(
                 iconRes = Icons.Rounded.Home,
                 label = "Home",
-                selected = selectedTab == "home",
+                selected = selectedTab == NavRoutes.HOME.route,
                 onClick = {
-                    onTabSelected("home")
-                    navController.navigate("home") {
-                        popUpTo("home") { inclusive = true }
+                    onTabSelected(NavRoutes.HOME.route)
+                    navController.navigate(NavRoutes.HOME.route) {
+                        popUpTo(NavRoutes.HOME.route) { inclusive = true }
                     }
                 }
             )
@@ -52,11 +53,11 @@ fun NavBar(
             NavBarItem(
                 iconRes = Icons.Rounded.ImportContacts,
                 label = "Courses",
-                selected = selectedTab == "courses",
+                selected = selectedTab == NavRoutes.COURSES.route,
                 onClick = {
-                    onTabSelected("courses")
-                    navController.navigate("courses") {
-                        popUpTo("courses") { inclusive = true }
+                    onTabSelected(NavRoutes.COURSES.route)
+                    navController.navigate(NavRoutes.COURSES.route) {
+                        popUpTo(NavRoutes.COURSES.route) { inclusive = true }
                     }
                 }
             )
@@ -64,11 +65,11 @@ fun NavBar(
             NavBarItem(
                 iconRes = Icons.Rounded.ChatBubbleOutline,
                 label = "Discussions",
-                selected = selectedTab == "discussions",
+                selected = selectedTab == NavRoutes.DISCUSSIONS.route,
                 onClick = {
-                    onTabSelected("discussions")
-                    navController.navigate("discussions") {
-                        popUpTo("discussions") { inclusive = true }
+                    onTabSelected(NavRoutes.DISCUSSIONS.route)
+                    navController.navigate(NavRoutes.DISCUSSIONS.route) {
+                        popUpTo(NavRoutes.DISCUSSIONS.route) { inclusive = true }
                     }
                 }
             )
@@ -76,16 +77,14 @@ fun NavBar(
             NavBarItem(
                 iconRes = Icons.Rounded.Menu,
                 label = "More",
-                selected = selectedTab == "more",
+                selected = selectedTab == NavRoutes.MORE.route,
                 onClick = {
-                    onTabSelected("more")
-                    navController.navigate("more") {
-                        popUpTo("more") { inclusive = true }
+                    onTabSelected(NavRoutes.MORE.route)
+                    navController.navigate(NavRoutes.MORE.route) {
+                        popUpTo(NavRoutes.MORE.route) { inclusive = true }
                     }
                 }
             )
         }
     }
 }
-
-

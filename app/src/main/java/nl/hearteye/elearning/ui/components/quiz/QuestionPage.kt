@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.components
+package nl.hearteye.elearning.ui.components.quiz
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,10 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import nl.hearteye.elearning.data.model.QuestionDetail
-import nl.hearteye.elearning.ui.components.answerbar.AnswerBar
+import nl.hearteye.elearning.ui.components.quiz.answerbar.AnswerBar
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
-import nl.hearteye.elearning.ui.components.progressbar.ProgressBar
+import nl.hearteye.elearning.ui.components.quiz.progressbar.ProgressBar
 import nl.hearteye.elearning.ui.theme.typography
 
 @Composable

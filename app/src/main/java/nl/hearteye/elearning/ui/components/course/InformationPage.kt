@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.components
+package nl.hearteye.elearning.ui.components.course
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

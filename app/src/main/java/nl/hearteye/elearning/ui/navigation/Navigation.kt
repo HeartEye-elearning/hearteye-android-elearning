@@ -12,7 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
-import nl.hearteye.elearning.ui.components.navbar.NavBar
+import nl.hearteye.elearning.ui.components.navigation.navbar.NavBar
 import nl.hearteye.elearning.ui.components.topbar.TopBar
 import nl.hearteye.elearning.ui.screens.coursedetail.CourseDetailScreen
 import nl.hearteye.elearning.ui.screens.courses.CoursesScreen
@@ -22,23 +22,23 @@ import nl.hearteye.elearning.ui.screens.more.MoreScreen
 
 @Composable
 fun Navigation(navController: NavHostController) {
-    val selectedTab = remember { mutableStateOf("home") }
+    val selectedTab = remember { mutableStateOf(NavRoutes.HOME.route) }
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
     Scaffold(
         topBar = {
             TopBar(
-                showBackButton = currentRoute == "courseDetail/{courseId}",
+                showBackButton = currentRoute == NavRoutes.COURSE_DETAIL.route,
                 onBackButtonClick = {
-                    navController.navigate("courses") {
-                        popUpTo("courses") { inclusive = true }
+                    navController.navigate(NavRoutes.COURSES.route) {
+                        popUpTo(NavRoutes.COURSES.route) { inclusive = true }
                     }
                 }
             )
         },
         bottomBar = {
-            if (currentRoute !in listOf("courseDetail/{courseId}")) {
+            if (currentRoute !in listOf(NavRoutes.COURSE_DETAIL.route)) {
                 NavBar(
                     navController = navController,
                     selectedTab = selectedTab.value,
@@ -49,20 +49,20 @@ fun Navigation(navController: NavHostController) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "home",
+            startDestination = NavRoutes.HOME.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("home") { HomeScreen() }
-            composable("courses") {
+            composable(NavRoutes.HOME.route) { HomeScreen() }
+            composable(NavRoutes.COURSES.route) {
                 CoursesScreen(onCourseSelected = { courseId ->
                     navController.navigate("courseDetail/$courseId")
                 })
             }
-            composable("discussions") { DiscussionsScreen() }
-            composable("more") { MoreScreen() }
+            composable(NavRoutes.DISCUSSIONS.route) { DiscussionsScreen() }
+            composable(NavRoutes.MORE.route) { MoreScreen() }
 
             composable(
-                route = "courseDetail/{courseId}",
+                route = NavRoutes.COURSE_DETAIL.route,
                 arguments = listOf(navArgument("courseId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
