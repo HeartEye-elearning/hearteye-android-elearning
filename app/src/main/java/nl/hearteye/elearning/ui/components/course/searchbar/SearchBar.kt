@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.components.searchbar
+package nl.hearteye.elearning.ui.components.course.searchbar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

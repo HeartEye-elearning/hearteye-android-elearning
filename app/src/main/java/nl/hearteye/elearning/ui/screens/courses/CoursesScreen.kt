@@ -12,12 +12,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import nl.hearteye.elearning.ui.components.coursecard.CourseCard
+import nl.hearteye.elearning.ui.components.course.coursecard.CourseCard
 import nl.hearteye.elearning.ui.components.error.ErrorView
-import nl.hearteye.elearning.ui.components.searchbar.SearchBar
+import nl.hearteye.elearning.ui.components.course.searchbar.SearchBar
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
 @Composable
@@ -61,15 +60,11 @@ fun CoursesScreen(
                 }
             }
             courses.isEmpty() -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                ) {
+                Column(modifier = Modifier.fillMaxSize()) {
                     SearchBar(
                         value = searchQuery.value,
                         onValueChange = { searchQuery.value = it },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
                     )
                     Box(
                         modifier = Modifier

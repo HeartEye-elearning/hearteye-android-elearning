@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.components.progressbar
+package nl.hearteye.elearning.ui.components.quiz.progressbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
@@ -20,7 +19,7 @@ fun ProgressBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -42,10 +41,4 @@ fun ProgressBar(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProgressBarPreview() {
-    ProgressBar(currentQuestion = 5, totalQuestions = 10, progress = 0.5f)
 }

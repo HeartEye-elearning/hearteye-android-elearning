@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.components.answeroverviewcircle
+package nl.hearteye.elearning.ui.components.quiz.answeroverviewcircle
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
