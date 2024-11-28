@@ -1,6 +1,7 @@
 package nl.hearteye.elearning.ui.components.answerbar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
@@ -27,18 +28,18 @@ fun AnswerBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(vertical = 8.dp)
+            .shadow(4.dp, shape = RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(10.dp))
             .background(
                 color = Color.White,
                 shape = RoundedCornerShape(10.dp)
             )
-            .shadow(
-                elevation = 4.dp,
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp),
-                clip = false
-            )
-            .clip(androidx.compose.foundation.shape.RoundedCornerShape(10.dp))
-            .padding(16.dp),
+            .height(60.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .clickable {
+                onCheckedChange(!isSelected)
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -46,33 +47,29 @@ fun AnswerBar(
             color = if (isSelected) Color.Black else Color.Gray,
             style = typography.bodyMedium,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp)
         )
-        Checkbox(
-            checked = isSelected,
-            onCheckedChange = onCheckedChange,
-            colors = androidx.compose.material3.CheckboxDefaults.colors(
-                checkedColor = ForegroundPrimary
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.LightGray)
+        ) {
+            Checkbox(
+                checked = isSelected,
+                onCheckedChange = null,
+                colors = androidx.compose.material3.CheckboxDefaults.colors(
+                    checkedColor = ForegroundPrimary,
+                    checkmarkColor = Color.White,
+                    uncheckedColor = Color.Transparent
+                ),
+                modifier = Modifier.align(Alignment.Center)
             )
-        )
+        }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AnswerBarPreview() {
-    Column {
-        AnswerBar(
-            id = "1",
-            answer = "The QRS-axis is horizontally left-centered so this is a really long test item to see what happens when the text is really long",
-            isSelected = false,
-            onCheckedChange = {}
-        )
-        AnswerBar(
-            id = "2",
-            answer = "The P-waves are less visible",
-            isSelected = true,
-            onCheckedChange = {}
-        )
-    }
-}
+
+

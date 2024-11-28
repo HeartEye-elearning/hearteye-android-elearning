@@ -77,7 +77,6 @@ fun CourseDetailScreen(
                             shape = RoundedCornerShape(10.dp)
                         )
                 ) {
-                    // Show StartPage if course is selected
                     if (!isCourseStarted.value) {
                         StartPage(
                             title = courseDetail.title,
@@ -124,6 +123,8 @@ fun CourseDetailScreen(
                         if (currentQuestion != null) {
                             QuestionPage(
                                 question = currentQuestion,
+                                currentQuestionIndex = currentQuestionIndex.intValue,
+                                totalQuestions = courseDetail.questions.size,
                                 onNext = {
                                     if (currentQuestionIndex.intValue < courseDetail.questions.size - 1) {
                                         currentQuestionIndex.intValue++
