@@ -4,11 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,6 +13,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import nl.hearteye.elearning.data.model.QuestionResult
 import nl.hearteye.elearning.ui.components.course.InformationPage
 import nl.hearteye.elearning.ui.components.quiz.QuestionPage
 import nl.hearteye.elearning.ui.components.course.StartPage
@@ -31,12 +29,15 @@ fun CourseDetailScreen(
     val courseDetail = courseDetailViewModel.courseDetail.value
     val isLoading = courseDetailViewModel.isLoading.value
     val errorMessage = courseDetailViewModel.errorMessage.value
+    val answerFeedback = courseDetailViewModel.answerFeedback.value
+    val questionResults = courseDetailViewModel.questionResults.value
 
     val currentInformationPageIndex = remember { mutableIntStateOf(0) }
     val currentQuizQuestionIndex = remember { mutableIntStateOf(0) }
     val hasCompletedInformationPages = remember { mutableStateOf(false) }
     val isQuizReady = remember { mutableStateOf(false) }
     val isCourseStarted = remember { mutableStateOf(false) }
+    val showQuizOverview = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         courseDetailViewModel.fetchCourseDetails(courseId)
@@ -55,10 +56,7 @@ fun CourseDetailScreen(
                 ErrorView(
                     message = errorMessage,
                     onRetry = {
-                        courseDetailViewModel.fetchCourseDetails(
-                            courseId = courseId,
-                            language = "eng"
-                        )
+                        courseDetailViewModel.fetchCourseDetails(courseId, "eng")
                     }
                 )
             }
@@ -68,20 +66,14 @@ fun CourseDetailScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(top = 8.dp, start = 16.dp, end = 16.dp)
-                        .windowInsetsPadding(WindowInsets.systemBars)
                         .shadow(5.dp, shape = RoundedCornerShape(10.dp))
                         .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            Color.White,
-                            shape = RoundedCornerShape(10.dp)
-                        )
+                        .background(Color.White, shape = RoundedCornerShape(10.dp))
                 ) {
                     if (!isCourseStarted.value) {
                         StartPage(
                             title = courseDetail.title,
-                            onStart = {
-                                isCourseStarted.value = true
-                            }
+                            onStart = { isCourseStarted.value = true }
                         )
                     }
 
@@ -91,14 +83,9 @@ fun CourseDetailScreen(
                         if (currentInformationPage != null) {
                             InformationPage(
                                 title = courseDetail.title,
-                                content = currentInformationPage.content["eng"]
-                                    ?: "No content available",
-                                onNext = {
-                                    currentInformationPageIndex.intValue++
-                                },
-                                onBack = {
-                                    currentInformationPageIndex.intValue--
-                                },
+                                content = currentInformationPage.content["eng"] ?: "No content available",
+                                onNext = { currentInformationPageIndex.intValue++ },
+                                onBack = { currentInformationPageIndex.intValue-- },
                                 canGoBack = currentInformationPageIndex.intValue > 0,
                                 canGoNext = currentInformationPageIndex.intValue < courseDetail.informationPages.size - 1
                             )
@@ -135,12 +122,45 @@ fun CourseDetailScreen(
                                     }
                                 },
                                 canGoBack = currentQuizQuestionIndex.intValue > 0,
-                                canGoNext = currentQuizQuestionIndex.intValue < courseDetail.questions.size - 1
+                                canGoNext = currentQuizQuestionIndex.intValue < courseDetail.questions.size - 1,
+                                onSubmitAnswer = { answerId ->
+                                    courseDetailViewModel.submitAnswer(
+                                        quizId = courseDetail.id,
+                                        questionId = currentQuestion.id,
+                                        answerId = answerId
+                                    )
+                                },
+                                answerFeedback = answerFeedback,
+                                onCompleteQuiz = {
+                                    showQuizOverview.value = true
+                                }
                             )
+                        }
+
+                        if (showQuizOverview.value) {
+                            QuizOverview(questionResults)
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+fun QuizOverview(questionResults: List<QuestionResult>) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text("Quiz Overview")
+        if (questionResults.isNotEmpty()) {
+            questionResults.forEachIndexed { index, result ->
+                Text("Q${index + 1}: ${if (result.isCorrect) "Correct" else "Wrong"}")
+            }
+        } else {
+            Text(text = "empty")
         }
     }
 }

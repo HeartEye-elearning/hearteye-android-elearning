@@ -14,7 +14,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import nl.hearteye.elearning.data.model.AnswerResponse
 import nl.hearteye.elearning.data.model.QuestionDetail
 import nl.hearteye.elearning.ui.components.quiz.answerbar.AnswerBar
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
@@ -30,7 +32,10 @@ fun QuestionPage(
     onNext: () -> Unit,
     onBack: () -> Unit,
     canGoBack: Boolean,
-    canGoNext: Boolean
+    canGoNext: Boolean,
+    onSubmitAnswer: (String) -> Unit,
+    answerFeedback: AnswerResponse?,
+    onCompleteQuiz: () -> Unit // new parameter to navigate to quiz overview
 ) {
     val selectedAnswer = remember { mutableStateOf<String?>(null) }
     val progress = (currentQuestionIndex + 1).toFloat() / totalQuestions
@@ -71,8 +76,6 @@ fun QuestionPage(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -85,11 +88,25 @@ fun QuestionPage(
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            if (canGoNext) {
+            if (currentQuestionIndex == totalQuestions - 1) {
                 RegularButton(
-                    onClick = onNext,
+                    onClick = {
+                        selectedAnswer.value?.let { answerId ->
+                            onSubmitAnswer(answerId)
+                            onCompleteQuiz()
+                        }
+                    },
+                    text = "Check Answers",
+                    enabled = selectedAnswer.value != null
+                )
+            } else if (canGoNext) {
+                RegularButton(
+                    onClick = {
+                        selectedAnswer.value?.let { answerId ->
+                            onSubmitAnswer(answerId)
+                            onNext()
+                        }
+                    },
                     text = "Next",
                     enabled = selectedAnswer.value != null
                 )
@@ -97,7 +114,3 @@ fun QuestionPage(
         }
     }
 }
-
-
-
-
