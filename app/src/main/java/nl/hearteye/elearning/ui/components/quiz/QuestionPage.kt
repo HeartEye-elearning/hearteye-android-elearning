@@ -7,20 +7,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import nl.hearteye.elearning.data.model.AnswerResponse
 import nl.hearteye.elearning.data.model.QuestionDetail
-import nl.hearteye.elearning.ui.components.quiz.answerbar.AnswerBar
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
+import nl.hearteye.elearning.ui.components.quiz.answerbar.AnswerBar
 import nl.hearteye.elearning.ui.components.quiz.progressbar.ProgressBar
 import nl.hearteye.elearning.ui.theme.typography
 
@@ -35,7 +33,7 @@ fun QuestionPage(
     canGoNext: Boolean,
     onSubmitAnswer: (String) -> Unit,
     answerFeedback: AnswerResponse?,
-    onCompleteQuiz: () -> Unit // new parameter to navigate to quiz overview
+    onCompleteQuiz: () -> Unit
 ) {
     val selectedAnswer = remember { mutableStateOf<String?>(null) }
     val progress = (currentQuestionIndex + 1).toFloat() / totalQuestions

@@ -19,6 +19,7 @@ import nl.hearteye.elearning.ui.components.quiz.QuestionPage
 import nl.hearteye.elearning.ui.components.course.StartPage
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.error.ErrorView
+import nl.hearteye.elearning.ui.components.quiz.QuizOverview
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
 @Composable
@@ -148,19 +149,4 @@ fun CourseDetailScreen(
 }
 
 
-@Composable
-fun QuizOverview(questionResults: List<QuestionResult>) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text("Quiz Overview")
-        if (questionResults.isNotEmpty()) {
-            questionResults.forEachIndexed { index, result ->
-                Text("Q${index + 1}: ${if (result.isCorrect) "Correct" else "Wrong"}")
-            }
-        } else {
-            Text(text = "empty")
-        }
-    }
-}
+
