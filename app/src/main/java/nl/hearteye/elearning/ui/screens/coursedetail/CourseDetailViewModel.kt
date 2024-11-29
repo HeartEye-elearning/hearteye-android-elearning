@@ -1,16 +1,12 @@
 package nl.hearteye.elearning.ui.screens.coursedetail
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import nl.hearteye.elearning.data.model.AnswerResponse
 import nl.hearteye.elearning.data.model.CourseDetail
-import nl.hearteye.elearning.data.model.QuestionResult
 import nl.hearteye.elearning.data.repository.CourseRepository
 import javax.inject.Inject
 
@@ -28,11 +24,6 @@ class CourseDetailViewModel @Inject constructor(
     private val _errorMessage = mutableStateOf<String?>(null)
     val errorMessage: State<String?> = _errorMessage
 
-    private val _answerFeedback = MutableLiveData<AnswerResponse?>()
-    val answerFeedback: LiveData<AnswerResponse?> = _answerFeedback
-
-    private val _questionResults = mutableStateOf<List<QuestionResult>>(emptyList())
-    val questionResults: State<List<QuestionResult>> = _questionResults
 
     fun fetchCourseDetails(courseId: String, language: String = "eng") {
         _isLoading.value = true
@@ -52,18 +43,6 @@ class CourseDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val response = courseRepository.submitAnswer(quizId, questionId, answerId)
-                _answerFeedback.value = response
-
-                // Update the question results
-                val updatedResults = _questionResults.value.toMutableList()
-                updatedResults.add(
-                    QuestionResult(
-                        questionId = questionId,
-                        answerId = answerId,
-                        isCorrect = response.isCorrect
-                    )
-                )
-                _questionResults.value = updatedResults
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to submit answer: ${e.message}"
             }

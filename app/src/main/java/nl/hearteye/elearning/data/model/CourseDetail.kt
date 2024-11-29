@@ -24,17 +24,4 @@ data class AnswerDetail(
     val correct: Boolean
 )
 
-data class AnswerResponse(
-    val quizId: String,
-    val questionId: String,
-    val givenAnswerId: String,
-    val isCorrect: Boolean
-)
-
-data class QuestionResult(
-    val questionId: String,
-    val answerId: String,
-    val isCorrect: Boolean
-)
-
 

@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import nl.hearteye.elearning.data.model.AnswerResponse
 import nl.hearteye.elearning.data.model.QuestionDetail
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
@@ -32,7 +31,6 @@ fun QuestionPage(
     canGoBack: Boolean,
     canGoNext: Boolean,
     onSubmitAnswer: (String) -> Unit,
-    answerFeedback: AnswerResponse?,
     onCompleteQuiz: () -> Unit
 ) {
     val selectedAnswer = remember { mutableStateOf<String?>(null) }

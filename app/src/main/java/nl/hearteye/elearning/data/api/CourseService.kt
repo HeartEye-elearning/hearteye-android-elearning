@@ -2,7 +2,6 @@ package nl.hearteye.elearning.data.api
 
 import nl.hearteye.elearning.data.entity.CourseDetailEntity
 import nl.hearteye.elearning.data.entity.CourseEntity
-import nl.hearteye.elearning.data.model.AnswerResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -20,6 +19,5 @@ interface CourseService {
         @Path("id") quizId: String,
         @Path("questionId") questionId: String,
         @Body answerId: Map<String, String>
-    ): AnswerResponse
-
+    )
 }

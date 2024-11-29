@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,12 +12,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import nl.hearteye.elearning.data.model.QuestionResult
-import nl.hearteye.elearning.ui.components.course.InformationPage
-import nl.hearteye.elearning.ui.components.quiz.QuestionPage
-import nl.hearteye.elearning.ui.components.course.StartPage
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
+import nl.hearteye.elearning.ui.components.course.InformationPage
+import nl.hearteye.elearning.ui.components.course.StartPage
 import nl.hearteye.elearning.ui.components.error.ErrorView
+import nl.hearteye.elearning.ui.components.quiz.QuestionPage
 import nl.hearteye.elearning.ui.components.quiz.QuizOverview
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
@@ -30,14 +28,13 @@ fun CourseDetailScreen(
     val courseDetail = courseDetailViewModel.courseDetail.value
     val isLoading = courseDetailViewModel.isLoading.value
     val errorMessage = courseDetailViewModel.errorMessage.value
-    val answerFeedback = courseDetailViewModel.answerFeedback.value
-    val questionResults = courseDetailViewModel.questionResults.value
 
     val currentInformationPageIndex = remember { mutableIntStateOf(0) }
     val currentQuizQuestionIndex = remember { mutableIntStateOf(0) }
     val hasCompletedInformationPages = remember { mutableStateOf(false) }
     val isQuizReady = remember { mutableStateOf(false) }
     val isCourseStarted = remember { mutableStateOf(false) }
+    val isQuizCompleted = remember { mutableStateOf(false) }
     val showQuizOverview = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -104,7 +101,7 @@ fun CourseDetailScreen(
                         }
                     }
 
-                    if (isQuizReady.value) {
+                    if (isQuizReady.value && !isQuizCompleted.value) {
                         val currentQuestion =
                             courseDetail.questions.getOrNull(currentQuizQuestionIndex.intValue)
                         if (currentQuestion != null) {
@@ -131,22 +128,19 @@ fun CourseDetailScreen(
                                         answerId = answerId
                                     )
                                 },
-                                answerFeedback = answerFeedback,
                                 onCompleteQuiz = {
+                                    isQuizCompleted.value = true
                                     showQuizOverview.value = true
                                 }
                             )
                         }
+                    }
 
-                        if (showQuizOverview.value) {
-                            QuizOverview(questionResults)
-                        }
+                    if (isQuizCompleted.value) {
+                        QuizOverview()
                     }
                 }
             }
         }
     }
 }
-
-
-
