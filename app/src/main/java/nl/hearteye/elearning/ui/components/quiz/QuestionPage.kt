@@ -34,7 +34,8 @@ fun QuestionPage(
     canGoBack: Boolean,
     canGoNext: Boolean,
     onSubmitAnswer: (String) -> Unit,
-    answerFeedback: AnswerResponse?
+    answerFeedback: AnswerResponse?,
+    onCompleteQuiz: () -> Unit // new parameter to navigate to quiz overview
 ) {
     val selectedAnswer = remember { mutableStateOf<String?>(null) }
     val progress = (currentQuestionIndex + 1).toFloat() / totalQuestions
@@ -75,8 +76,6 @@ fun QuestionPage(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -89,9 +88,18 @@ fun QuestionPage(
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            if (canGoNext) {
+            if (currentQuestionIndex == totalQuestions - 1) {
+                RegularButton(
+                    onClick = {
+                        selectedAnswer.value?.let { answerId ->
+                            onSubmitAnswer(answerId)
+                            onCompleteQuiz()
+                        }
+                    },
+                    text = "Check Answers",
+                    enabled = selectedAnswer.value != null
+                )
+            } else if (canGoNext) {
                 RegularButton(
                     onClick = {
                         selectedAnswer.value?.let { answerId ->
@@ -106,9 +114,3 @@ fun QuestionPage(
         }
     }
 }
-
-
-
-
-
-

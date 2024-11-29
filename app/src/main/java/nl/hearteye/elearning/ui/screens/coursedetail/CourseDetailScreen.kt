@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import nl.hearteye.elearning.data.model.QuestionResult
 import nl.hearteye.elearning.ui.components.course.InformationPage
 import nl.hearteye.elearning.ui.components.quiz.QuestionPage
 import nl.hearteye.elearning.ui.components.course.StartPage
@@ -29,12 +30,14 @@ fun CourseDetailScreen(
     val isLoading = courseDetailViewModel.isLoading.value
     val errorMessage = courseDetailViewModel.errorMessage.value
     val answerFeedback = courseDetailViewModel.answerFeedback.value
+    val questionResults = courseDetailViewModel.questionResults.value
 
     val currentInformationPageIndex = remember { mutableIntStateOf(0) }
     val currentQuizQuestionIndex = remember { mutableIntStateOf(0) }
     val hasCompletedInformationPages = remember { mutableStateOf(false) }
     val isQuizReady = remember { mutableStateOf(false) }
     val isCourseStarted = remember { mutableStateOf(false) }
+    val showQuizOverview = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         courseDetailViewModel.fetchCourseDetails(courseId)
@@ -127,13 +130,37 @@ fun CourseDetailScreen(
                                         answerId = answerId
                                     )
                                 },
-                                answerFeedback = answerFeedback
+                                answerFeedback = answerFeedback,
+                                onCompleteQuiz = {
+                                    showQuizOverview.value = true
+                                }
                             )
                         }
-                    }
 
+                        if (showQuizOverview.value) {
+                            QuizOverview(questionResults)
+                        }
+                    }
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+fun QuizOverview(questionResults: List<QuestionResult>) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text("Quiz Overview")
+        if (questionResults.isNotEmpty()) {
+            questionResults.forEachIndexed { index, result ->
+                Text("Q${index + 1}: ${if (result.isCorrect) "Correct" else "Wrong"}")
+            }
+        } else {
+            Text(text = "empty")
         }
     }
 }

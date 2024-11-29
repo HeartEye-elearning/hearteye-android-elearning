@@ -31,3 +31,10 @@ data class AnswerResponse(
     val isCorrect: Boolean
 )
 
+data class QuestionResult(
+    val questionId: String,
+    val answerId: String,
+    val isCorrect: Boolean
+)
+
+
