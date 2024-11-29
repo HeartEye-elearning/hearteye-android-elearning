@@ -23,3 +23,11 @@ data class AnswerDetail(
     val content: String,
     val correct: Boolean
 )
+
+data class AnswerResponse(
+    val quizId: String,
+    val questionId: String,
+    val givenAnswerId: String,
+    val isCorrect: Boolean
+)
+

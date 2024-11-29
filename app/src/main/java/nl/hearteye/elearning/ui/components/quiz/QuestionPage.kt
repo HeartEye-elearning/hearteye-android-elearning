@@ -14,7 +14,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import nl.hearteye.elearning.data.model.AnswerResponse
 import nl.hearteye.elearning.data.model.QuestionDetail
 import nl.hearteye.elearning.ui.components.quiz.answerbar.AnswerBar
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
@@ -30,7 +32,9 @@ fun QuestionPage(
     onNext: () -> Unit,
     onBack: () -> Unit,
     canGoBack: Boolean,
-    canGoNext: Boolean
+    canGoNext: Boolean,
+    onSubmitAnswer: (String) -> Unit,
+    answerFeedback: AnswerResponse?
 ) {
     val selectedAnswer = remember { mutableStateOf<String?>(null) }
     val progress = (currentQuestionIndex + 1).toFloat() / totalQuestions
@@ -89,7 +93,12 @@ fun QuestionPage(
 
             if (canGoNext) {
                 RegularButton(
-                    onClick = onNext,
+                    onClick = {
+                        selectedAnswer.value?.let { answerId ->
+                            onSubmitAnswer(answerId)
+                            onNext()
+                        }
+                    },
                     text = "Next",
                     enabled = selectedAnswer.value != null
                 )
@@ -97,6 +106,8 @@ fun QuestionPage(
         }
     }
 }
+
+
 
 
 
