@@ -41,17 +41,3 @@ fun AnswerOverviewCircle(questionNumber: Int, isCorrect: Boolean) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AnswerOverviewPreview() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        for (i in 1..5) {
-            AnswerOverviewCircle(questionNumber = i, isCorrect = i % 2 == 0) 
-        }
-    }
-}
