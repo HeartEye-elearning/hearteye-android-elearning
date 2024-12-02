@@ -35,8 +35,8 @@ fun AnswerBar(
                 color = Color.White,
                 shape = RoundedCornerShape(10.dp)
             )
-            .height(60.dp)
-            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .height(50.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable {
                 onCheckedChange(!isSelected)
             },
@@ -44,8 +44,8 @@ fun AnswerBar(
     ) {
         Text(
             text = answer,
-            color = if (isSelected) Color.Black else Color.Gray,
-            style = typography.bodyMedium,
+            color = if (isSelected) Color.Black else Color(0xFF4E4E4E),
+            style = typography.bodyMedium.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
             modifier = Modifier
                 .weight(1f)
@@ -55,14 +55,14 @@ fun AnswerBar(
             modifier = Modifier
                 .size(24.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Color.LightGray)
+                .background(Color(0xFFF5F5F5))
         ) {
             Checkbox(
                 checked = isSelected,
                 onCheckedChange = null,
                 colors = CheckboxDefaults.colors(
-                    checkedColor = ForegroundPrimary,
-                    checkmarkColor = Color.White,
+                    checkedColor = Color.Transparent,
+                    checkmarkColor = ForegroundPrimary,
                     uncheckedColor = Color.Transparent
                 ),
                 modifier = Modifier.align(Alignment.Center)
