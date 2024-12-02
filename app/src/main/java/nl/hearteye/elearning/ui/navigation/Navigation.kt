@@ -14,6 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import nl.hearteye.elearning.ui.components.navigation.navbar.NavBar
 import nl.hearteye.elearning.ui.components.topbar.TopBar
+import nl.hearteye.elearning.ui.screens.answeroverview.AnswerOverviewScreen
 import nl.hearteye.elearning.ui.screens.coursedetail.CourseDetailScreen
 import nl.hearteye.elearning.ui.screens.courses.CoursesScreen
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionsScreen
@@ -29,16 +30,28 @@ fun Navigation(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopBar(
-                showBackButton = currentRoute == NavRoutes.COURSE_DETAIL.route,
+                showBackButton = currentRoute in listOf(
+                    NavRoutes.COURSE_DETAIL.route,
+                    NavRoutes.ANSWER_OVERVIEW.route
+                ),
                 onBackButtonClick = {
-                    navController.navigate(NavRoutes.COURSES.route) {
-                        popUpTo(NavRoutes.COURSES.route) { inclusive = true }
+                    when (currentRoute) {
+                        NavRoutes.COURSE_DETAIL.route -> {
+                            navController.navigate(NavRoutes.COURSES.route) {
+                                popUpTo(NavRoutes.COURSES.route) { inclusive = true }
+                            }
+                        }
+                        NavRoutes.ANSWER_OVERVIEW.route -> {
+                            navController.navigate(NavRoutes.COURSES.route) {
+                                popUpTo(NavRoutes.COURSES.route) { inclusive = true }
+                            }
+                        }
                     }
                 }
             )
         },
         bottomBar = {
-            if (currentRoute !in listOf(NavRoutes.COURSE_DETAIL.route)) {
+            if (currentRoute !in listOf(NavRoutes.COURSE_DETAIL.route, NavRoutes.ANSWER_OVERVIEW.route)) {
                 NavBar(
                     navController = navController,
                     selectedTab = selectedTab.value,
@@ -66,10 +79,16 @@ fun Navigation(navController: NavHostController) {
                 arguments = listOf(navArgument("courseId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
-                CourseDetailScreen(courseId = courseId)
+                CourseDetailScreen(courseId = courseId, navController = navController)
+            }
+            composable(
+                route = NavRoutes.ANSWER_OVERVIEW.route,
+                arguments = listOf(navArgument("courseId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
+                AnswerOverviewScreen(courseId = courseId)
             }
         }
     }
 }
-
 

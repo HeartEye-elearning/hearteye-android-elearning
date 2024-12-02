@@ -5,5 +5,6 @@ enum class NavRoutes(val route: String) {
     COURSES("courses"),
     DISCUSSIONS("discussions"),
     MORE("more"),
-    COURSE_DETAIL("courseDetail/{courseId}")
+    COURSE_DETAIL("courseDetail/{courseId}"),
+    ANSWER_OVERVIEW("answerOverview/{courseId}")
 }

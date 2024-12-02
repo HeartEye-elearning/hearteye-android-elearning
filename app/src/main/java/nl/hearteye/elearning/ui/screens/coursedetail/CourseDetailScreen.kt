@@ -6,16 +6,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import nl.hearteye.elearning.ui.components.course.InformationPage
 import nl.hearteye.elearning.ui.components.course.StartPage
 import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.components.quiz.QuestionPage
-import nl.hearteye.elearning.ui.components.quiz.QuizOverview
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
 @Composable
 fun CourseDetailScreen(
     courseId: String,
+    navController: NavHostController,
     courseDetailViewModel: CourseDetailViewModel = hiltViewModel()
 ) {
     val courseDetail = courseDetailViewModel.courseDetail.value
@@ -116,7 +117,9 @@ fun CourseDetailScreen(
                 }
 
                 if (isQuizCompleted.value) {
-                    QuizOverview()
+                    LaunchedEffect(Unit) {
+                        navController.navigate("answerOverview/$courseId")
+                    }
                 }
             }
         }

@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import nl.hearteye.elearning.ui.theme.ForegroundGray
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
 
@@ -44,7 +45,7 @@ fun AnswerBar(
     ) {
         Text(
             text = answer,
-            color = if (isSelected) Color.Black else Color(0xFF4E4E4E),
+            color = if (isSelected) Color.Black else ForegroundGray,
             style = typography.bodyMedium.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
             modifier = Modifier
