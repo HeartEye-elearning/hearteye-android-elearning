@@ -42,11 +42,10 @@ fun InformationPage(
             .clip(RoundedCornerShape(10.dp))
             .background(Color.White, shape = RoundedCornerShape(10.dp))
     ) {
-        // Title and Content Section
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f) // Take up available space
+                .weight(1f)
                 .padding(start = 25.dp, end = 25.dp, top = 16.dp, bottom = 16.dp)
         ) {
             Text(

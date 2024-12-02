@@ -46,7 +46,7 @@ fun QuestionPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         ProgressBar(
             currentQuestion = currentQuestionIndex + 1,
@@ -129,7 +129,7 @@ fun QuestionPage(
                             }
                         }
                     },
-                    text = if (currentQuestionIndex == totalQuestions - 1) "Check Answers" else "Next",
+                    text = if (currentQuestionIndex == totalQuestions - 1) "Submit" else "Next",
                     enabled = selectedAnswer.value != null,
                     modifier = Modifier.weight(1f)
                 )
