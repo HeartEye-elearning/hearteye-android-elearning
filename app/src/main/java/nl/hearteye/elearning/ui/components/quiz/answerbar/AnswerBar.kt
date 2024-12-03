@@ -1,6 +1,7 @@
 package nl.hearteye.elearning.ui.components.quiz.answerbar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import nl.hearteye.elearning.ui.theme.BackgroundCorrect
+import nl.hearteye.elearning.ui.theme.BackgroundWrong
+import nl.hearteye.elearning.ui.theme.BorderCorrect
+import nl.hearteye.elearning.ui.theme.BorderWrong
 import nl.hearteye.elearning.ui.theme.ForegroundGray
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
@@ -24,18 +29,30 @@ fun AnswerBar(
     id: String,
     answer: String,
     isSelected: Boolean,
+    isCorrect: Boolean? = null,
     onCheckedChange: (Boolean) -> Unit
 ) {
+
+    val backgroundColor = when {
+        isSelected && isCorrect == true -> BackgroundCorrect
+        isSelected && isCorrect == false -> BackgroundWrong
+        else -> Color.White
+    }
+
+    val borderColor = when {
+        isSelected && isCorrect == true -> BorderCorrect
+        isSelected && isCorrect == false -> BorderWrong
+        else -> Color.Transparent
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .shadow(4.dp, shape = RoundedCornerShape(10.dp))
             .clip(RoundedCornerShape(10.dp))
-            .background(
-                color = Color.White,
-                shape = RoundedCornerShape(10.dp)
-            )
+            .background(color = backgroundColor, shape = RoundedCornerShape(10.dp))
+            .border(2.dp, borderColor, shape = RoundedCornerShape(10.dp))
             .height(50.dp)
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable {
@@ -45,7 +62,7 @@ fun AnswerBar(
     ) {
         Text(
             text = answer,
-            color = if (isSelected) Color.Black else ForegroundGray,
+            color = if (isSelected) borderColor else ForegroundGray,
             style = typography.bodyMedium.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
             modifier = Modifier
@@ -71,6 +88,7 @@ fun AnswerBar(
         }
     }
 }
+
 
 
 
