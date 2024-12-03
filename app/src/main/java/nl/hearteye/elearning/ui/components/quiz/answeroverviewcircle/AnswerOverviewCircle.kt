@@ -16,20 +16,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import nl.hearteye.elearning.ui.theme.BackgroundCorrect
+import nl.hearteye.elearning.ui.theme.BackgroundWrong
+import nl.hearteye.elearning.ui.theme.BorderCorrect
+import nl.hearteye.elearning.ui.theme.BorderWrong
 import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
 fun AnswerOverviewCircle(questionNumber: Int, isCorrect: Boolean) {
-    val backgroundColor = if (isCorrect) Color(0xFF089E53) else Color(0xFFF89FA0)
-    val borderColor = if (isCorrect) Color.Green else Color.Red
-    val textColor = if (isCorrect) Color.Green else Color.Red
+    val backgroundColor = if (isCorrect) BackgroundCorrect else BackgroundWrong
+    val borderColor = if (isCorrect) BorderCorrect else BorderWrong
+    val textColor = if (isCorrect) BorderCorrect else BorderWrong
 
     Box(
         modifier = Modifier
-            .size(75.dp)
+            .size(80.dp)
             .background(backgroundColor, CircleShape)
-            .border(2.dp, borderColor, CircleShape)
-            .padding(8.dp),
+            .border(2.dp, borderColor, CircleShape),
         contentAlignment = Alignment.Center
     ) {
         Text(
