@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import nl.hearteye.elearning.ui.components.result.ResultDetailPage
 import nl.hearteye.elearning.ui.components.result.ResultOverviewPage
 import nl.hearteye.elearning.ui.components.result.ResultPage
 
@@ -19,11 +20,12 @@ fun AnswerOverviewScreen(courseId: String) {
 //            onCloseCourse = { /* Navigate to course close */ },
 //            onSeeQuestions = { /* Navigate to questions */ }
 //        )
-        ResultOverviewPage(
-            onRetryCourse = { /* Navigate to retry logic */ },
-            onCloseCourse = { /* Navigate to course close */ },
-            onSeeQuestions = { /* Navigate to questions */ }
-        )
+//        ResultOverviewPage(
+//            onRetryCourse = { /* Navigate to retry logic */ },
+//            onCloseCourse = { /* Navigate to course close */ },
+//            onSeeQuestions = { /* Navigate to questions */ }
+//        )
+        ResultDetailPage {  }
     }
 }
 
