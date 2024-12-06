@@ -15,8 +15,8 @@ class AnswerOverviewViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _score = MutableStateFlow<Int?>(null)
-    val score: StateFlow<Int?> = _score
+    private val _userQuizStats = MutableStateFlow<UserQuizStats?>(null)
+    val userQuizStats: StateFlow<UserQuizStats?> = _userQuizStats
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -30,7 +30,7 @@ class AnswerOverviewViewModel @Inject constructor(
             _error.value = null
             try {
                 val stats: UserQuizStats = userRepository.getUserQuizStats(userId, quizId)
-                _score.value = stats.stats.score
+                _userQuizStats.value = stats
             } catch (e: Exception) {
                 _error.value = "Failed to load score: ${e.message}"
             } finally {
@@ -39,3 +39,5 @@ class AnswerOverviewViewModel @Inject constructor(
         }
     }
 }
+
+

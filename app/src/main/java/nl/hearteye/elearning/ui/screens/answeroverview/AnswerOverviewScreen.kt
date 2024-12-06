@@ -18,12 +18,14 @@ fun AnswerOverviewScreen(
     courseId: String,
     viewModel: AnswerOverviewViewModel = hiltViewModel()
 ) {
-    val score by viewModel.score.collectAsState()
+    val score by viewModel.userQuizStats.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
-    // Hardcoded userId for now
-    val userId = "ddae2aa6-fad9-428e-a3b2-ec81961bc4a1"
+
+    // Hardcoded
+    val userId = "8dab58ae-8ddb-4674-b8db-602c39a258cf"
+    val courseId = "8dab58ae-8dce-4674-b8db-602c39a258cf"
 
     LaunchedEffect(Unit) {
         viewModel.fetchScoreForUser(userId, courseId)
@@ -46,7 +48,7 @@ fun AnswerOverviewScreen(
             score != null -> {
                 if (showResultPage) {
                     ResultPage(
-                        score = score ?: 0,
+                        score = score?.stats?.score ?: 0,
                         onRetryCourse = { /* Navigate to retry logic */ },
                         onCloseCourse = { /* Navigate to course close */ },
                         onSeeQuestions = { showResultPage = false }
@@ -55,18 +57,11 @@ fun AnswerOverviewScreen(
                     ResultOverviewPage(
                         onRetryCourse = { /* Navigate to retry logic */ },
                         onCloseCourse = { /* Navigate to course close */ },
-                        onSeeQuestions = { showResultPage = true }
+                        onSeeQuestions = { showResultPage = true },
+                        userQuizStats = score!! 
                     )
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AnswerOverviewScreenPreview() {
-    MaterialTheme {
-        AnswerOverviewScreen("1")
     }
 }
