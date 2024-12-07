@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import nl.hearteye.elearning.data.api.CourseService
+import nl.hearteye.elearning.data.api.UserService
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -32,4 +33,9 @@ object AppModule {
     @Singleton
     fun provideCourseService(retrofit: Retrofit): CourseService =
         retrofit.create(CourseService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideUserService(retrofit: Retrofit): UserService =
+        retrofit.create(UserService::class.java)
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import nl.hearteye.elearning.data.model.UserQuizStats
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.quiz.answeroverviewcircle.AnswerOverviewCircle
@@ -25,9 +26,12 @@ import nl.hearteye.elearning.ui.theme.typography
 fun ResultOverviewPage(
     onRetryCourse: () -> Unit,
     onCloseCourse: () -> Unit,
-    onSeeQuestions: () -> Unit
+    onSeeQuestions: () -> Unit,
+    userQuizStats: UserQuizStats
 ) {
-    val answers = List(10) { it < 7 }
+    val latestAttempt = userQuizStats.attempts.lastOrNull()
+
+    val answers = latestAttempt?.answers?.map { it.isCorrect } ?: emptyList()
 
     Box(
         modifier = Modifier
@@ -99,4 +103,3 @@ fun ResultOverviewPage(
         }
     }
 }
-
