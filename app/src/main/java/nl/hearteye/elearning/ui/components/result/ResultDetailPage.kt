@@ -29,10 +29,9 @@ import nl.hearteye.elearning.ui.theme.typography
 fun ResultDetailPage(
     onBack: () -> Unit,
     questionId: String,
-    questionDetails: QuestionDetailEntity? // Pass the question details
+    questionDetails: QuestionDetailEntity?
 ) {
     if (questionDetails == null) {
-        // Show loading or error state if question details are not available yet
         CircularProgressIndicator()
         return
     }
@@ -63,7 +62,6 @@ fun ResultDetailPage(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Answer choices
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,15 +71,14 @@ fun ResultDetailPage(
                 .background(Color.White, shape = RoundedCornerShape(10.dp))
                 .padding(16.dp)
         ) {
-            // Displaying answers dynamically
             questionDetails.answers.forEach { answer ->
                 AnswerBar(
                     id = answer.id,
                     answer = answer.content.toString(),
-                    isSelected = false, // Implement selection logic here
+                    isSelected = false,
                     isCorrect = answer.correct,
                     onCheckedChange = { isSelected ->
-                        // Handle answer selection logic
+
                     }
                 )
             }
@@ -89,7 +86,6 @@ fun ResultDetailPage(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Back button text
         Text(
             text = "Go back to question overview →",
             style = typography.bodyLarge,

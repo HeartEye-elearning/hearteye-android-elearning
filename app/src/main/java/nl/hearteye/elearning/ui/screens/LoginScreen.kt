@@ -1,41 +1,48 @@
 package nl.hearteye.elearning.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import nl.hearteye.elearning.R
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
+import nl.hearteye.elearning.ui.navigation.NavRoutes
 
 @Composable
-fun LoginScreen(onForgotPasswordClick: () -> Unit, onSignInClick: () -> Unit) {
-    val email by remember { mutableStateOf("") }
-    val password by remember { mutableStateOf("") }
+fun LoginScreen(
+    navController: NavController,
+    onForgotPasswordClick: () -> Unit
+) {
+    val loginViewModel: LoginViewModel = hiltViewModel()
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     val isButtonEnabled = email.isNotEmpty() && password.isNotEmpty()
+
+    val isLoading by loginViewModel.isLoading.collectAsState()
+    val errorMessage by loginViewModel.errorMessage.collectAsState()
+    val isLoggedIn = loginViewModel.isUserLoggedIn()
+
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            navController.navigate(NavRoutes.HOME.route) {
+                popUpTo(NavRoutes.LOGIN.route) { inclusive = true }
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -48,7 +55,6 @@ fun LoginScreen(onForgotPasswordClick: () -> Unit, onSignInClick: () -> Unit) {
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Spacer(modifier = Modifier.height(32.dp))
 
             Image(
@@ -73,9 +79,12 @@ fun LoginScreen(onForgotPasswordClick: () -> Unit, onSignInClick: () -> Unit) {
 
             OutlinedTextField(
                 value = email,
-                onValueChange = {},
+                onValueChange = { email = it },
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation = VisualTransformation.None
+                placeholder = { Text("Enter your email") },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -92,18 +101,22 @@ fun LoginScreen(onForgotPasswordClick: () -> Unit, onSignInClick: () -> Unit) {
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { },
+                onValueChange = { password = it },
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                placeholder = { Text("Enter your password") },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
             RegularButton(
-                onClick = onSignInClick,
-                text = "Sign In",
+                onClick = { loginViewModel.login(email, password) },
+                text = if (isLoading) "Signing In..." else "Sign In",
                 modifier = Modifier.fillMaxWidth(),
-                enabled = isButtonEnabled
+                enabled = isButtonEnabled && !isLoading
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -112,14 +125,15 @@ fun LoginScreen(onForgotPasswordClick: () -> Unit, onSignInClick: () -> Unit) {
                 onClick = onForgotPasswordClick,
                 modifier = Modifier.align(Alignment.Start)
             ) {
-                Text(text = "Forgot password?",  textDecoration = TextDecoration.Underline)
+                Text(text = "Forgot password?", textDecoration = TextDecoration.Underline)
+            }
+
+            if (errorMessage != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = errorMessage ?: "", color = Color.Red)
             }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen(onForgotPasswordClick = {}, onSignInClick = {})
-}
+
