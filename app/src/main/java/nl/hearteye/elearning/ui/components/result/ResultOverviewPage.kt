@@ -27,11 +27,11 @@ fun ResultOverviewPage(
     onRetryCourse: () -> Unit,
     onCloseCourse: () -> Unit,
     onSeeQuestions: () -> Unit,
-    userQuizStats: UserQuizStats
+    userQuizStats: UserQuizStats,
+    onCircleClick: (String) -> Unit // Updated callback to receive questionId
 ) {
     val latestAttempt = userQuizStats.attempts.lastOrNull()
-
-    val answers = latestAttempt?.answers?.map { it.isCorrect } ?: emptyList()
+    val answers = latestAttempt?.answers?.map { it.isCorrect to it.questionId } ?: emptyList()
 
     Box(
         modifier = Modifier
@@ -59,14 +59,17 @@ fun ResultOverviewPage(
                 modifier = Modifier.padding(16.dp),
             ) {
                 items(answers.size) { index ->
+                    val (isCorrect, questionId) = answers[index]
                     Box(
                         modifier = Modifier
                             .aspectRatio(1f)
                             .padding(2.dp)
+                            .clickable { onCircleClick(questionId) } // Passing questionId
                     ) {
                         AnswerOverviewCircle(
                             questionNumber = index + 1,
-                            isCorrect = answers[index]
+                            questionId = questionId, // Passing questionId
+                            isCorrect = isCorrect
                         )
                     }
                 }

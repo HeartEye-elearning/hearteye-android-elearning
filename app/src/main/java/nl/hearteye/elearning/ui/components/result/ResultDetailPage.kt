@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import nl.hearteye.elearning.data.entity.QuestionDetailEntity
 import nl.hearteye.elearning.data.model.AnswerDetail
 import nl.hearteye.elearning.ui.components.quiz.answerbar.AnswerBar
 import nl.hearteye.elearning.ui.theme.ForegroundGray
@@ -24,19 +27,17 @@ import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
 fun ResultDetailPage(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    questionId: String,
+    questionDetails: QuestionDetailEntity? // Pass the question details
 ) {
-    val questionText =
-        "What is a characteristic of the HeartEye-ECG due to the placement of the four electrodes directly above the heart?"
+    if (questionDetails == null) {
+        // Show loading or error state if question details are not available yet
+        CircularProgressIndicator()
+        return
+    }
 
-    val answers = listOf(
-        AnswerDetail(id = "a1", content = "The P-waves are less visible", correct = true),
-        AnswerDetail(id = "a2", content = "The QRS-axis is horizontally left-centered", correct = false),
-        AnswerDetail(id = "a3", content = "The STT segments change more slowly and less pronounced.", correct = false),
-        AnswerDetail(id = "a4", content = "The anterior leads show no R-wave progression.", correct = false)
-    )
-
-    val selectedAnswerId = "a1"
+//    val questionText = questionDetails.question["en"] ?: "No question available"  // Extract text for a specific key, e.g., "en"
 
     Column(
         modifier = Modifier
@@ -51,14 +52,18 @@ fun ResultDetailPage(
                 .background(Color.White, shape = RoundedCornerShape(10.dp))
                 .padding(16.dp)
         ) {
-            Text(
-                text = questionText,
-                style = typography.bodyLarge
-            )
+//            Text(
+//                text = questionText,  // Now passing a String to Text
+//                style = typography.bodyLarge
+//            )
         }
 
+        Text(
+            text = questionId
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Answer choices
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -68,37 +73,31 @@ fun ResultDetailPage(
                 .background(Color.White, shape = RoundedCornerShape(10.dp))
                 .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                answers.forEach { answer ->
-                    AnswerBar(
-                        id = answer.id,
-                        answer = answer.content,
-                        isSelected = selectedAnswerId == answer.id,
-                        isCorrect = answer.correct,
-                        onCheckedChange = { isSelected ->
-
-                        }
-                    )
-                }
+            // Displaying answers dynamically
+            questionDetails.answers.forEach { answer ->
+                AnswerBar(
+                    id = answer.id,
+                    answer = answer.content.toString(),
+                    isSelected = false, // Implement selection logic here
+                    isCorrect = answer.correct,
+                    onCheckedChange = { isSelected ->
+                        // Handle answer selection logic
+                    }
+                )
             }
-
-            Text(
-                text = "Go back to question overview →",
-                style = typography.bodyLarge,
-                color = ForegroundGray,
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .clickable { onBack() }
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Back button text
+        Text(
+            text = "Go back to question overview →",
+            style = typography.bodyLarge,
+            color = ForegroundGray,
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .clickable { onBack() }
+        )
     }
 }
-
-
-
 

@@ -1,6 +1,7 @@
 package nl.hearteye.elearning.data.repository
 
 import nl.hearteye.elearning.data.api.CourseService
+import nl.hearteye.elearning.data.entity.QuestionDetailEntity
 import nl.hearteye.elearning.data.mapper.CourseDetailMapper
 import nl.hearteye.elearning.data.mapper.CourseMapper
 import nl.hearteye.elearning.data.model.Course
@@ -27,5 +28,9 @@ class CourseRepository @Inject constructor(
             questionId = questionId,
             answerId = mapOf("givenAnswerId" to answerId)
         )
+    }
+
+    suspend fun getQuestionDetails(quizId: String, questionId: String): QuestionDetailEntity {
+        return courseService.getQuestionDetails(quizId, questionId)
     }
 }

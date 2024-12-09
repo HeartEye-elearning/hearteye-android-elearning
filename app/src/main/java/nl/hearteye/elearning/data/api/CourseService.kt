@@ -2,6 +2,7 @@ package nl.hearteye.elearning.data.api
 
 import nl.hearteye.elearning.data.entity.CourseDetailEntity
 import nl.hearteye.elearning.data.entity.CourseEntity
+import nl.hearteye.elearning.data.entity.QuestionDetailEntity
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -20,4 +21,10 @@ interface CourseService {
         @Path("questionId") questionId: String,
         @Body answerId: Map<String, String>
     )
+
+    @GET("quiz-service/v1/quizzes/{quizId}/questions/{questionId}")
+    suspend fun getQuestionDetails(
+        @Path("quizId") quizId: String,
+        @Path("questionId") questionId: String
+    ): QuestionDetailEntity
 }

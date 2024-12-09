@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import nl.hearteye.elearning.ui.components.result.ResultDetailPage
 import nl.hearteye.elearning.ui.components.result.ResultPage
 import nl.hearteye.elearning.ui.components.result.ResultOverviewPage
 
@@ -21,7 +22,7 @@ fun AnswerOverviewScreen(
     val score by viewModel.userQuizStats.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
-
+    val questionDetails by viewModel.questionDetails.collectAsState()
 
     // Hardcoded
     val userId = "8dab58ae-8ddb-4674-b8db-602c39a258cf"
@@ -31,13 +32,15 @@ fun AnswerOverviewScreen(
         viewModel.fetchScoreForUser(userId, courseId)
     }
 
-    var showResultPage by remember { mutableStateOf(true) }
+    var selectedQuestionId by remember { mutableStateOf<String?>(null) }
+    var currentScreen by remember { mutableStateOf(Screen.ResultPage) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when {
             isLoading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+
             error != null -> {
                 Text(
                     text = error.orEmpty(),
@@ -45,23 +48,51 @@ fun AnswerOverviewScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
+
             score != null -> {
-                if (showResultPage) {
-                    ResultPage(
-                        score = score?.stats?.score ?: 0,
-                        onRetryCourse = { /* Navigate to retry logic */ },
-                        onCloseCourse = { /* Navigate to course close */ },
-                        onSeeQuestions = { showResultPage = false }
-                    )
-                } else {
-                    ResultOverviewPage(
-                        onRetryCourse = { /* Navigate to retry logic */ },
-                        onCloseCourse = { /* Navigate to course close */ },
-                        onSeeQuestions = { showResultPage = true },
-                        userQuizStats = score!! 
-                    )
+                when (currentScreen) {
+                    Screen.ResultPage -> {
+                        ResultPage(
+                            score = score?.stats?.score ?: 0,
+                            onRetryCourse = { },
+                            onCloseCourse = { },
+                            onSeeQuestions = { currentScreen = Screen.ResultOverview }
+                        )
+                    }
+
+                    Screen.ResultOverview -> {
+                        ResultOverviewPage(
+                            onRetryCourse = {},
+                            onCloseCourse = { },
+                            onSeeQuestions = { currentScreen = Screen.ResultPage },
+                            userQuizStats = score!!,
+                            onCircleClick = { questionId ->
+                                selectedQuestionId = questionId
+                                viewModel.fetchQuestionDetails(courseId, questionId)
+                                currentScreen = Screen.ResultDetail
+                            }
+                        )
+                    }
+
+                    Screen.ResultDetail -> {
+                        ResultDetailPage(
+                            questionId = selectedQuestionId ?: "",
+                            questionDetails = questionDetails,
+                            onBack = {
+                                selectedQuestionId = null
+                                currentScreen = Screen.ResultOverview
+                            }
+                        )
+                    }
                 }
             }
         }
     }
+}
+
+
+private enum class Screen {
+    ResultPage,
+    ResultOverview,
+    ResultDetail
 }

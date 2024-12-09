@@ -23,7 +23,7 @@ import nl.hearteye.elearning.ui.theme.BorderWrong
 import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
-fun AnswerOverviewCircle(questionNumber: Int, isCorrect: Boolean) {
+fun AnswerOverviewCircle(questionId: String, questionNumber: Int, isCorrect: Boolean) {
     val backgroundColor = if (isCorrect) BackgroundCorrect else BackgroundWrong
     val borderColor = if (isCorrect) BorderCorrect else BorderWrong
     val textColor = if (isCorrect) BorderCorrect else BorderWrong
