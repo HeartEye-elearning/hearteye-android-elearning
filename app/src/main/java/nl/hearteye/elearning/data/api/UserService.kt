@@ -11,3 +11,4 @@ interface UserService {
         @Path("quizId") quizId: String
     ): UserQuizStatsEntity
 }
+

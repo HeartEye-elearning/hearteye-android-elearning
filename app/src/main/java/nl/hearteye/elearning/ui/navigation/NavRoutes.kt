@@ -1,6 +1,8 @@
 package nl.hearteye.elearning.ui.navigation
 
 enum class NavRoutes(val route: String) {
+    PRELOGIN("prelogin"),
+    LOGIN("login"),
     HOME("home"),
     COURSES("courses"),
     DISCUSSIONS("discussions"),
@@ -8,3 +10,4 @@ enum class NavRoutes(val route: String) {
     COURSE_DETAIL("courseDetail/{courseId}"),
     ANSWER_OVERVIEW("answerOverview/{courseId}")
 }
+
