@@ -27,4 +27,7 @@ interface CourseService {
         @Path("quizId") quizId: String,
         @Path("questionId") questionId: String
     ): QuestionDetailEntity
+
+    @POST("quiz-service/v1/quizzes/{id}/finish")
+    suspend fun finishQuiz(@Path("id") quizId: String)
 }

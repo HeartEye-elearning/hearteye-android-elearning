@@ -33,20 +33,19 @@ fun Navigation(navController: NavHostController) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
-    // Getting ViewModel instances
     val loginViewModel: LoginViewModel = hiltViewModel()
 
-    // Check if the user is logged in and if they have completed onboarding
     val isUserLoggedIn = loginViewModel.isUserLoggedIn()
     val isOnboardingCompleted = loginViewModel.isOnboardingCompleted.collectAsState(initial = false).value
 
     Scaffold(
         topBar = {
-            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route)) {
+            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route, NavRoutes.ONBOARDING.route)) {
                 TopBar(
                     showBackButton = currentRoute in listOf(
                         NavRoutes.COURSE_DETAIL.route,
-                        NavRoutes.ANSWER_OVERVIEW.route
+                        NavRoutes.ANSWER_OVERVIEW.route,
+
                     ),
                     onBackButtonClick = {
                         when (currentRoute) {
@@ -67,7 +66,7 @@ fun Navigation(navController: NavHostController) {
             }
         },
         bottomBar = {
-            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route)) {
+            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route, NavRoutes.ONBOARDING.route, NavRoutes.COURSE_DETAIL.route)) {
                 NavBar(
                     navController = navController,
                     selectedTab = selectedTab.value,
@@ -76,9 +75,8 @@ fun Navigation(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
-        // Determine the start destination based on login and onboarding completion
         val startDestination = when {
-            isUserLoggedIn && isOnboardingCompleted -> NavRoutes.HOME.route
+            isUserLoggedIn && !isOnboardingCompleted -> NavRoutes.HOME.route
             isUserLoggedIn -> NavRoutes.ONBOARDING.route
             else -> NavRoutes.PRELOGIN.route
         }

@@ -111,6 +111,7 @@ fun CourseDetailScreen(
                             onCompleteQuiz = {
                                 isQuizCompleted.value = true
                                 showQuizOverview.value = true
+                                courseDetailViewModel.finishQuiz(courseId)
                             }
                         )
                     }
@@ -125,4 +126,5 @@ fun CourseDetailScreen(
         }
     }
 }
+
 

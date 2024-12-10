@@ -24,12 +24,9 @@ fun AnswerOverviewScreen(
     val error by viewModel.error.collectAsState()
     val questionDetails by viewModel.questionDetails.collectAsState()
 
-    // Hardcoded
-    val userId = "8dab58ae-8ddb-4674-b8db-602c39a258cf"
-    val courseId = "8dab58ae-8dce-4674-b8db-602c39a258cf"
 
     LaunchedEffect(Unit) {
-        viewModel.fetchScoreForUser(userId, courseId)
+        viewModel.fetchScoreForUser(courseId)
     }
 
     var selectedQuestionId by remember { mutableStateOf<String?>(null) }

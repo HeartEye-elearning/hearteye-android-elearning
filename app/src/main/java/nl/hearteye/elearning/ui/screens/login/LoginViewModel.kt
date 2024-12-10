@@ -19,7 +19,7 @@ class LoginViewModel @Inject constructor(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    private val clientSecret = "szTfCajigkrFeYMjZYPBf31KqlMnAT7h"
+    private val clientSecret = ""
 
     private val _loginResult = MutableStateFlow<Result<KeycloakLogin?>>(Result.success(null))
     private val _isLoading = MutableStateFlow(false)

@@ -42,11 +42,22 @@ class CourseDetailViewModel @Inject constructor(
     fun submitAnswer(quizId: String, questionId: String, answerId: String) {
         viewModelScope.launch {
             try {
-                val response = courseRepository.submitAnswer(quizId, questionId, answerId)
+                courseRepository.submitAnswer(quizId, questionId, answerId)
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to submit answer: ${e.message}"
             }
         }
     }
+
+    fun finishQuiz(quizId: String) {
+        viewModelScope.launch {
+            try {
+                courseRepository.finishQuiz(quizId)
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to finish quiz: ${e.message}"
+            }
+        }
+    }
 }
+
 
