@@ -1,7 +1,6 @@
 package nl.hearteye.elearning.ui.screens
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,13 +14,12 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val keycloakLoginRepository: KeycloakLoginRepository,
-    public val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     private val clientSecret = "szTfCajigkrFeYMjZYPBf31KqlMnAT7h"
 
     private val _loginResult = MutableStateFlow<Result<KeycloakLogin?>>(Result.success(null))
-    val loginResult: StateFlow<Result<KeycloakLogin?>> = _loginResult
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
