@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AnswerOverviewViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val courseRepository: CourseRepository // Inject the CourseRepository
+    private val courseRepository: CourseRepository
 ) : ViewModel() {
 
     private val _userQuizStats = MutableStateFlow<UserQuizStats?>(null)
@@ -30,12 +30,12 @@ class AnswerOverviewViewModel @Inject constructor(
     private val _questionDetails = MutableStateFlow<QuestionDetailEntity?>(null)
     val questionDetails: StateFlow<QuestionDetailEntity?> = _questionDetails
 
-    fun fetchScoreForUser(userId: String, quizId: String) {
+    fun fetchScoreForUser(quizId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                val stats: UserQuizStats = userRepository.getUserQuizStats(userId, quizId)
+                val stats: UserQuizStats = userRepository.getUserQuizStats(quizId)
                 _userQuizStats.value = stats
             } catch (e: Exception) {
                 _error.value = "Failed to load score: ${e.message}"

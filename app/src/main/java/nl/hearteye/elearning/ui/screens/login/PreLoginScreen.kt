@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.screens
+package nl.hearteye.elearning.ui.screens.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

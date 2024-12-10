@@ -3,6 +3,7 @@ package nl.hearteye.elearning.ui.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -15,15 +16,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import nl.hearteye.elearning.ui.components.navigation.navbar.NavBar
 import nl.hearteye.elearning.ui.components.topbar.TopBar
-import nl.hearteye.elearning.ui.screens.LoginScreen
-import nl.hearteye.elearning.ui.screens.LoginViewModel
-import nl.hearteye.elearning.ui.screens.PreLoginScreen
+import nl.hearteye.elearning.ui.screens.login.LoginScreen
+import nl.hearteye.elearning.ui.screens.login.LoginViewModel
+import nl.hearteye.elearning.ui.screens.login.PreLoginScreen
 import nl.hearteye.elearning.ui.screens.answeroverview.AnswerOverviewScreen
 import nl.hearteye.elearning.ui.screens.coursedetail.CourseDetailScreen
 import nl.hearteye.elearning.ui.screens.courses.CoursesScreen
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionsScreen
 import nl.hearteye.elearning.ui.screens.home.HomeScreen
 import nl.hearteye.elearning.ui.screens.more.MoreScreen
+import nl.hearteye.elearning.ui.screens.onboarding.OnboardingScreen
 
 @Composable
 fun Navigation(navController: NavHostController) {
@@ -32,15 +34,18 @@ fun Navigation(navController: NavHostController) {
     val currentRoute = navBackStackEntry.value?.destination?.route
 
     val loginViewModel: LoginViewModel = hiltViewModel()
+
     val isUserLoggedIn = loginViewModel.isUserLoggedIn()
+    val isOnboardingCompleted = loginViewModel.isOnboardingCompleted.collectAsState(initial = false).value
 
     Scaffold(
         topBar = {
-            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route)) {
+            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route, NavRoutes.ONBOARDING.route)) {
                 TopBar(
                     showBackButton = currentRoute in listOf(
                         NavRoutes.COURSE_DETAIL.route,
-                        NavRoutes.ANSWER_OVERVIEW.route
+                        NavRoutes.ANSWER_OVERVIEW.route,
+
                     ),
                     onBackButtonClick = {
                         when (currentRoute) {
@@ -49,6 +54,7 @@ fun Navigation(navController: NavHostController) {
                                     popUpTo(NavRoutes.COURSES.route) { inclusive = true }
                                 }
                             }
+
                             NavRoutes.ANSWER_OVERVIEW.route -> {
                                 navController.navigate(NavRoutes.COURSES.route) {
                                     popUpTo(NavRoutes.COURSES.route) { inclusive = true }
@@ -60,7 +66,7 @@ fun Navigation(navController: NavHostController) {
             }
         },
         bottomBar = {
-            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route)) {
+            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route, NavRoutes.ONBOARDING.route, NavRoutes.COURSE_DETAIL.route)) {
                 NavBar(
                     navController = navController,
                     selectedTab = selectedTab.value,
@@ -69,9 +75,15 @@ fun Navigation(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
+        val startDestination = when {
+            isUserLoggedIn && !isOnboardingCompleted -> NavRoutes.HOME.route
+            isUserLoggedIn -> NavRoutes.ONBOARDING.route
+            else -> NavRoutes.PRELOGIN.route
+        }
+
         NavHost(
             navController = navController,
-            startDestination = if (isUserLoggedIn) NavRoutes.HOME.route else NavRoutes.PRELOGIN.route, // Conditional landing page
+            startDestination = startDestination,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(NavRoutes.LOGIN.route) {
@@ -86,6 +98,9 @@ fun Navigation(navController: NavHostController) {
                         popUpTo(NavRoutes.PRELOGIN.route) { inclusive = true }
                     }
                 })
+            }
+            composable(NavRoutes.ONBOARDING.route) {
+                OnboardingScreen(navController)
             }
             composable(NavRoutes.HOME.route) {
                 HomeScreen(navController = navController)
@@ -114,7 +129,3 @@ fun Navigation(navController: NavHostController) {
         }
     }
 }
-
-
-
-

@@ -12,6 +12,8 @@ import dagger.hilt.components.SingletonComponent
 import nl.hearteye.elearning.data.api.CourseService
 import nl.hearteye.elearning.data.api.KeycloakService
 import nl.hearteye.elearning.data.api.UserService
+import nl.hearteye.elearning.data.store.DataStoreManager
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -22,25 +24,55 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMoshi(): Moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
+    fun provideMoshi(): Moshi {
+        return Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthInterceptor(sharedPreferences: SharedPreferences): AuthInterceptor {
+        return AuthInterceptor(sharedPreferences)
+    }
+
+    @Provides
+    @Singleton
+    @AuthenticatedClient
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @NoAuthClient
+    fun provideOkHttpClientWithoutAuth(): OkHttpClient {
+        return OkHttpClient.Builder().build()
+    }
 
     @Provides
     @Singleton
     @GeneralRetrofit
-    fun provideRetrofit(moshi: Moshi): Retrofit = Retrofit.Builder()
-        .baseUrl("https://hearteye-bravo-dev.apps.inholland.hcs-lab.nl/")
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .build()
+    fun provideRetrofit(@AuthenticatedClient okHttpClient: OkHttpClient, moshi: Moshi): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://hearteye-bravo-dev.apps.inholland.hcs-lab.nl/")
+            .client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+    }
 
     @Provides
     @Singleton
     @KeycloakRetrofit
-    fun provideKeycloakRetrofit(moshi: Moshi): Retrofit = Retrofit.Builder()
-        .baseUrl("https://keycloak-bravo-dev.apps.inholland.hcs-lab.nl/")
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .build()
+    fun provideKeycloakRetrofit(@NoAuthClient okHttpClient: OkHttpClient, moshi: Moshi): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://keycloak-bravo-dev.apps.inholland.hcs-lab.nl/")
+            .client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+    }
 
     @Provides
     @Singleton
@@ -61,5 +93,11 @@ object AppModule {
     @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataStoreManager(@ApplicationContext context: Context): DataStoreManager {
+        return DataStoreManager(context)
     }
 }

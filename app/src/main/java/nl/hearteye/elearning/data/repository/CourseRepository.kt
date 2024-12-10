@@ -33,4 +33,8 @@ class CourseRepository @Inject constructor(
     suspend fun getQuestionDetails(quizId: String, questionId: String): QuestionDetailEntity {
         return courseService.getQuestionDetails(quizId, questionId)
     }
+
+    suspend fun finishQuiz(quizId: String) {
+        courseService.finishQuiz(quizId)
+    }
 }

@@ -9,8 +9,8 @@ class UserRepository @Inject constructor(
     private val userService: UserService
 ) {
 
-    suspend fun getUserQuizStats(userId: String, quizId: String): UserQuizStats {
-        val entity = userService.getUserQuizStats(userId, quizId)
+    suspend fun getUserQuizStats(quizId: String): UserQuizStats {
+        val entity = userService.getUserQuizStats(quizId)
         return UserQuizStatsMapper.map(entity)
     }
 }

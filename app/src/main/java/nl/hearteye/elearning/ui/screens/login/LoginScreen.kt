@@ -1,6 +1,5 @@
-package nl.hearteye.elearning.ui.screens
+package nl.hearteye.elearning.ui.screens.login
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -38,7 +37,7 @@ fun LoginScreen(
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
-            navController.navigate(NavRoutes.HOME.route) {
+            navController.navigate(NavRoutes.ONBOARDING.route) {
                 popUpTo(NavRoutes.LOGIN.route) { inclusive = true }
             }
         }
@@ -135,5 +134,6 @@ fun LoginScreen(
         }
     }
 }
+
 
 

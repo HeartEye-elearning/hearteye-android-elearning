@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import nl.hearteye.elearning.ui.navigation.NavRoutes
-import nl.hearteye.elearning.ui.screens.LoginViewModel
+import nl.hearteye.elearning.ui.screens.login.LoginViewModel
 
 @Composable
 fun HomeScreen(navController: NavController) {

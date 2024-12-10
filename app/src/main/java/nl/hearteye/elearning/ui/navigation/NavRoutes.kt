@@ -4,6 +4,7 @@ enum class NavRoutes(val route: String) {
     PRELOGIN("prelogin"),
     LOGIN("login"),
     HOME("home"),
+    ONBOARDING("onboarding"),
     COURSES("courses"),
     DISCUSSIONS("discussions"),
     MORE("more"),

@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.screens
+package nl.hearteye.elearning.ui.screens.login
 
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
@@ -9,15 +9,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import nl.hearteye.elearning.data.model.KeycloakLogin
 import nl.hearteye.elearning.data.repository.KeycloakLoginRepository
+import nl.hearteye.elearning.data.store.DataStoreManager
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val keycloakLoginRepository: KeycloakLoginRepository,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    private val clientSecret = "szTfCajigkrFeYMjZYPBf31KqlMnAT7h"
+    private val clientSecret = ""
 
     private val _loginResult = MutableStateFlow<Result<KeycloakLogin?>>(Result.success(null))
     private val _isLoading = MutableStateFlow(false)
@@ -64,6 +66,30 @@ class LoginViewModel @Inject constructor(
             .apply()
 
         _loginResult.value = Result.success(null)
+    }
+
+    // Track if onboarding is completed
+    private val _isOnboardingCompleted = MutableStateFlow(false)
+    val isOnboardingCompleted: StateFlow<Boolean> get() = _isOnboardingCompleted
+
+    init {
+        // Check if onboarding is completed on initialization
+        checkOnboardingStatus()
+    }
+
+    // Check onboarding status from DataStore
+    private fun checkOnboardingStatus() {
+        viewModelScope.launch {
+            _isOnboardingCompleted.value = dataStoreManager.isOnboardingCompleted()
+        }
+    }
+
+    // Mark onboarding as completed
+    fun completeOnboarding() {
+        viewModelScope.launch {
+            dataStoreManager.setOnboardingCompleted(true)
+            _isOnboardingCompleted.value = true
+        }
     }
 }
 
