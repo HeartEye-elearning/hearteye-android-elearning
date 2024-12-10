@@ -12,6 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import nl.hearteye.elearning.data.api.CourseService
 import nl.hearteye.elearning.data.api.KeycloakService
 import nl.hearteye.elearning.data.api.UserService
+import nl.hearteye.elearning.data.store.DataStoreManager
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -61,5 +62,11 @@ object AppModule {
     @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataStoreManager(@ApplicationContext context: Context): DataStoreManager {
+        return DataStoreManager(context)
     }
 }
