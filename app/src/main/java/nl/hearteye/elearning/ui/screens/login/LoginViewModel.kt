@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import nl.hearteye.elearning.BuildConfig
 import nl.hearteye.elearning.data.model.KeycloakLogin
 import nl.hearteye.elearning.data.repository.KeycloakLoginRepository
 import nl.hearteye.elearning.data.store.DataStoreManager
@@ -19,7 +20,7 @@ class LoginViewModel @Inject constructor(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    private val clientSecret = ""
+    private val clientSecret = BuildConfig.CLIENT_SECRET
 
     private val _loginResult = MutableStateFlow<Result<KeycloakLogin?>>(Result.success(null))
     private val _isLoading = MutableStateFlow(false)
@@ -39,7 +40,7 @@ class LoginViewModel @Inject constructor(
 
             } catch (exception: Exception) {
                 _loginResult.value = Result.failure(exception)
-                _errorMessage.value = "Failed to login: ${exception.message}"
+                _errorMessage.value = "Wrong credentials."
             } finally {
                 _isLoading.value = false
             }
@@ -68,23 +69,19 @@ class LoginViewModel @Inject constructor(
         _loginResult.value = Result.success(null)
     }
 
-    // Track if onboarding is completed
     private val _isOnboardingCompleted = MutableStateFlow(false)
     val isOnboardingCompleted: StateFlow<Boolean> get() = _isOnboardingCompleted
 
     init {
-        // Check if onboarding is completed on initialization
         checkOnboardingStatus()
     }
 
-    // Check onboarding status from DataStore
     private fun checkOnboardingStatus() {
         viewModelScope.launch {
             _isOnboardingCompleted.value = dataStoreManager.isOnboardingCompleted()
         }
     }
 
-    // Mark onboarding as completed
     fun completeOnboarding() {
         viewModelScope.launch {
             dataStoreManager.setOnboardingCompleted(true)

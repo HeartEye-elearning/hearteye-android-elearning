@@ -22,13 +22,21 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "CLIENT_SECRET", "\"${project.findProperty("CLIENT_SECRET") ?: "DEBUG_SECRET_NOT_FOUND"}\"")
+        }
         release {
+            buildConfigField("String", "CLIENT_SECRET", "\"${project.findProperty("CLIENT_SECRET") ?: "RELEASE_SECRET_NOT_FOUND"}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {
