@@ -10,6 +10,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import nl.hearteye.elearning.data.api.CourseService
+import nl.hearteye.elearning.data.api.DiscussionService
 import nl.hearteye.elearning.data.api.KeycloakService
 import nl.hearteye.elearning.data.api.UserService
 import nl.hearteye.elearning.data.store.DataStoreManager
@@ -83,6 +84,11 @@ object AppModule {
     @Singleton
     fun provideUserService(@GeneralRetrofit retrofit: Retrofit): UserService =
         retrofit.create(UserService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideDiscussionService(@GeneralRetrofit retrofit: Retrofit): DiscussionService =
+        retrofit.create(DiscussionService::class.java)
 
     @Provides
     @Singleton
