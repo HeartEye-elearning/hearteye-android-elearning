@@ -1,6 +1,9 @@
 package nl.hearteye.elearning.ui.screens.login
 
 import android.content.SharedPreferences
+import android.util.Log
+import androidx.datastore.dataStore
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -88,7 +91,14 @@ class LoginViewModel @Inject constructor(
             _isOnboardingCompleted.value = true
         }
     }
+
+    fun saveLanguagePreference(language: String) {
+        viewModelScope.launch {
+            dataStoreManager.setSelectedLanguage(language)
+        }
+    }
 }
+
 
 
 

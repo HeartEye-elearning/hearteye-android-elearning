@@ -48,7 +48,7 @@ fun CourseDetailScreen(
                 ErrorView(
                     message = errorMessage,
                     onRetry = {
-                        courseDetailViewModel.fetchCourseDetails(courseId, "eng")
+                        courseDetailViewModel.fetchCourseDetails(courseId)
                     }
                 )
             }

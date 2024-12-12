@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import nl.hearteye.elearning.data.entity.QuestionDetailEntity
+import nl.hearteye.elearning.data.model.User
 import nl.hearteye.elearning.data.repository.UserRepository
 import nl.hearteye.elearning.data.model.UserQuizStats
 import nl.hearteye.elearning.data.repository.CourseRepository
@@ -30,12 +31,35 @@ class AnswerOverviewViewModel @Inject constructor(
     private val _questionDetails = MutableStateFlow<QuestionDetailEntity?>(null)
     val questionDetails: StateFlow<QuestionDetailEntity?> = _questionDetails
 
-    fun fetchScoreForUser(quizId: String) {
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> = _currentUser
+
+    fun fetchCurrentUser() {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                val stats: UserQuizStats = userRepository.getUserQuizStats(quizId)
+                val user = userRepository.getCurrentUser()
+                _currentUser.value = user
+            } catch (e: Exception) {
+                _error.value = "Failed to load user: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun fetchScoreForUser(quizId: String) {
+        val userId = _currentUser.value?.id
+        if (userId == null) {
+            _error.value = "User ID not available"
+            return
+        }
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                val stats: UserQuizStats = userRepository.getUserQuizStats(userId, quizId)
                 _userQuizStats.value = stats
             } catch (e: Exception) {
                 _error.value = "Failed to load score: ${e.message}"
@@ -60,6 +84,4 @@ class AnswerOverviewViewModel @Inject constructor(
         }
     }
 }
-
-
 

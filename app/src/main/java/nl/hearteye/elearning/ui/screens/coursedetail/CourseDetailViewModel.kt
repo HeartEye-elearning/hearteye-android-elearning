@@ -8,11 +8,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import nl.hearteye.elearning.data.model.CourseDetail
 import nl.hearteye.elearning.data.repository.CourseRepository
+import nl.hearteye.elearning.data.store.DataStoreManager
 import javax.inject.Inject
 
 @HiltViewModel
 class CourseDetailViewModel @Inject constructor(
-    private val courseRepository: CourseRepository
+    private val courseRepository: CourseRepository,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     private val _courseDetail = mutableStateOf<CourseDetail?>(null)
@@ -25,12 +27,13 @@ class CourseDetailViewModel @Inject constructor(
     val errorMessage: State<String?> = _errorMessage
 
 
-    fun fetchCourseDetails(courseId: String, language: String = "eng") {
+    fun fetchCourseDetails(courseId: String) {
         _isLoading.value = true
         _errorMessage.value = null
         viewModelScope.launch {
             try {
-                _courseDetail.value = courseRepository.getCourseDetails(courseId, language)
+                val savedLanguage = dataStoreManager.getSelectedLanguage() ?: "eng"
+                _courseDetail.value = courseRepository.getCourseDetails(courseId, savedLanguage)
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to load course details: ${e.message}"
             } finally {

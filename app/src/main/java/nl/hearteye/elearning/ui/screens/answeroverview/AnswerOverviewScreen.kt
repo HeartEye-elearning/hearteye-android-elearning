@@ -23,10 +23,16 @@ fun AnswerOverviewScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
     val questionDetails by viewModel.questionDetails.collectAsState()
-
+    val currentUser by viewModel.currentUser.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchScoreForUser(courseId)
+        viewModel.fetchCurrentUser()
+    }
+
+    LaunchedEffect(currentUser) {
+        currentUser?.let {
+            viewModel.fetchScoreForUser(courseId)
+        }
     }
 
     var selectedQuestionId by remember { mutableStateOf<String?>(null) }
@@ -86,7 +92,6 @@ fun AnswerOverviewScreen(
         }
     }
 }
-
 
 private enum class Screen {
     ResultPage,
