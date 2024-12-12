@@ -8,15 +8,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import nl.hearteye.elearning.ui.theme.ForegroundGray
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
+import nl.hearteye.elearning.ui.theme.ForegroundPrimaryUnselected
 
 @Composable
 fun Indicator(isSelected: Boolean) {
     Box(
         modifier = Modifier
-            .padding(4.dp)
+            .padding(8.dp)
             .size(12.dp)
-            .background(if (isSelected) ForegroundPrimary else ForegroundGray, shape = MaterialTheme.shapes.small)
+            .background(if (isSelected) ForegroundPrimary else ForegroundPrimaryUnselected, shape = MaterialTheme.shapes.small)
     )
 }

@@ -30,7 +30,7 @@ fun CoursesScreen(
     val searchQuery = remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        courseViewModel.getCourses(language = "eng")
+        courseViewModel.getCourses()
     }
 
     LaunchedEffect(searchQuery.value) {
@@ -55,7 +55,7 @@ fun CoursesScreen(
                     )
                     ErrorView(
                         message = errorMessage,
-                        onRetry = { courseViewModel.getCourses(language = "eng") }
+                        onRetry = { courseViewModel.getCourses() }
                     )
                 }
             }
