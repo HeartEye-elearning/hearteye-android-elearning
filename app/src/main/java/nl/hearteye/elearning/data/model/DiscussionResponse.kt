@@ -1,6 +1,5 @@
 package nl.hearteye.elearning.data.model
 
-import nl.hearteye.elearning.data.entity.Base64Content
 import nl.hearteye.elearning.data.entity.Pageable
 
 data class DiscussionResponse(
@@ -37,8 +36,8 @@ data class DiscussionContent(
     val userId: String,
     val title: String,
     val content: String,
+    val category: String,
     val createdAt: String,
-    val fileLocation: String,
-    val numOfComments: Int,
-    val base64: Base64Content
+    val fileLocation: String?,
+    val numOfComments: Int
 )

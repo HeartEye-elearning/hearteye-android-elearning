@@ -5,6 +5,7 @@ import nl.hearteye.elearning.data.entity.DiscussionResponseEntity
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface DiscussionService {
 
@@ -12,5 +13,10 @@ interface DiscussionService {
     suspend fun createDiscussion(@Body discussion: DiscussionEntity)
 
     @GET("forum-service/v1/forum")
-    suspend fun getDiscussions(): List<DiscussionResponseEntity>
+    suspend fun getDiscussions(
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+        @Query("creator") creator: Boolean? = null
+    ): DiscussionResponseEntity
+
 }

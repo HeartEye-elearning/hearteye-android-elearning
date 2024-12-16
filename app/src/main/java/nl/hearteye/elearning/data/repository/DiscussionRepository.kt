@@ -14,8 +14,9 @@ class DiscussionRepository @Inject constructor(
         discussionService.createDiscussion(entity)
     }
 
-    suspend fun getDiscussions(): List<DiscussionResponse> {
-        val responseEntities = discussionService.getDiscussions()
-        return responseEntities.map { DiscussionMapper.mapToModel(it) }
+    suspend fun getDiscussions(page: Int = 0, size: Int = 10, creator: Boolean = false): DiscussionResponse {
+        val responseEntity = discussionService.getDiscussions(page, size, creator)
+        return DiscussionMapper.mapToModel(responseEntity)
     }
+
 }
