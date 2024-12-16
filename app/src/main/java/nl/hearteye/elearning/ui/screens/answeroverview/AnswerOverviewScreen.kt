@@ -10,13 +10,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import nl.hearteye.elearning.data.store.DataStoreManager
 import nl.hearteye.elearning.ui.components.result.ResultDetailPage
 import nl.hearteye.elearning.ui.components.result.ResultPage
 import nl.hearteye.elearning.ui.components.result.ResultOverviewPage
+import nl.hearteye.elearning.ui.navigation.NavRoutes
 
 @Composable
 fun AnswerOverviewScreen(
     courseId: String,
+    navController: NavController,
     viewModel: AnswerOverviewViewModel = hiltViewModel()
 ) {
     val score by viewModel.userQuizStats.collectAsState()
@@ -57,16 +61,31 @@ fun AnswerOverviewScreen(
                     Screen.ResultPage -> {
                         ResultPage(
                             score = score?.stats?.score ?: 0,
-                            onRetryCourse = { },
-                            onCloseCourse = { },
+                            onRetryCourse = {
+                                viewModel.clearQuizData()
+                                viewModel.fetchScoreForUser(courseId)
+                            },
+                            onCloseCourse = {
+                                viewModel.clearQuizData()
+                                navController.navigate(NavRoutes.COURSES.route) {
+                                    popUpTo(NavRoutes.COURSES.route) { inclusive = true }
+                                }
+                            },
                             onSeeQuestions = { currentScreen = Screen.ResultOverview }
                         )
                     }
 
                     Screen.ResultOverview -> {
                         ResultOverviewPage(
-                            onRetryCourse = {},
-                            onCloseCourse = { },
+                            onRetryCourse = {
+                                viewModel.clearQuizData()
+                            },
+                            onCloseCourse = {
+                                viewModel.clearQuizData()
+                                navController.navigate(NavRoutes.COURSES.route) {
+                                    popUpTo(NavRoutes.COURSES.route) { inclusive = true }
+                                }
+                            },
                             onSeeQuestions = { currentScreen = Screen.ResultPage },
                             userQuizStats = score!!,
                             onCircleClick = { questionId ->
@@ -79,7 +98,6 @@ fun AnswerOverviewScreen(
 
                     Screen.ResultDetail -> {
                         ResultDetailPage(
-                            questionId = selectedQuestionId ?: "",
                             questionDetails = questionDetails,
                             onBack = {
                                 selectedQuestionId = null
@@ -98,3 +116,4 @@ private enum class Screen {
     ResultOverview,
     ResultDetail
 }
+

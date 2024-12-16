@@ -7,7 +7,7 @@ import nl.hearteye.elearning.data.model.CourseDetail
 import nl.hearteye.elearning.data.model.QuestionDetail
 
 object CourseDetailMapper {
-    fun map(entity: CourseDetailEntity, language: String = "eng"): CourseDetail {
+    fun map(entity: CourseDetailEntity, language: String): CourseDetail {
         return CourseDetail(
             id = entity.id,
             title = entity.title[language] ?: "Untitled",

@@ -69,6 +69,10 @@ class LoginViewModel @Inject constructor(
             .remove("is_logged_in")
             .apply()
 
+        viewModelScope.launch {
+            dataStoreManager.setOnboardingCompleted(false)
+        }
+
         _loginResult.value = Result.success(null)
     }
 

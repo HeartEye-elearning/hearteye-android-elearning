@@ -12,12 +12,12 @@ class CourseRepository @Inject constructor(
     private val courseService: CourseService
 ) {
 
-    suspend fun getCourses(language: String = "eng"): List<Course> {
+    suspend fun getCourses(language: String): List<Course> {
         val apiCourses = courseService.getCourses()
         return apiCourses.map { CourseMapper.map(it, language) }
     }
 
-    suspend fun getCourseDetails(courseId: String, language: String = "eng"): CourseDetail {
+    suspend fun getCourseDetails(courseId: String, language: String): CourseDetail {
         val apiCourseDetail = courseService.getCourseDetails(courseId)
         return CourseDetailMapper.map(apiCourseDetail, language)
     }
@@ -35,6 +35,9 @@ class CourseRepository @Inject constructor(
     }
 
     suspend fun finishQuiz(quizId: String) {
-        courseService.finishQuiz(quizId)
+        val response = courseService.finishQuiz(quizId)
+        if (!response.isSuccessful) {
+            throw Exception("Failed to finish quiz: ${response.errorBody()?.string()}")
+        }
     }
 }

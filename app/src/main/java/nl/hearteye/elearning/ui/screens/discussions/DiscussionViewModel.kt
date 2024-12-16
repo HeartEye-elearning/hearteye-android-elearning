@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import nl.hearteye.elearning.data.entity.Base64Content
 import nl.hearteye.elearning.data.model.Discussion
+import nl.hearteye.elearning.data.model.DiscussionResponse
 import nl.hearteye.elearning.data.repository.DiscussionRepository
 import javax.inject.Inject
 
@@ -20,6 +21,22 @@ class DiscussionViewModel @Inject constructor(
     private val _errorMessage = mutableStateOf<String?>(null)
     val errorMessage: State<String?> = _errorMessage
 
+    private val _discussions = mutableStateOf<List<DiscussionResponse>>(emptyList())
+    val discussions: State<List<DiscussionResponse>> = _discussions
+
+    fun getDiscussions() {
+        _errorMessage.value = null
+        viewModelScope.launch {
+            try {
+                val discussionList = discussionRepository.getDiscussions()
+                Log.d("DiscussionViewModel", "Fetched discussions size: ${discussionList.size}")
+
+                _discussions.value = discussionList
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to fetch discussions: ${e.message}"
+            }
+        }
+    }
 
     fun createDiscussion(
         title: String,
@@ -35,7 +52,6 @@ class DiscussionViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 discussionRepository.createDiscussion(discussion)
-
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to post discussion: ${e.message}"
             }

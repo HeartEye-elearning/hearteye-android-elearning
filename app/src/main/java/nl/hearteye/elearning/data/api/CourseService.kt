@@ -3,9 +3,11 @@ package nl.hearteye.elearning.data.api
 import nl.hearteye.elearning.data.entity.CourseDetailEntity
 import nl.hearteye.elearning.data.entity.CourseEntity
 import nl.hearteye.elearning.data.entity.QuestionDetailEntity
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface CourseService {
@@ -28,6 +30,6 @@ interface CourseService {
         @Path("questionId") questionId: String
     ): QuestionDetailEntity
 
-    @POST("quiz-service/v1/quizzes/{id}/finish")
-    suspend fun finishQuiz(@Path("id") quizId: String)
+    @PUT("quiz-service/v1/quizzes/{id}/finish")
+    suspend fun finishQuiz(@Path("id") quizId: String): Response<Unit>
 }

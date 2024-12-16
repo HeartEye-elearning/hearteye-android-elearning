@@ -8,7 +8,7 @@ import retrofit2.http.Path
 interface UserService {
     @GET("user-service/v1/users/{id}/quizzes/{quizId}/stats")
     suspend fun getUserQuizStats(
-        @Path("userId") userId: String,
+        @Path("id") id: String,
         @Path("quizId") quizId: String
     ): UserQuizStatsEntity
 

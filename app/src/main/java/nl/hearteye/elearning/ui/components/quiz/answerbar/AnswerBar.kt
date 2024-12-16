@@ -33,17 +33,22 @@ fun AnswerBar(
     onCheckedChange: (Boolean) -> Unit
 ) {
 
-    val backgroundColor = when {
-        isSelected && isCorrect == true -> BackgroundCorrect
-        isSelected && isCorrect == false -> BackgroundWrong
+    val backgroundColor = when (isCorrect) {
+        true -> BackgroundCorrect
         else -> Color.White
     }
 
-    val borderColor = when {
-        isSelected && isCorrect == true -> BorderCorrect
-        isSelected && isCorrect == false -> BorderWrong
+    val borderColor = when (isCorrect) {
+        true -> BorderCorrect
         else -> Color.Transparent
     }
+
+    val textColor = when {
+        isSelected -> Color.Black
+        else -> ForegroundGray
+    }
+
+    val fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
 
     Row(
         modifier = Modifier
@@ -62,9 +67,9 @@ fun AnswerBar(
     ) {
         Text(
             text = answer,
-            color = if (isSelected) borderColor else ForegroundGray,
+            color = textColor,
             style = typography.bodyMedium.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+            fontWeight = fontWeight,
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 8.dp)
@@ -88,7 +93,4 @@ fun AnswerBar(
         }
     }
 }
-
-
-
 

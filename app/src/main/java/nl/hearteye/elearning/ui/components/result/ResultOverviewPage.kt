@@ -28,7 +28,7 @@ fun ResultOverviewPage(
     onCloseCourse: () -> Unit,
     onSeeQuestions: () -> Unit,
     userQuizStats: UserQuizStats,
-    onCircleClick: (String) -> Unit // Updated callback to receive questionId
+    onCircleClick: (String) -> Unit
 ) {
     val latestAttempt = userQuizStats.attempts.lastOrNull()
     val answers = latestAttempt?.answers?.map { it.isCorrect to it.questionId } ?: emptyList()
@@ -64,11 +64,11 @@ fun ResultOverviewPage(
                         modifier = Modifier
                             .aspectRatio(1f)
                             .padding(2.dp)
-                            .clickable { onCircleClick(questionId) } // Passing questionId
+                            .clickable { onCircleClick(questionId) }
                     ) {
                         AnswerOverviewCircle(
                             questionNumber = index + 1,
-                            questionId = questionId, // Passing questionId
+                            questionId = questionId,
                             isCorrect = isCorrect
                         )
                     }

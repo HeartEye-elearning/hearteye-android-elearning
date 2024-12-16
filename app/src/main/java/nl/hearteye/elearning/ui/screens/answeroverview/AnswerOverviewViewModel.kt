@@ -83,5 +83,11 @@ class AnswerOverviewViewModel @Inject constructor(
             }
         }
     }
+
+    fun clearQuizData() {
+        _userQuizStats.value = null
+        _questionDetails.value = null
+        _error.value = null
+    }
 }
 

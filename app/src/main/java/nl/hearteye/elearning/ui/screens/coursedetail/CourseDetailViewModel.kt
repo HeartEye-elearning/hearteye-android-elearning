@@ -53,11 +53,15 @@ class CourseDetailViewModel @Inject constructor(
     }
 
     fun finishQuiz(quizId: String) {
+        _isLoading.value = true
+        _errorMessage.value = null
         viewModelScope.launch {
             try {
                 courseRepository.finishQuiz(quizId)
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to finish quiz: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }

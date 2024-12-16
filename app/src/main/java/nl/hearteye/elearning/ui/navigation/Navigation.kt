@@ -43,19 +43,12 @@ fun Navigation(navController: NavHostController) {
             if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route, NavRoutes.ONBOARDING.route)) {
                 TopBar(
                     showBackButton = currentRoute in listOf(
-                        NavRoutes.COURSE_DETAIL.route,
-                        NavRoutes.ANSWER_OVERVIEW.route,
+                        NavRoutes.COURSE_DETAIL.route
 
                     ),
                     onBackButtonClick = {
                         when (currentRoute) {
                             NavRoutes.COURSE_DETAIL.route -> {
-                                navController.navigate(NavRoutes.COURSES.route) {
-                                    popUpTo(NavRoutes.COURSES.route) { inclusive = true }
-                                }
-                            }
-
-                            NavRoutes.ANSWER_OVERVIEW.route -> {
                                 navController.navigate(NavRoutes.COURSES.route) {
                                     popUpTo(NavRoutes.COURSES.route) { inclusive = true }
                                 }
@@ -66,7 +59,7 @@ fun Navigation(navController: NavHostController) {
             }
         },
         bottomBar = {
-            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route, NavRoutes.ONBOARDING.route, NavRoutes.COURSE_DETAIL.route)) {
+            if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route, NavRoutes.ONBOARDING.route, NavRoutes.COURSE_DETAIL.route, NavRoutes.ANSWER_OVERVIEW.route)) {
                 NavBar(
                     navController = navController,
                     selectedTab = selectedTab.value,
@@ -124,7 +117,7 @@ fun Navigation(navController: NavHostController) {
                 arguments = listOf(navArgument("courseId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
-                AnswerOverviewScreen(courseId = courseId)
+                AnswerOverviewScreen(courseId = courseId, navController = navController)
             }
         }
     }
