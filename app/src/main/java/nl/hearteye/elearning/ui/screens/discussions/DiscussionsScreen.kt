@@ -8,14 +8,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import nl.hearteye.elearning.ui.components.buttons.PlusButton
 
 @Composable
 fun DiscussionsScreen(
-    discussionViewModel: DiscussionViewModel = hiltViewModel()
+    discussionViewModel: DiscussionViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val discussions = discussionViewModel.discussions.value
 
-    // Use LaunchedEffect to call getDiscussions only once when the Composable is first launched
     LaunchedEffect(Unit) {
         if (discussions.isEmpty()) {
             discussionViewModel.getDiscussions()
@@ -47,5 +49,6 @@ fun DiscussionsScreen(
                 )
             }
         }
+        PlusButton(navController = navController)
     }
 }

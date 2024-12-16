@@ -4,19 +4,18 @@ import nl.hearteye.elearning.data.entity.DiscussionContentEntity
 import nl.hearteye.elearning.data.entity.DiscussionEntity
 import nl.hearteye.elearning.data.entity.DiscussionResponseEntity
 import nl.hearteye.elearning.data.model.Discussion
-import nl.hearteye.elearning.data.model.DiscussionResponse
 import nl.hearteye.elearning.data.model.DiscussionContent
+import nl.hearteye.elearning.data.model.DiscussionResponse
 
 object DiscussionMapper {
 
-    // Mapping DiscussionResponseEntity to DiscussionResponse
     fun mapToModel(entity: DiscussionResponseEntity): DiscussionResponse {
         return DiscussionResponse(
             totalPages = entity.totalPages,
             totalElements = entity.totalElements,
             numberOfElements = entity.numberOfElements,
             size = entity.size,
-            content = entity.content.map { mapContentToModel(it) },  // Mapping content list
+            content = entity.content.map { mapContentToModel(it) },
             pageable = entity.pageable,
             first = entity.first,
             last = entity.last,
@@ -24,7 +23,6 @@ object DiscussionMapper {
         )
     }
 
-    // Mapping DiscussionContentEntity to DiscussionContent
     private fun mapContentToModel(entity: DiscussionContentEntity): DiscussionContent {
         return DiscussionContent(
             id = entity.id,
@@ -38,12 +36,11 @@ object DiscussionMapper {
         )
     }
 
-    // Mapping Discussion model to DiscussionEntity
     fun mapToEntity(model: Discussion): DiscussionEntity {
         return DiscussionEntity(
             title = model.title,
             content = model.content,
-            base64 = model.base64
+            category = model.category,
         )
     }
 }

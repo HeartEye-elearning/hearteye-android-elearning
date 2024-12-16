@@ -1,5 +1,6 @@
 package nl.hearteye.elearning.ui.navigation
 
+import DiscussionsUploadScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -103,7 +104,10 @@ fun Navigation(navController: NavHostController) {
                     navController.navigate("courseDetail/$courseId")
                 })
             }
-            composable(NavRoutes.DISCUSSIONS.route) { DiscussionsScreen() }
+            composable(NavRoutes.DISCUSSIONS.route) { DiscussionsScreen(navController = navController) }
+            composable(NavRoutes.DISCUSSIONS_UPLOAD.route) {
+                DiscussionsUploadScreen(discussionViewModel = hiltViewModel())
+            }
             composable(NavRoutes.MORE.route) { MoreScreen() }
             composable(
                 route = NavRoutes.COURSE_DETAIL.route,
