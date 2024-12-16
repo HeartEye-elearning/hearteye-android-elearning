@@ -20,4 +20,9 @@ class UserRepository @Inject constructor(
         val userEntity = userService.getCurrentUser()
         return UserMapper.map(userEntity)
     }
+
+    suspend fun getUser(userId: String): User {
+        val userEntity = userService.getUser(userId)
+        return UserMapper.map(userEntity)
+    }
 }

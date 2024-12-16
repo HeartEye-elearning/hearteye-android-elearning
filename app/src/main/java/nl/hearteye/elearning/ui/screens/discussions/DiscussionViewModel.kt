@@ -1,6 +1,5 @@
 package nl.hearteye.elearning.ui.screens.discussions
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,12 +8,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import nl.hearteye.elearning.data.model.Discussion
 import nl.hearteye.elearning.data.model.DiscussionResponse
+import nl.hearteye.elearning.data.model.User
 import nl.hearteye.elearning.data.repository.DiscussionRepository
+import nl.hearteye.elearning.data.repository.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class DiscussionViewModel @Inject constructor(
     private val discussionRepository: DiscussionRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _errorMessage = mutableStateOf<String?>(null)
@@ -23,15 +25,16 @@ class DiscussionViewModel @Inject constructor(
     private val _discussions = mutableStateOf<List<DiscussionResponse>>(emptyList())
     val discussions: State<List<DiscussionResponse>> = _discussions
 
-    // Correctly handle the response and map it into the model
+    private val _userCache = mutableStateOf<Map<String, User>>(emptyMap())
+    val userCache: State<Map<String, User>> = _userCache
+
     fun getDiscussions(page: Int = 0, size: Int = 10, creator: Boolean = false) {
         _errorMessage.value = null
         viewModelScope.launch {
             try {
                 val discussionsResponse = discussionRepository.getDiscussions(page, size, creator)
 
-                // Update the _discussions value to hold the correct data
-                _discussions.value = listOf(discussionsResponse) // Wrapping it in a list since discussionsResponse is a DiscussionResponse, not a list
+                _discussions.value = listOf(discussionsResponse)
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An unknown error occurred"
             }
@@ -50,4 +53,20 @@ class DiscussionViewModel @Inject constructor(
             }
         }
     }
+
+    fun getUser(userId: String) {
+        if (_userCache.value.containsKey(userId)) return
+
+        viewModelScope.launch {
+            try {
+                val user = userRepository.getUser(userId)
+                _userCache.value = _userCache.value.toMutableMap().apply {
+                    put(userId, user)
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to fetch user: ${e.message}"
+            }
+        }
+    }
 }
+

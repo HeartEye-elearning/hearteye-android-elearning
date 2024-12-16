@@ -4,14 +4,22 @@
     <selectionStates>
       <SelectionState runConfigName="elearning.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-13T14:13:19.631395200Z">
+        <DropdownSelection timestamp="2024-12-16T13:07:52.633747500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\jesse\.android\avd\Pixel_7_API_35.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=KJDQAIS8VGYPEAXO" />
             </handle>
           </Target>
         </DropdownSelection>
-        <DialogSelection />
+        <DialogSelection>
+          <targets>
+            <Target type="DEFAULT_BOOT">
+              <handle>
+                <DeviceId pluginId="PhysicalDevice" identifier="serial=KJDQAIS8VGYPEAXO" />
+              </handle>
+            </Target>
+          </targets>
+        </DialogSelection>
       </SelectionState>
       <SelectionState runConfigName="ResultOverviewPagePreview">
         <option name="selectionMode" value="DROPDOWN" />
