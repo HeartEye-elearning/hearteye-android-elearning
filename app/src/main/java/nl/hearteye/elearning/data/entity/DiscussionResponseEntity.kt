@@ -36,9 +36,9 @@ data class DiscussionContentEntity(
     @Json(name = "userId") val userId: String,
     @Json(name = "title") val title: String,
     @Json(name = "content") val content: String,
+    @Json(name = "category") val category: String,
     @Json(name = "createdAt") val createdAt: String,
-    @Json(name = "fileLocation") val fileLocation: String,
-    @Json(name = "numOfComments") val numOfComments: Int,
-    @Json(name = "base64") val base64: Base64Content
+    @Json(name = "fileLocation") val fileLocation: String?,
+    @Json(name = "numOfComments") val numOfComments: Int
 )
 

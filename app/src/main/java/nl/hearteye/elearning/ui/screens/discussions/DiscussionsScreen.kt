@@ -2,6 +2,7 @@ package nl.hearteye.elearning.ui.screens.discussions
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +11,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import nl.hearteye.elearning.ui.components.buttons.PlusButton
+import nl.hearteye.elearning.ui.components.error.ErrorView
+import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
 @Composable
 fun DiscussionsScreen(
@@ -17,38 +20,44 @@ fun DiscussionsScreen(
     navController: NavController
 ) {
     val discussions = discussionViewModel.discussions.value
+    val errorMessage = discussionViewModel.errorMessage.value
 
     LaunchedEffect(Unit) {
-        if (discussions.isEmpty()) {
+        if (discussions.isEmpty() && errorMessage == null) {
             discussionViewModel.getDiscussions()
         }
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        if (discussions.isEmpty()) {
-            Text(
-                text = "No discussions available",
-                style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
-            )
-        } else {
-            val firstDiscussion = discussions.firstOrNull()?.content?.firstOrNull()
 
-            firstDiscussion?.let {
-                Text(
-                    text = "Title: ${it.title}",
-                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = "Content: ${it.content}",
-                    style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
-                )
-            } ?: run {
-                Text(
-                    text = "No content available",
-                    style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
-                )
+        if (discussions.isEmpty() && errorMessage == null) {
+            CircularProgressIndicator(
+                color = ForegroundPrimary
+            )
+        }
+
+        errorMessage?.let {
+            ErrorView(message = "Error: $it") { }
+        }
+
+        if (discussions.isNotEmpty()) {
+            discussions.forEach { discussionResponse ->
+                discussionResponse.content.forEach { discussion ->
+                    Text(
+                        text = "Title: ${discussion.title}",
+                        style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = "Content: ${discussion.content}",
+                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
+
         PlusButton(navController = navController)
     }
 }
+
+
+
