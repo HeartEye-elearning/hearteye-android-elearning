@@ -9,6 +9,7 @@ enum class NavRoutes(val route: String) {
     DISCUSSIONS("discussions"),
     MORE("more"),
     COURSE_DETAIL("courseDetail/{courseId}"),
-    ANSWER_OVERVIEW("answerOverview/{courseId}")
+    ANSWER_OVERVIEW("answerOverview/{courseId}"),
+    DISCUSSIONS_UPLOAD("discussionsUploadScreen")
 }
 

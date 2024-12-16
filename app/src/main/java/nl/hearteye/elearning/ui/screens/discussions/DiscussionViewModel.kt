@@ -41,13 +41,10 @@ class DiscussionViewModel @Inject constructor(
     fun createDiscussion(
         title: String,
         content: String,
-        base64Content: String,
-        contentType: String,
-        base64Title: String
+        category: String
     ) {
         _errorMessage.value = null
-        val base64 = Base64Content(base64Content, contentType, base64Title)
-        val discussion = Discussion(title, content, base64)
+        val discussion = Discussion(title, content, category)
 
         viewModelScope.launch {
             try {
@@ -57,4 +54,5 @@ class DiscussionViewModel @Inject constructor(
             }
         }
     }
+
 }

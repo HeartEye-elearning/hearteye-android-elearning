@@ -5,7 +5,7 @@ import nl.hearteye.elearning.data.entity.Base64Content
 data class Discussion(
     val title: String,
     val content: String,
-    val base64: Base64Content
+    val category: String
 )
 
 data class Base64Content(
