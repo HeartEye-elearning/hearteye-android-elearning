@@ -18,7 +18,7 @@ import nl.hearteye.elearning.ui.navigation.NavRoutes
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
 @Composable
-fun PlusButton(navController: NavController) {
+fun PlusButton(navController: NavController, modifier: Modifier) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -27,9 +27,9 @@ fun PlusButton(navController: NavController) {
     ) {
         Surface(
             modifier = Modifier
-                .size(56.dp)
+                .size(40.dp)
                 .background(ForegroundPrimary, shape = MaterialTheme.shapes.small)
-                .padding(12.dp),
+                .padding(6.dp),
             shape = MaterialTheme.shapes.small,
             color = Color.Transparent
         ) {

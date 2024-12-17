@@ -1,21 +1,23 @@
 package nl.hearteye.elearning.ui.screens.discussions
 
 import DiscussionsCard
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import nl.hearteye.elearning.R
 import nl.hearteye.elearning.ui.components.buttons.PlusButton
 import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
-import nl.hearteye.elearning.R
-import nl.hearteye.elearning.data.model.User
 
 @Composable
 fun DiscussionsScreen(
@@ -26,54 +28,70 @@ fun DiscussionsScreen(
     val errorMessage = discussionViewModel.errorMessage.value
     val userCache = discussionViewModel.userCache.value
 
+    val listState = rememberLazyListState()
+
     LaunchedEffect(Unit) {
         if (discussions.isEmpty() && errorMessage == null) {
             discussionViewModel.getDiscussions()
         }
     }
 
-    LazyColumn(modifier = Modifier.padding(16.dp)) {
-
-        if (discussions.isEmpty() && errorMessage == null) {
-            item {
-                CircularProgressIndicator(
-                    color = ForegroundPrimary,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-            }
+    LaunchedEffect(listState.layoutInfo.visibleItemsInfo.lastOrNull()) {
+        val lastItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+        if (lastItem != null && lastItem.index == discussions.size - 1) {
+            discussionViewModel.loadMoreDiscussions()
         }
+    }
 
-        errorMessage?.let {
-            item {
-                ErrorView(message = "Error: $it") { }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.padding(16.dp).fillMaxSize()
+        ) {
+            if (discussions.isEmpty() && errorMessage == null) {
+                item {
+                    CircularProgressIndicator(
+                        color = ForegroundPrimary,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
             }
-        }
 
-        if (discussions.isNotEmpty()) {
-            items(discussions.size) { index ->
-                val discussionResponse = discussions[index]
-                discussionResponse.content.forEach { discussion ->
-                    val user = userCache[discussion.userId]
+            errorMessage?.let {
+                item {
+                    ErrorView(message = "Error: $it") { }
+                }
+            }
 
-                    if (user == null) {
-                        LaunchedEffect(discussion.userId) {
-                            discussionViewModel.getUser(discussion.userId)
+            if (discussions.isNotEmpty()) {
+                items(discussions.size) { index ->
+                    val discussionResponse = discussions[index]
+                    discussionResponse.content.forEach { discussion ->
+                        val user = userCache[discussion.userId]
+
+                        if (user == null) {
+                            LaunchedEffect(discussion.userId) {
+                                discussionViewModel.getUser(discussion.userId)
+                            }
+                        } else {
+                            DiscussionsCard(
+                                user = user,
+                                postTime = discussion.createdAt,
+                                postTitle = discussion.title,
+                                postContent = discussion.content,
+                                ecgImageResId = R.drawable.ecg_scan
+                            )
                         }
-                    } else {
-                        DiscussionsCard(
-                            user = user,
-                            postTime = discussion.createdAt,
-                            postTitle = discussion.title,
-                            postContent = discussion.content,
-                            ecgImageResId = R.drawable.ecg_scan
-                        )
                     }
                 }
             }
         }
 
-        item {
-            PlusButton(navController = navController)
-        }
+        PlusButton(
+            navController = navController,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        )
     }
 }

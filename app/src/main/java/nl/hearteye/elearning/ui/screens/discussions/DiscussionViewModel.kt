@@ -28,17 +28,24 @@ class DiscussionViewModel @Inject constructor(
     private val _userCache = mutableStateOf<Map<String, User>>(emptyMap())
     val userCache: State<Map<String, User>> = _userCache
 
+    private var currentPage = 0
+
     fun getDiscussions(page: Int = 0, size: Int = 10, creator: Boolean = false) {
         _errorMessage.value = null
         viewModelScope.launch {
             try {
                 val discussionsResponse = discussionRepository.getDiscussions(page, size, creator)
 
-                _discussions.value = listOf(discussionsResponse)
+                _discussions.value = _discussions.value + discussionsResponse
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An unknown error occurred"
             }
         }
+    }
+
+    fun loadMoreDiscussions() {
+        currentPage++
+        getDiscussions(page = currentPage)
     }
 
     fun createDiscussion(title: String, content: String, category: String) {
@@ -69,4 +76,5 @@ class DiscussionViewModel @Inject constructor(
         }
     }
 }
+
 
