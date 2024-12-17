@@ -48,6 +48,13 @@ fun DiscussionsScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        if (discussions.isEmpty() && errorMessage == null) {
+            discussionViewModel.getDiscussions()
+            discussionViewModel.fetchCurrentUser()
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             state = listState,
@@ -73,6 +80,8 @@ fun DiscussionsScreen(
                     val discussionResponse = discussions[index]
                     discussionResponse.content.forEach { discussion ->
                         val user = userCache[discussion.userId]
+                        val currentUser =
+                            userCache[discussionViewModel.userCache.value.keys.firstOrNull()]
 
                         if (user == null) {
                             LaunchedEffect(discussion.userId) {
@@ -85,7 +94,9 @@ fun DiscussionsScreen(
                                 user = user,
                                 postTime = discussion.createdAt,
                                 postTitle = discussion.title,
-                                postContent = if (isExpanded) discussion.content else discussion.content.take(100),
+                                postContent = if (isExpanded) discussion.content else discussion.content.take(
+                                    100
+                                ),
                                 ecgImageResId = R.drawable.ecg_scan,
                                 discussionId = discussion.id,
                                 isExpanded = isExpanded,
@@ -97,7 +108,8 @@ fun DiscussionsScreen(
                                         discussionViewModel.getDiscussionById(discussionId)
                                     }
                                 },
-                                discussionDetail = if (isExpanded) discussionDetail else null
+                                discussionDetail = if (isExpanded) discussionDetail else null,
+                                isCurrentUser = currentUser?.id == discussion.userId
                             )
                         }
                     }

@@ -5,24 +5,31 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import nl.hearteye.elearning.data.model.User
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
 import nl.hearteye.elearning.R
 import nl.hearteye.elearning.data.model.DiscussionDetail
+import nl.hearteye.elearning.ui.screens.discussions.DiscussionViewModel
 
 @Composable
 fun DiscussionsCard(
@@ -34,7 +41,9 @@ fun DiscussionsCard(
     discussionId: String,
     isExpanded: Boolean,
     onReadMoreClick: (String) -> Unit,
-    discussionDetail: DiscussionDetail?
+    discussionDetail: DiscussionDetail?,
+    isCurrentUser: Boolean,
+    discussionViewModel: DiscussionViewModel = hiltViewModel(),
 ) {
     val ecgImage: Painter = painterResource(id = ecgImageResId)
     val timeAgo = getTimeAgo(postTime)
@@ -59,6 +68,7 @@ fun DiscussionsCard(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.profile_picture),
@@ -78,7 +88,23 @@ fun DiscussionsCard(
                     text = timeAgo,
                     style = MaterialTheme.typography.bodySmall,
                 )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                if (isCurrentUser) {
+                    Icon(
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = "More Options",
+                        tint = ForegroundPrimary,
+                        modifier = Modifier
+                            .graphicsLayer(rotationZ = 90f)
+                            .clickable {
+                                discussionViewModel.deleteDiscussion(discussionId)
+                            }
+                    )
+                }
             }
+
 
             Spacer(modifier = Modifier.height(8.dp))
 

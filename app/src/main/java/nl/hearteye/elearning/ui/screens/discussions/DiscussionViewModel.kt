@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DiscussionViewModel @Inject constructor(
     private val discussionRepository: DiscussionRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val _errorMessage = mutableStateOf<String?>(null)
@@ -29,7 +29,7 @@ class DiscussionViewModel @Inject constructor(
     private val _userCache = mutableStateOf<Map<String, User>>(emptyMap())
     val userCache: State<Map<String, User>> = _userCache
 
-    private val _discussionDetail = mutableStateOf<DiscussionDetail?>(null) // New state for full discussion
+    private val _discussionDetail = mutableStateOf<DiscussionDetail?>(null)
     val discussionDetail: State<DiscussionDetail?> = _discussionDetail
 
     private var currentPage = 0
@@ -88,6 +88,30 @@ class DiscussionViewModel @Inject constructor(
                 _discussionDetail.value = discussionDetail
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to fetch discussion details: ${e.message}"
+            }
+        }
+    }
+
+    fun deleteDiscussion(discussionId: String) {
+        _errorMessage.value = null
+        viewModelScope.launch {
+            try {
+                discussionRepository.deleteDiscussion(discussionId)
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to delete discussion: ${e.message}"
+            }
+        }
+    }
+
+    fun fetchCurrentUser() {
+        viewModelScope.launch {
+            try {
+                val user = userRepository.getCurrentUser()
+                _userCache.value = _userCache.value.toMutableMap().apply {
+                    put(user.id, user)
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to fetch current user: ${e.message}"
             }
         }
     }

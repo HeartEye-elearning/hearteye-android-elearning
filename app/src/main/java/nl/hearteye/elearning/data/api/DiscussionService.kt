@@ -4,8 +4,10 @@ import nl.hearteye.elearning.data.entity.DiscussionDetailEntity
 import nl.hearteye.elearning.data.entity.DiscussionEntity
 import nl.hearteye.elearning.data.entity.DiscussionResponseEntity
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface DiscussionService {
@@ -25,4 +27,8 @@ interface DiscussionService {
         @Query("id") id: String,
     ): DiscussionDetailEntity
 
+    @DELETE("forum-service/v1/forum/{id}")
+    suspend fun deleteDiscussion(
+        @Path("id") id: String
+    )
 }

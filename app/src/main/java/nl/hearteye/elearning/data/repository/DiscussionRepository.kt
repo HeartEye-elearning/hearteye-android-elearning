@@ -24,4 +24,9 @@ class DiscussionRepository @Inject constructor(
         val discussionDetailEntity = discussionService.getDiscussionById(id)
         return DiscussionDetailMapper.map(discussionDetailEntity)
     }
+
+    suspend fun deleteDiscussion(discussionId: String) {
+        discussionService.deleteDiscussion(discussionId)
+    }
+
 }
