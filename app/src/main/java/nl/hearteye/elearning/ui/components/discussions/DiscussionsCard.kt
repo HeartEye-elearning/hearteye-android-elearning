@@ -1,6 +1,7 @@
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,7 @@ import nl.hearteye.elearning.data.model.User
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
 import nl.hearteye.elearning.R
+import nl.hearteye.elearning.data.model.DiscussionDetail
 
 @Composable
 fun DiscussionsCard(
@@ -28,7 +30,11 @@ fun DiscussionsCard(
     postTime: String,
     postTitle: String,
     postContent: String,
-    ecgImageResId: Int
+    ecgImageResId: Int,
+    discussionId: String,
+    isExpanded: Boolean,
+    onReadMoreClick: (String) -> Unit,
+    discussionDetail: DiscussionDetail?
 ) {
     val ecgImage: Painter = painterResource(id = ecgImageResId)
     val timeAgo = getTimeAgo(postTime)
@@ -83,22 +89,57 @@ fun DiscussionsCard(
                 overflow = TextOverflow.Ellipsis,
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            if (isExpanded) {
                 Text(
-                    text = postContent,
+                    text = discussionDetail?.content ?: postContent,
                     style = typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
                 )
-                Text(
-                    text = "Read more",
-                    style = typography.bodyMedium,
-                    color = ForegroundPrimary
-                )
+
+                Row(
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                ) {
+                    discussionDetail?.let { detail ->
+                        val commentCount = detail.comments.size
+                        Text(
+                            text = "$commentCount Comments",
+                            style = typography.bodyMedium,
+                            color = ForegroundPrimary,
+                            modifier = Modifier
+                                .weight(1f)
+                        )
+                    }
+
+                    Text(
+                        text = "View less",
+                        style = typography.bodyMedium,
+                        color = ForegroundPrimary,
+                        modifier = Modifier.clickable {
+                            onReadMoreClick(discussionId)
+                        }
+                    )
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = postContent,
+                        style = typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = "Read more",
+                        style = typography.bodyMedium,
+                        color = ForegroundPrimary,
+                        modifier = Modifier.clickable {
+                            onReadMoreClick(discussionId)
+                        }
+                    )
+                }
             }
         }
     }

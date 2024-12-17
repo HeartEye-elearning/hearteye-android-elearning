@@ -9,14 +9,13 @@ import nl.hearteye.elearning.data.model.DiscussionResponse
 
 object DiscussionMapper {
 
-    // Map the entire response entity to a model response
     fun mapToModel(entity: DiscussionResponseEntity): DiscussionResponse {
         return DiscussionResponse(
             totalPages = entity.totalPages,
             totalElements = entity.totalElements,
             numberOfElements = entity.numberOfElements,
             size = entity.size,
-            content = entity.content.map { mapContentToModel(it) }, // Mapping each content
+            content = entity.content.map { mapContentToModel(it) },
             pageable = entity.pageable,
             first = entity.first,
             last = entity.last,
@@ -24,7 +23,6 @@ object DiscussionMapper {
         )
     }
 
-    // Map the content of the discussion entity to the model
     private fun mapContentToModel(entity: DiscussionContentEntity): DiscussionContent {
         return DiscussionContent(
             id = entity.id,
@@ -38,7 +36,6 @@ object DiscussionMapper {
         )
     }
 
-    // Convert Discussion model to entity for saving in DB or posting to API
     fun mapToEntity(model: Discussion): DiscussionEntity {
         return DiscussionEntity(
             title = model.title,
