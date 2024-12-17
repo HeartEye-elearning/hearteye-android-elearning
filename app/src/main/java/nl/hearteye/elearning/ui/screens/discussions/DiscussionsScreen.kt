@@ -1,15 +1,20 @@
 package nl.hearteye.elearning.ui.screens.discussions
 
-import androidx.compose.foundation.layout.Column
+import DiscussionsCard
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import nl.hearteye.elearning.R
 import nl.hearteye.elearning.ui.components.buttons.PlusButton
 import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
@@ -21,6 +26,9 @@ fun DiscussionsScreen(
 ) {
     val discussions = discussionViewModel.discussions.value
     val errorMessage = discussionViewModel.errorMessage.value
+    val userCache = discussionViewModel.userCache.value
+
+    val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
         if (discussions.isEmpty() && errorMessage == null) {
@@ -28,36 +36,62 @@ fun DiscussionsScreen(
         }
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-
-        if (discussions.isEmpty() && errorMessage == null) {
-            CircularProgressIndicator(
-                color = ForegroundPrimary
-            )
+    LaunchedEffect(listState.layoutInfo.visibleItemsInfo.lastOrNull()) {
+        val lastItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+        if (lastItem != null && lastItem.index == discussions.size - 1) {
+            discussionViewModel.loadMoreDiscussions()
         }
+    }
 
-        errorMessage?.let {
-            ErrorView(message = "Error: $it") { }
-        }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.padding(16.dp).fillMaxSize()
+        ) {
+            if (discussions.isEmpty() && errorMessage == null) {
+                item {
+                    CircularProgressIndicator(
+                        color = ForegroundPrimary,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
+            }
 
-        if (discussions.isNotEmpty()) {
-            discussions.forEach { discussionResponse ->
-                discussionResponse.content.forEach { discussion ->
-                    Text(
-                        text = "Title: ${discussion.title}",
-                        style = androidx.compose.material3.MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = "Content: ${discussion.content}",
-                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
-                    )
+            errorMessage?.let {
+                item {
+                    ErrorView(message = "Error: $it") { }
+                }
+            }
+
+            if (discussions.isNotEmpty()) {
+                items(discussions.size) { index ->
+                    val discussionResponse = discussions[index]
+                    discussionResponse.content.forEach { discussion ->
+                        val user = userCache[discussion.userId]
+
+                        if (user == null) {
+                            LaunchedEffect(discussion.userId) {
+                                discussionViewModel.getUser(discussion.userId)
+                            }
+                        } else {
+                            DiscussionsCard(
+                                user = user,
+                                postTime = discussion.createdAt,
+                                postTitle = discussion.title,
+                                postContent = discussion.content,
+                                ecgImageResId = R.drawable.ecg_scan
+                            )
+                        }
+                    }
                 }
             }
         }
 
-        PlusButton(navController = navController)
+        PlusButton(
+            navController = navController,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        )
     }
 }
-
-
-

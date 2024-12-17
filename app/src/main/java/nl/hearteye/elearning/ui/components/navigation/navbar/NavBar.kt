@@ -29,7 +29,7 @@ fun NavBar(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .height(80.dp)
             .background(Color.White)
     ) {
         Row(

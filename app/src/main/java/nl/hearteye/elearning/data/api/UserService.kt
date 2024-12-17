@@ -15,6 +15,11 @@ interface UserService {
     @GET("user-service/v1/users/me")
     suspend fun getCurrentUser(
     ): UserEntity
+
+    @GET("user-service/v1/users/{id}")
+    suspend fun getUser(
+        @Path("id") id: String,
+    ): UserEntity
 }
 
 
