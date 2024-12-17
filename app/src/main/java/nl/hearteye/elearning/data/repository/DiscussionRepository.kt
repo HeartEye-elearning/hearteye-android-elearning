@@ -1,8 +1,10 @@
 package nl.hearteye.elearning.data.repository
 
 import nl.hearteye.elearning.data.api.DiscussionService
+import nl.hearteye.elearning.data.mapper.DiscussionDetailMapper
 import nl.hearteye.elearning.data.mapper.DiscussionMapper
 import nl.hearteye.elearning.data.model.Discussion
+import nl.hearteye.elearning.data.model.DiscussionDetail
 import nl.hearteye.elearning.data.model.DiscussionResponse
 import javax.inject.Inject
 
@@ -14,9 +16,12 @@ class DiscussionRepository @Inject constructor(
         discussionService.createDiscussion(entity)
     }
 
-    suspend fun getDiscussions(page: Int = 0, size: Int = 10, creator: Boolean = false): DiscussionResponse {
+    suspend fun getDiscussions(page: Int, size: Int, creator: Boolean = false): DiscussionResponse {
         val responseEntity = discussionService.getDiscussions(page, size, creator)
         return DiscussionMapper.mapToModel(responseEntity)
     }
-
+    suspend fun getDiscussionById(id: String): DiscussionDetail {
+        val discussionDetailEntity = discussionService.getDiscussionById(id)
+        return DiscussionDetailMapper.map(discussionDetailEntity)
+    }
 }

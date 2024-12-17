@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import nl.hearteye.elearning.data.model.Discussion
+import nl.hearteye.elearning.data.model.DiscussionDetail
 import nl.hearteye.elearning.data.model.DiscussionResponse
 import nl.hearteye.elearning.data.model.User
 import nl.hearteye.elearning.data.repository.DiscussionRepository
@@ -27,6 +28,9 @@ class DiscussionViewModel @Inject constructor(
 
     private val _userCache = mutableStateOf<Map<String, User>>(emptyMap())
     val userCache: State<Map<String, User>> = _userCache
+
+    private val _discussionDetail = mutableStateOf<DiscussionDetail?>(null) // New state for full discussion
+    val discussionDetail: State<DiscussionDetail?> = _discussionDetail
 
     private var currentPage = 0
 
@@ -75,6 +79,17 @@ class DiscussionViewModel @Inject constructor(
             }
         }
     }
-}
 
+    fun getDiscussionById(discussionId: String) {
+        _errorMessage.value = null
+        viewModelScope.launch {
+            try {
+                val discussionDetail = discussionRepository.getDiscussionById(discussionId)
+                _discussionDetail.value = discussionDetail
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to fetch discussion details: ${e.message}"
+            }
+        }
+    }
+}
 

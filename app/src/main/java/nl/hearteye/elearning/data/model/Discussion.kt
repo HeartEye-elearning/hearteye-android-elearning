@@ -1,6 +1,5 @@
 package nl.hearteye.elearning.data.model
 
-import nl.hearteye.elearning.data.entity.Base64Content
 
 data class Discussion(
     val title: String,

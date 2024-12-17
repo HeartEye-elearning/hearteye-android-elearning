@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,8 +29,11 @@ fun DiscussionsScreen(
     val discussions = discussionViewModel.discussions.value
     val errorMessage = discussionViewModel.errorMessage.value
     val userCache = discussionViewModel.userCache.value
+    val discussionDetail = discussionViewModel.discussionDetail.value
 
     val listState = rememberLazyListState()
+
+    val expandedDiscussionId = remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         if (discussions.isEmpty() && errorMessage == null) {
@@ -74,12 +79,25 @@ fun DiscussionsScreen(
                                 discussionViewModel.getUser(discussion.userId)
                             }
                         } else {
+                            val isExpanded = expandedDiscussionId.value == discussion.id
+
                             DiscussionsCard(
                                 user = user,
                                 postTime = discussion.createdAt,
                                 postTitle = discussion.title,
-                                postContent = discussion.content,
-                                ecgImageResId = R.drawable.ecg_scan
+                                postContent = if (isExpanded) discussion.content else discussion.content.take(100),
+                                ecgImageResId = R.drawable.ecg_scan,
+                                discussionId = discussion.id,
+                                isExpanded = isExpanded,
+                                onReadMoreClick = { discussionId ->
+                                    if (expandedDiscussionId.value == discussionId) {
+                                        expandedDiscussionId.value = null
+                                    } else {
+                                        expandedDiscussionId.value = discussionId
+                                        discussionViewModel.getDiscussionById(discussionId)
+                                    }
+                                },
+                                discussionDetail = if (isExpanded) discussionDetail else null
                             )
                         }
                     }
