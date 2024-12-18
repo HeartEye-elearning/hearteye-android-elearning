@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.components.course.searchbar
+package nl.hearteye.elearning.ui.components.searchbar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -47,7 +47,7 @@ fun SearchBar(
                 value = value,
                 onValueChange = onValueChange,
                 placeholder = {
-                    Text(text = "Search Courses...")
+                    Text(text = "Search...")
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,

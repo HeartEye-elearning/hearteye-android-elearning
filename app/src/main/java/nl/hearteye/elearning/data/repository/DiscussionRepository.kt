@@ -6,6 +6,7 @@ import nl.hearteye.elearning.data.mapper.DiscussionMapper
 import nl.hearteye.elearning.data.model.Discussion
 import nl.hearteye.elearning.data.model.DiscussionDetail
 import nl.hearteye.elearning.data.model.DiscussionResponse
+import retrofit2.Response
 import javax.inject.Inject
 
 class DiscussionRepository @Inject constructor(
@@ -16,8 +17,8 @@ class DiscussionRepository @Inject constructor(
         discussionService.createDiscussion(entity)
     }
 
-    suspend fun getDiscussions(page: Int, size: Int, creator: Boolean = false): DiscussionResponse {
-        val responseEntity = discussionService.getDiscussions(page, size, creator)
+    suspend fun getDiscussions(page: Int, size: Int, creator: Boolean = false, search: String? = null): DiscussionResponse {
+        val responseEntity = discussionService.getDiscussions(page, size, creator, search)
         return DiscussionMapper.mapToModel(responseEntity)
     }
     suspend fun getDiscussionById(id: String): DiscussionDetail {
@@ -25,8 +26,8 @@ class DiscussionRepository @Inject constructor(
         return DiscussionDetailMapper.map(discussionDetailEntity)
     }
 
-    suspend fun deleteDiscussion(discussionId: String) {
-        discussionService.deleteDiscussion(discussionId)
+    suspend fun deleteDiscussion(discussionId: String): Response<Unit> {
+        return discussionService.deleteDiscussion(discussionId)
     }
 
 }

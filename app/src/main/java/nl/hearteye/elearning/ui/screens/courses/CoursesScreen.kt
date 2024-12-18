@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import nl.hearteye.elearning.ui.components.course.coursecard.CourseCard
 import nl.hearteye.elearning.ui.components.error.ErrorView
-import nl.hearteye.elearning.ui.components.course.searchbar.SearchBar
+import nl.hearteye.elearning.ui.components.searchbar.SearchBar
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
 @Composable

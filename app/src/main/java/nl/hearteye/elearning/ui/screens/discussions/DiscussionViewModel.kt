@@ -32,24 +32,34 @@ class DiscussionViewModel @Inject constructor(
     private val _discussionDetail = mutableStateOf<DiscussionDetail?>(null)
     val discussionDetail: State<DiscussionDetail?> = _discussionDetail
 
+    val _searchQuery = mutableStateOf<String>("")
+    val searchQuery: State<String> = _searchQuery
+
     private var currentPage = 0
 
-    fun getDiscussions(page: Int = 0, size: Int = 10, creator: Boolean = false) {
+    fun getDiscussions(
+        page: Int = 0,
+        size: Int = 10,
+        creator: Boolean = false,
+        search: String? = null
+    ) {
         _errorMessage.value = null
         viewModelScope.launch {
             try {
-                val discussionsResponse = discussionRepository.getDiscussions(page, size, creator)
+                val discussionsResponse =
+                    discussionRepository.getDiscussions(page, size, creator, search)
 
-                _discussions.value = _discussions.value + discussionsResponse
+                if (search != null) {
+                    _discussions.value = listOf(discussionsResponse)
+                    currentPage = 0
+                } else {
+                    _discussions.value = _discussions.value + discussionsResponse
+                    currentPage++
+                }
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An unknown error occurred"
             }
         }
-    }
-
-    fun loadMoreDiscussions() {
-        currentPage++
-        getDiscussions(page = currentPage)
     }
 
     fun createDiscussion(title: String, content: String, category: String) {
@@ -92,13 +102,22 @@ class DiscussionViewModel @Inject constructor(
         }
     }
 
+    private val _deleteResult = mutableStateOf<Result<Boolean>>(Result.success(false))
+    val deleteResult: State<Result<Boolean>> = _deleteResult
+
     fun deleteDiscussion(discussionId: String) {
-        _errorMessage.value = null
         viewModelScope.launch {
+            _deleteResult.value = Result.success(false)
+
             try {
-                discussionRepository.deleteDiscussion(discussionId)
+                val response = discussionRepository.deleteDiscussion(discussionId)
+                if (response.isSuccessful) {
+                    _deleteResult.value = Result.success(true)
+                } else {
+                    _deleteResult.value = Result.failure(Exception("Failed to delete"))
+                }
             } catch (e: Exception) {
-                _errorMessage.value = "Failed to delete discussion: ${e.message}"
+                _deleteResult.value = Result.failure(e)
             }
         }
     }
