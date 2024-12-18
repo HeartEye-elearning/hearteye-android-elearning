@@ -48,6 +48,8 @@ fun DiscussionsCard(
     val ecgImage: Painter = painterResource(id = ecgImageResId)
     val timeAgo = getTimeAgo(postTime)
 
+    val canDelete = isCurrentUser || user.role in listOf("ADMIN", "SUPER_CARDIOLOGIST")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +93,7 @@ fun DiscussionsCard(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                if (isCurrentUser) {
+                if (canDelete) {
                     Icon(
                         imageVector = Icons.Filled.MoreVert,
                         contentDescription = "More Options",
@@ -104,7 +106,6 @@ fun DiscussionsCard(
                     )
                 }
             }
-
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -170,5 +171,6 @@ fun DiscussionsCard(
         }
     }
 }
+
 
 
