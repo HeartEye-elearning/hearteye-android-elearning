@@ -16,7 +16,7 @@ data class DiscussionDetailEntity(
 data class CommentEntity(
     @Json(name = "id") val id: String,
     @Json(name = "userId") val userId: String,
-    @Json(name = "parentCommentId") val parentCommentId: String,
+    @Json(name = "parentCommentId") val parentCommentId: String?,
     @Json(name = "level") val level: Int,
     @Json(name = "content") val content: String,
     @Json(name = "createdAt") val createdAt: String,

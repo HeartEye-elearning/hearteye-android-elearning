@@ -97,7 +97,7 @@ fun Navigation(navController: NavHostController) {
                 OnboardingScreen(navController)
             }
             composable(NavRoutes.HOME.route) {
-                HomeScreen(navController = navController)
+                HomeScreen(homeViewModel = hiltViewModel())
             }
             composable(NavRoutes.COURSES.route) {
                 CoursesScreen(onCourseSelected = { courseId ->
@@ -108,7 +108,7 @@ fun Navigation(navController: NavHostController) {
             composable(NavRoutes.DISCUSSIONS_UPLOAD.route) {
                 DiscussionsUploadScreen(discussionViewModel = hiltViewModel())
             }
-            composable(NavRoutes.MORE.route) { MoreScreen() }
+            composable(NavRoutes.MORE.route) { MoreScreen(navController = navController) }
             composable(
                 route = NavRoutes.COURSE_DETAIL.route,
                 arguments = listOf(navArgument("courseId") { type = NavType.StringType })

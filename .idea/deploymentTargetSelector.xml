@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="elearning.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-16T13:07:52.633747500Z">
+        <DropdownSelection timestamp="2024-12-20T10:28:22.435767600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=KJDQAIS8VGYPEAXO" />

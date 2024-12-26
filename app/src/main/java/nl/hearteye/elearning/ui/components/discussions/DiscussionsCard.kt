@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -24,12 +23,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import nl.hearteye.elearning.data.model.User
-import nl.hearteye.elearning.ui.theme.ForegroundPrimary
-import nl.hearteye.elearning.ui.theme.typography
 import nl.hearteye.elearning.R
 import nl.hearteye.elearning.data.model.DiscussionDetail
+import nl.hearteye.elearning.data.model.User
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionViewModel
+import nl.hearteye.elearning.ui.theme.ForegroundPrimary
+import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
 fun DiscussionsCard(
@@ -43,6 +42,7 @@ fun DiscussionsCard(
     onReadMoreClick: (String) -> Unit,
     discussionDetail: DiscussionDetail?,
     isCurrentUser: Boolean,
+    onCommentsClick: () -> Unit,
     discussionViewModel: DiscussionViewModel = hiltViewModel(),
 ) {
     val ecgImage: Painter = painterResource(id = ecgImageResId)
@@ -134,6 +134,7 @@ fun DiscussionsCard(
                             color = ForegroundPrimary,
                             modifier = Modifier
                                 .weight(1f)
+                                .clickable { onCommentsClick() }  // Trigger overlay
                         )
                     }
 

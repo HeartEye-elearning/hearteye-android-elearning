@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import nl.hearteye.elearning.R
 import nl.hearteye.elearning.ui.components.buttons.PlusButton
+import nl.hearteye.elearning.ui.components.comments.CommentsOverlay
 import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.components.searchbar.SearchBar
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
@@ -40,6 +41,8 @@ fun DiscussionsScreen(
     val isLoading = remember { mutableStateOf(false) }
     val currentPage = remember { mutableStateOf(0) }
 
+    val selectedDiscussionId = remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(searchQuery) {
         discussionViewModel.getDiscussions(page = 0, search = searchQuery)
     }
@@ -49,24 +52,6 @@ fun DiscussionsScreen(
             discussionViewModel.getDiscussions()
             discussionViewModel.fetchCurrentUser()
         }
-    }
-
-    val onScrollHalfway = {
-        if (!isLoading.value && listState.layoutInfo.visibleItemsInfo.isNotEmpty()) {
-            val totalItems = listState.layoutInfo.totalItemsCount
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            val halfwayPoint = totalItems / 2
-
-            if (lastVisibleItem >= halfwayPoint) {
-                isLoading.value = true
-                discussionViewModel.getDiscussions(page = currentPage.value + 1, search = searchQuery)
-                currentPage.value += 1
-            }
-        }
-    }
-
-    LaunchedEffect(listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index) {
-        onScrollHalfway()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -132,7 +117,8 @@ fun DiscussionsScreen(
                                         }
                                     },
                                     discussionDetail = if (isExpanded) discussionDetail else null,
-                                    isCurrentUser = currentUser?.id == discussion.userId
+                                    isCurrentUser = currentUser?.id == discussion.userId,
+                                    onCommentsClick = { selectedDiscussionId.value = discussion.id }
                                 )
                             }
                         }
@@ -156,5 +142,14 @@ fun DiscussionsScreen(
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
         )
+
+        // Display the CommentsOverlay when a discussion is selected
+        selectedDiscussionId.value?.let {
+            // Only show the overlay for the selected discussion
+            CommentsOverlay(
+                discussionDetail = discussionDetail,
+                onClose = { selectedDiscussionId.value = null }
+            )
+        }
     }
 }
