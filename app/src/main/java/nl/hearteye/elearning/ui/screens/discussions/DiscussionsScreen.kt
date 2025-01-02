@@ -43,6 +43,8 @@ fun DiscussionsScreen(
 
     val selectedDiscussionId = remember { mutableStateOf<String?>(null) }
 
+    val commentText = remember { mutableStateOf("") }
+
     LaunchedEffect(searchQuery) {
         discussionViewModel.getDiscussions(page = 0, search = searchQuery)
     }
@@ -91,7 +93,8 @@ fun DiscussionsScreen(
                     items(discussions) { discussionResponse ->
                         discussionResponse.content.forEach { discussion ->
                             val user = userCache[discussion.userId]
-                            val currentUser = userCache[discussionViewModel.userCache.value.keys.firstOrNull()]
+                            val currentUser =
+                                userCache[discussionViewModel.userCache.value.keys.firstOrNull()]
 
                             if (user == null) {
                                 LaunchedEffect(discussion.userId) {
@@ -104,7 +107,9 @@ fun DiscussionsScreen(
                                     user = user,
                                     postTime = discussion.createdAt,
                                     postTitle = discussion.title,
-                                    postContent = if (isExpanded) discussion.content else discussion.content.take(100),
+                                    postContent = if (isExpanded) discussion.content else discussion.content.take(
+                                        100
+                                    ),
                                     ecgImageResId = R.drawable.ecg_scan,
                                     discussionId = discussion.id,
                                     isExpanded = isExpanded,
@@ -143,12 +148,15 @@ fun DiscussionsScreen(
                 .padding(16.dp)
         )
 
-        // Display the CommentsOverlay when a discussion is selected
         selectedDiscussionId.value?.let {
-            // Only show the overlay for the selected discussion
             CommentsOverlay(
                 discussionDetail = discussionDetail,
-                onClose = { selectedDiscussionId.value = null }
+                onClose = { selectedDiscussionId.value = null },
+                onAddComment = { commentText ->
+                    selectedDiscussionId.value?.let { discussionId ->
+                        discussionViewModel.createComment(discussionId, commentText)
+                    }
+                }
             )
         }
     }

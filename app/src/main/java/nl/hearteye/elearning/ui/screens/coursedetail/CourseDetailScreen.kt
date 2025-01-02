@@ -67,7 +67,7 @@ fun CourseDetailScreen(
                     if (currentInformationPage != null) {
                         InformationPage(
                             title = courseDetail.title,
-                            content = currentInformationPage.content["eng"] ?: "No content available",
+                            content = currentInformationPage.content,
                             onNext = { currentInformationPageIndex.intValue++ },
                             onBack = { currentInformationPageIndex.intValue-- },
                             canGoBack = currentInformationPageIndex.intValue > 0,

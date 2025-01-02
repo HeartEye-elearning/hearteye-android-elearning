@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import nl.hearteye.elearning.data.model.Comment
 import nl.hearteye.elearning.data.model.Discussion
 import nl.hearteye.elearning.data.model.DiscussionDetail
 import nl.hearteye.elearning.data.model.DiscussionResponse
@@ -76,14 +77,11 @@ class DiscussionViewModel @Inject constructor(
     }
 
     fun getUser(userId: String) {
-        if (_userCache.value.containsKey(userId)) return
+        _errorMessage.value = null
 
         viewModelScope.launch {
             try {
                 val user = userRepository.getUser(userId)
-                _userCache.value = _userCache.value.toMutableMap().apply {
-                    put(userId, user)
-                }
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to fetch user: ${e.message}"
             }
@@ -131,6 +129,26 @@ class DiscussionViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to fetch current user: ${e.message}"
+            }
+        }
+    }
+
+    fun createComment(discussionId: String, commentText: String) {
+        _errorMessage.value = null
+        viewModelScope.launch {
+            try {
+                val comment = Comment(
+                    content = commentText,
+                    id = null,
+                    userId = null,
+                    parentCommentId = null,
+                    level = null,
+                    createdAt = null,
+                    updatedAt = null,
+                )
+                discussionRepository.createComment(discussionId, comment)
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to add comment: ${e.message}"
             }
         }
     }

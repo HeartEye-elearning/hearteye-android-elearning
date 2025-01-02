@@ -1,6 +1,5 @@
 package nl.hearteye.elearning.data.model
 
-import nl.hearteye.elearning.data.entity.InformationPage
 
 data class CourseDetail(
     val id: String,
@@ -10,6 +9,11 @@ data class CourseDetail(
     val questionCount: Int,
     val durationInMinutes: Int,
     val questions: List<QuestionDetail>
+)
+
+data class InformationPage(
+    val id: String,
+    val content: String
 )
 
 data class QuestionDetail(

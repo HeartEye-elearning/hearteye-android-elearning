@@ -43,7 +43,7 @@ class LoginViewModel @Inject constructor(
 
             } catch (exception: Exception) {
                 _loginResult.value = Result.failure(exception)
-                _errorMessage.value = "Wrong credentials."
+                _errorMessage.value = exception.message
             } finally {
                 _isLoading.value = false
             }
@@ -63,18 +63,6 @@ class LoginViewModel @Inject constructor(
         return sharedPreferences.getBoolean("is_logged_in", false)
     }
 
-    fun logout() {
-        sharedPreferences.edit()
-            .remove("auth_token")
-            .remove("is_logged_in")
-            .apply()
-
-        viewModelScope.launch {
-            dataStoreManager.setOnboardingCompleted(false)
-        }
-
-        _loginResult.value = Result.success(null)
-    }
 
     private val _isOnboardingCompleted = MutableStateFlow(false)
     val isOnboardingCompleted: StateFlow<Boolean> get() = _isOnboardingCompleted

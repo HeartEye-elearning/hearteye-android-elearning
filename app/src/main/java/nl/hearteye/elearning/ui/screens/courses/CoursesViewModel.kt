@@ -1,5 +1,6 @@
 package nl.hearteye.elearning.ui.screens.courses
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel

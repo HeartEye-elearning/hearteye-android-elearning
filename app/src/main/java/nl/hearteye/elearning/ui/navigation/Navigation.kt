@@ -108,7 +108,7 @@ fun Navigation(navController: NavHostController) {
             composable(NavRoutes.DISCUSSIONS_UPLOAD.route) {
                 DiscussionsUploadScreen(discussionViewModel = hiltViewModel())
             }
-            composable(NavRoutes.MORE.route) { MoreScreen(navController = navController) }
+            composable(NavRoutes.MORE.route) { MoreScreen() }
             composable(
                 route = NavRoutes.COURSE_DETAIL.route,
                 arguments = listOf(navArgument("courseId") { type = NavType.StringType })

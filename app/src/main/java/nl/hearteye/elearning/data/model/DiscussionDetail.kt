@@ -12,11 +12,11 @@ data class DiscussionDetail(
 )
 
 data class Comment(
-    val id: String,
-    val userId: String,
+    val id: String?,
+    val userId: String?,
     val parentCommentId: String?,
-    val level: Int,
-    val content: String,
-    val createdAt: String,
-    val updatedAt: String
+    val level: Int?,
+    val content: String?,
+    val createdAt: String?,
+    val updatedAt: String?
 )

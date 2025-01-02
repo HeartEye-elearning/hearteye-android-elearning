@@ -5,12 +5,16 @@ import nl.hearteye.elearning.data.model.Course
 
 object CourseMapper {
     fun map(entity: CourseEntity, language: String): Course {
+        val title = entity.title[language] ?: entity.title["eng"] ?: "Untitled"
+        val description = entity.description[language] ?: entity.description["eng"] ?: "No description available"
+
         return Course(
             id = entity.id,
-            title = entity.title[language] ?: "Untitled",
-            description = entity.description[language] ?: "No description available",
+            title = title,
+            description = description,
             duration = entity.durationInMinutes,
-            createdAt = entity.createdAt
+            createdAt = entity.createdAt,
+            imageLocation = entity.imageLocation
         )
     }
 }

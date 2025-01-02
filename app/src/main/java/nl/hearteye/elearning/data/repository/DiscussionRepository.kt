@@ -3,6 +3,7 @@ package nl.hearteye.elearning.data.repository
 import nl.hearteye.elearning.data.api.DiscussionService
 import nl.hearteye.elearning.data.mapper.DiscussionDetailMapper
 import nl.hearteye.elearning.data.mapper.DiscussionMapper
+import nl.hearteye.elearning.data.model.Comment
 import nl.hearteye.elearning.data.model.Discussion
 import nl.hearteye.elearning.data.model.DiscussionDetail
 import nl.hearteye.elearning.data.model.DiscussionResponse
@@ -30,4 +31,8 @@ class DiscussionRepository @Inject constructor(
         return discussionService.deleteDiscussion(discussionId)
     }
 
+    suspend fun createComment(discussionId: String, comment: Comment): Response<Unit> {
+        val commentEntity = DiscussionDetailMapper.mapComment(comment)
+        return discussionService.createComment(discussionId, commentEntity)
+    }
 }

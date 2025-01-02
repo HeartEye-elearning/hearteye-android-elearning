@@ -1,5 +1,6 @@
 package nl.hearteye.elearning.data.api
 
+import nl.hearteye.elearning.data.entity.CommentEntity
 import nl.hearteye.elearning.data.entity.DiscussionDetailEntity
 import nl.hearteye.elearning.data.entity.DiscussionEntity
 import nl.hearteye.elearning.data.entity.DiscussionResponseEntity
@@ -32,5 +33,11 @@ interface DiscussionService {
     @DELETE("forum-service/v1/forum/{id}")
     suspend fun deleteDiscussion(
         @Path("id") id: String
+    ): Response<Unit>
+
+    @POST("forum-service/v1/forum/{id}/comment")
+    suspend fun createComment(
+        @Path("id") discussionId: String,
+        @Body comment: CommentEntity
     ): Response<Unit>
 }
