@@ -2,13 +2,20 @@ package nl.hearteye.elearning.ui.components.comments
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -21,60 +28,128 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import nl.hearteye.elearning.data.model.Comment
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
-fun CommentInput(onAddComment: (String) -> Unit) {
+fun CommentInput(
+    onAddComment: (String) -> Unit,
+    selectedComment: Comment?,
+    onClearSelectedComment: () -> Unit
+) {
     var commentText = remember { mutableStateOf(TextFieldValue()) }
 
-    Row {
-        Box(
-            modifier = Modifier
-                .shadow(
-                    elevation = 4.dp,
-                    shape = RoundedCornerShape(8.dp),
-                    clip = false
-                )
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.White)
-        ) {
-            TextField(
-                value = commentText.value,
-                onValueChange = { commentText.value = it },
-                textStyle = typography.bodyMedium,
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                ),
-                placeholder = {
-                    Text(text = "Enter your comment", style = typography.bodyMedium.copy(color = Color.Gray))
+    Column {
+        selectedComment?.let {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                    .background(Color.Gray)
+                    .padding(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Replying to ${it.id ?: ""}",
+                        style = typography.bodyMedium.copy(color = Color.White)
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        onClick = { onClearSelectedComment() },
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear",
+                            tint = Color.White
+                        )
+                    }
                 }
-            )
-
+            }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        IconButton(
-            onClick = {
-                onAddComment(commentText.value.text)
-                commentText.value = TextFieldValue()
-            },
-            modifier = Modifier
-                .size(32.dp)
-                .background(ForegroundPrimary, shape = RoundedCornerShape(8.dp))
+        Row(
+            modifier = Modifier.height(56.dp)
         ) {
-            Icon(
-                painter = painterResource(id = android.R.drawable.ic_menu_upload),
-                contentDescription = "Upload",
-                tint = Color.White // Icon color
-            )
+            Box(
+                modifier = Modifier
+                    .height(48.dp)
+                    .shadow(
+                        elevation = 4.dp,
+                        shape = if (selectedComment != null) RoundedCornerShape(
+                            bottomStart = 8.dp,
+                            bottomEnd = 8.dp
+                        ) else RoundedCornerShape(8.dp),
+                        clip = false
+                    )
+                    .clip(
+                        if (selectedComment != null) RoundedCornerShape(
+                            bottomStart = 8.dp,
+                            bottomEnd = 8.dp
+                        ) else RoundedCornerShape(8.dp)
+                    )
+                    .background(Color.White)
+            ) {
+                TextField(
+                    value = commentText.value,
+                    onValueChange = { commentText.value = it },
+                    textStyle = typography.bodyMedium,
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                    ),
+                    placeholder = {
+                        Text(
+                            text = "Enter your comment",
+                            style = typography.bodyMedium.copy(color = Color.Gray)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(horizontal = 12.dp),
+                    maxLines = 10,
+                    singleLine = false
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Box(
+                modifier = Modifier
+                    .height(48.dp)
+                    .shadow(
+                        elevation = 4.dp,
+                        shape = RoundedCornerShape(8.dp),
+                        clip = false
+                    )
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.White)
+            ) {
+                IconButton(
+                    onClick = {
+                        onAddComment(commentText.value.text)
+                        commentText.value = TextFieldValue()
+                    },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(ForegroundPrimary, shape = RoundedCornerShape(8.dp))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowUpward,
+                        contentDescription = "Upload",
+                        tint = Color.White
+                    )
+                }
+            }
         }
     }
 }
+
+

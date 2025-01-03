@@ -43,7 +43,6 @@ fun DiscussionsScreen(
 
     val selectedDiscussionId = remember { mutableStateOf<String?>(null) }
 
-    val commentText = remember { mutableStateOf("") }
 
     LaunchedEffect(searchQuery) {
         discussionViewModel.getDiscussions(page = 0, search = searchQuery)
@@ -107,9 +106,7 @@ fun DiscussionsScreen(
                                     user = user,
                                     postTime = discussion.createdAt,
                                     postTitle = discussion.title,
-                                    postContent = if (isExpanded) discussion.content else discussion.content.take(
-                                        100
-                                    ),
+                                    postContent = if (isExpanded) discussion.content else discussion.content.take(100),
                                     ecgImageResId = R.drawable.ecg_scan,
                                     discussionId = discussion.id,
                                     isExpanded = isExpanded,
@@ -152,7 +149,7 @@ fun DiscussionsScreen(
             CommentsOverlay(
                 discussionDetail = discussionDetail,
                 onClose = { selectedDiscussionId.value = null },
-                onAddComment = { commentText ->
+                onAddComment = { commentText, comment ->
                     selectedDiscussionId.value?.let { discussionId ->
                         discussionViewModel.createComment(discussionId, commentText)
                     }

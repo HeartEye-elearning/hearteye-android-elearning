@@ -1,5 +1,6 @@
 package nl.hearteye.elearning.ui.components.comments
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -20,7 +21,7 @@ import nl.hearteye.elearning.ui.theme.typography
 
 
 @Composable
-fun Comment(comment: Comment) {
+fun Comment(comment: Comment, onRespondClick: (Comment) -> Unit) {
     val user = remember { mutableStateOf<User?>(null) }
     val discussionViewModel: DiscussionViewModel = hiltViewModel()
 
@@ -55,10 +56,10 @@ fun Comment(comment: Comment) {
     )
     Text(
         text = "Respond",
-        modifier = Modifier.padding(top = 4.dp),
+        modifier = Modifier
+            .padding(top = 4.dp)
+            .clickable { onRespondClick(comment) },
         style = typography.bodySmall,
         color = ForegroundPrimary
     )
 }
-
-
