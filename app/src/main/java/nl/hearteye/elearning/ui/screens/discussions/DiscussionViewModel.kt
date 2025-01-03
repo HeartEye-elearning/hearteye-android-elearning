@@ -111,6 +111,7 @@ class DiscussionViewModel @Inject constructor(
                 val response = discussionRepository.deleteDiscussion(discussionId)
                 if (response.isSuccessful) {
                     _deleteResult.value = Result.success(true)
+                    getDiscussions()
                 } else {
                     _deleteResult.value = Result.failure(Exception("Failed to delete"))
                 }
@@ -133,7 +134,7 @@ class DiscussionViewModel @Inject constructor(
         }
     }
 
-    fun createComment(discussionId: String, commentText: String) {
+    fun createComment(discussionId: String, commentText: String, parentCommentId: String? = null) {
         _errorMessage.value = null
         viewModelScope.launch {
             try {
@@ -141,16 +142,19 @@ class DiscussionViewModel @Inject constructor(
                     content = commentText,
                     id = null,
                     userId = null,
-                    parentCommentId = null,
+                    parentCommentId = parentCommentId,
                     level = null,
                     createdAt = null,
-                    updatedAt = null,
+                    updatedAt = null
                 )
                 discussionRepository.createComment(discussionId, comment)
+
+                getDiscussionById(discussionId)
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to add comment: ${e.message}"
             }
         }
     }
+
 }
 

@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,7 +36,7 @@ import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
 fun CommentInput(
-    onAddComment: (String) -> Unit,
+    onAddComment: (String, String?) -> Unit,
     selectedComment: Comment?,
     onClearSelectedComment: () -> Unit
 ) {
@@ -74,11 +74,14 @@ fun CommentInput(
         }
 
         Row(
-            modifier = Modifier.height(56.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
         ) {
             Box(
                 modifier = Modifier
                     .height(48.dp)
+                    .weight(1f)
                     .shadow(
                         elevation = 4.dp,
                         shape = if (selectedComment != null) RoundedCornerShape(
@@ -119,11 +122,12 @@ fun CommentInput(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.width(12.dp))
 
             Box(
                 modifier = Modifier
                     .height(48.dp)
+                    .width(48.dp)
                     .shadow(
                         elevation = 4.dp,
                         shape = RoundedCornerShape(8.dp),
@@ -134,11 +138,11 @@ fun CommentInput(
             ) {
                 IconButton(
                     onClick = {
-                        onAddComment(commentText.value.text)
+                        onAddComment(commentText.value.text, selectedComment?.id)
                         commentText.value = TextFieldValue()
                     },
                     modifier = Modifier
-                        .size(48.dp)
+                        .fillMaxSize()
                         .background(ForegroundPrimary, shape = RoundedCornerShape(8.dp))
                 ) {
                     Icon(
@@ -151,5 +155,6 @@ fun CommentInput(
         }
     }
 }
+
 
 

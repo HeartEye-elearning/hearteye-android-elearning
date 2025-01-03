@@ -33,33 +33,38 @@ fun Comment(comment: Comment, onRespondClick: (Comment) -> Unit) {
     }
 
     Row(
-        modifier = Modifier.padding(top = 8.dp),
+        modifier = Modifier
+            .padding(top = 12.dp)
     ) {
         user.value?.let {
             Text(
                 text = "${it.firstName} ${it.lastName}",
-                style = typography.titleSmall
+                style = typography.titleSmall,
             )
         }
 
         Text(
             text = getTimeAgo(comment.createdAt.toString()),
             style = typography.bodySmall,
-            color = Color.Gray
+            color = Color.Gray,
+            modifier = Modifier.padding(start = 8.dp)
         )
     }
 
     Text(
         text = comment.content.toString(),
-        modifier = Modifier.padding(top = 8.dp),
+        modifier = Modifier
+            .padding(top = 6.dp),
         style = typography.bodyMedium
     )
+
     Text(
         text = "Respond",
         modifier = Modifier
-            .padding(top = 4.dp)
+            .padding(top = 8.dp)
             .clickable { onRespondClick(comment) },
         style = typography.bodySmall,
         color = ForegroundPrimary
     )
 }
+

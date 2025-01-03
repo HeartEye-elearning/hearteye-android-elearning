@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,7 +43,6 @@ fun DiscussionsScreen(
     val currentPage = remember { mutableStateOf(0) }
 
     val selectedDiscussionId = remember { mutableStateOf<String?>(null) }
-
 
     LaunchedEffect(searchQuery) {
         discussionViewModel.getDiscussions(page = 0, search = searchQuery)
@@ -149,11 +149,12 @@ fun DiscussionsScreen(
             CommentsOverlay(
                 discussionDetail = discussionDetail,
                 onClose = { selectedDiscussionId.value = null },
-                onAddComment = { commentText, comment ->
+                onAddComment = { commentText, parentCommentId ->
                     selectedDiscussionId.value?.let { discussionId ->
-                        discussionViewModel.createComment(discussionId, commentText)
+                        discussionViewModel.createComment(discussionId, commentText, parentCommentId)
                     }
-                }
+                },
+                modifier = Modifier.align(Alignment.BottomCenter)
             )
         }
     }

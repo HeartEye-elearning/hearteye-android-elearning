@@ -29,7 +29,8 @@ import nl.hearteye.elearning.ui.theme.typography
 fun CommentsOverlay(
     discussionDetail: DiscussionDetail?,
     onClose: () -> Unit,
-    onAddComment: (String, Comment?) -> Unit
+    onAddComment: (String, String?) -> Unit,
+    modifier: Modifier
 ) {
     val selectedComment = remember { mutableStateOf<Comment?>(null) }
 
@@ -38,7 +39,7 @@ fun CommentsOverlay(
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.5f))
             .clickable(enabled = true) { onClose() }
-            .wrapContentSize(Alignment.Center)
+//            .wrapContentSize(Alignment.Center)
     ) {
         Box(
             modifier = Modifier
@@ -86,8 +87,8 @@ fun CommentsOverlay(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 CommentInput(
-                    onAddComment = { text ->
-                        onAddComment(text, selectedComment.value)
+                    onAddComment = { text, parentId ->
+                        onAddComment(text, parentId)
                         selectedComment.value = null
                     },
                     selectedComment = selectedComment.value,

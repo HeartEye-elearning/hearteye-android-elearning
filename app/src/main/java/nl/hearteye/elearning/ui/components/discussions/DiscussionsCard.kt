@@ -134,7 +134,7 @@ fun DiscussionsCard(
                             color = ForegroundPrimary,
                             modifier = Modifier
                                 .weight(1f)
-                                .clickable { onCommentsClick() }  // Trigger overlay
+                                .clickable { onCommentsClick() }
                         )
                     }
 

@@ -31,16 +31,17 @@ fun SubComment(subcomment: Comment) {
 
     user.value?.let {
 
-        Row(modifier = Modifier.padding(top = 8.dp)) {
+        Row(modifier = Modifier.padding(top = 12.dp)) {
             Text(
                 text = "${it.firstName} ${it.lastName}",
-
-                style = typography.titleSmall
+                style = typography.titleSmall,
+                modifier = Modifier.padding(start = 32.dp)
             )
             Text(
                 text = getTimeAgo(subcomment.createdAt.toString()),
                 style = typography.bodySmall,
-                color = Color.Gray
+                color = Color.Gray,
+                modifier = Modifier.padding(start = 8.dp)
             )
         }
     }
@@ -48,8 +49,8 @@ fun SubComment(subcomment: Comment) {
     Text(
         text = subcomment.content.toString(),
         modifier = Modifier
-            .padding(top = 8.dp)
-            .padding(start = 16.dp),
+            .padding(top = 6.dp)
+            .padding(start = 32.dp, end = 16.dp, bottom = 8.dp),
         style = typography.bodyMedium
     )
 }
