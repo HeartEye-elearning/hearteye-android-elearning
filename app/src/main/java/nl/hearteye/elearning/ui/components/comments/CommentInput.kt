@@ -55,7 +55,7 @@ fun CommentInput(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Replying to ${it.id ?: ""}",
+                        text = "Replying to '${it.content ?: ""}'",
                         style = typography.bodyMedium.copy(color = Color.White)
                     )
                     Spacer(modifier = Modifier.weight(1f))

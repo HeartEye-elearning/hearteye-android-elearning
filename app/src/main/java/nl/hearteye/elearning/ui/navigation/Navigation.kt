@@ -70,7 +70,7 @@ fun Navigation(navController: NavHostController) {
         }
     ) { innerPadding ->
         val startDestination = when {
-            isUserLoggedIn && !isOnboardingCompleted -> NavRoutes.HOME.route
+            isUserLoggedIn && isOnboardingCompleted -> NavRoutes.HOME.route
             isUserLoggedIn -> NavRoutes.ONBOARDING.route
             else -> NavRoutes.PRELOGIN.route
         }

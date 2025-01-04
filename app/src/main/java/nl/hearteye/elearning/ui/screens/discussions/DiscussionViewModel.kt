@@ -40,7 +40,7 @@ class DiscussionViewModel @Inject constructor(
 
     fun getDiscussions(
         page: Int = 0,
-        size: Int = 2,
+        size: Int = 1,
         creator: Boolean = false,
         search: String? = null
     ) {

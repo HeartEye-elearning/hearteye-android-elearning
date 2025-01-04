@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -23,7 +22,6 @@ import androidx.navigation.NavController
 import nl.hearteye.elearning.R
 import nl.hearteye.elearning.ui.components.buttons.PlusButton
 import nl.hearteye.elearning.ui.components.comments.CommentsOverlay
-import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.components.searchbar.SearchBar
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
@@ -45,17 +43,13 @@ fun DiscussionsScreen(
 
     val selectedDiscussionId = remember { mutableStateOf<String?>(null) }
 
+    // Fetch discussions when search query changes
     LaunchedEffect(searchQuery) {
+        currentPage.value = 0  // Reset to page 0 for new search
         discussionViewModel.getDiscussions(page = 0, search = searchQuery)
     }
 
-    LaunchedEffect(Unit) {
-        if (discussions.isEmpty() && errorMessage == null) {
-            discussionViewModel.getDiscussions()
-            discussionViewModel.fetchCurrentUser()
-        }
-    }
-
+    // Lazy loading implementation
     val onScrollReachedEnd = {
         val firstVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.firstOrNull()?.index
         val totalItems = listState.layoutInfo.totalItemsCount
@@ -79,7 +73,7 @@ fun DiscussionsScreen(
                 value = searchQuery,
                 onValueChange = { query ->
                     discussionViewModel._searchQuery.value = query
-                    currentPage.value = 0
+                    currentPage.value = 0  // Reset page when search query changes
                     discussionViewModel.getDiscussions(page = 0, search = query)
                 },
                 modifier = Modifier.padding(16.dp)
