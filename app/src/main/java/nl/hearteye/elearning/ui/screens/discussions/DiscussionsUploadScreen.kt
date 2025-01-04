@@ -10,14 +10,19 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.error.ErrorView
+import nl.hearteye.elearning.ui.navigation.NavRoutes
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DiscussionsUploadScreen(discussionViewModel: DiscussionViewModel = hiltViewModel()) {
+fun DiscussionsUploadScreen(
+    discussionViewModel: DiscussionViewModel = hiltViewModel(),
+    navController: NavController
+) {
     var postTitle by remember { mutableStateOf("") }
     var postDescription by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("") }
@@ -35,14 +40,13 @@ fun DiscussionsUploadScreen(discussionViewModel: DiscussionViewModel = hiltViewM
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.spacedBy(48.dp)
         ) {
 
             if (errorMessage != null) {
                 ErrorView(
                     message = errorMessage!!,
                     onRetry = {
-
                     }
                 )
             }
@@ -53,19 +57,10 @@ fun DiscussionsUploadScreen(discussionViewModel: DiscussionViewModel = hiltViewM
             ) {
                 OutlinedButton(
                     onClick = {
-                        // No PDF logic here anymore
                     },
                     text = "Upload ECG"
                 )
             }
-
-            // Remove the logic for displaying the file
-            // pdfUri?.let {
-            //     Text(
-            //         "Selected file: ${File(it.path).name}",
-            //         style = MaterialTheme.typography.bodySmall
-            //     )
-            // }
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Post Title", style = MaterialTheme.typography.titleSmall)
@@ -172,12 +167,16 @@ fun DiscussionsUploadScreen(discussionViewModel: DiscussionViewModel = hiltViewM
                     if (postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory.isNotEmpty()) {
                         discussionViewModel.createDiscussion(
                             postTitle, postDescription, selectedCategory
-                        )
+                        ) {
+                            navController.navigate(NavRoutes.DISCUSSIONS.route)
+                        }
                     }
                 },
                 text = "Post",
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory.isNotEmpty()
             )
         }
     }
 }
+

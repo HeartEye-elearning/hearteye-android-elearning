@@ -8,8 +8,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import nl.hearteye.elearning.data.model.Course
 import nl.hearteye.elearning.data.model.DiscussionResponse
+import nl.hearteye.elearning.data.model.User
 import nl.hearteye.elearning.data.repository.CourseRepository
 import nl.hearteye.elearning.data.repository.DiscussionRepository
+import nl.hearteye.elearning.data.repository.UserRepository
 import nl.hearteye.elearning.data.store.DataStoreManager
 import javax.inject.Inject
 
@@ -18,6 +20,7 @@ class HomeViewModel @Inject constructor(
     private val courseRepository: CourseRepository,
     private val dataStoreManager: DataStoreManager,
     private val discussionRepository: DiscussionRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val _courses = mutableStateOf<List<Course>>(emptyList())
@@ -31,6 +34,9 @@ class HomeViewModel @Inject constructor(
 
     private val _errorMessage = mutableStateOf<String?>(null)
     val errorMessage: State<String?> = _errorMessage
+
+    private val _currentUser = mutableStateOf<User?>(null)
+    val currentUser: State<User?> = _currentUser
 
     fun getCourses() {
         _isLoading.value = true
@@ -71,6 +77,17 @@ class HomeViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An unknown error occurred"
+            }
+        }
+    }
+
+    fun fetchCurrentUser() {
+        viewModelScope.launch {
+            try {
+                val user = userRepository.getCurrentUser()
+                _currentUser.value = user
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to fetch current user: ${e.message}"
             }
         }
     }

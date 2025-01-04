@@ -31,10 +31,12 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
     val discussions = homeViewModel.discussions.value
     val isLoading = homeViewModel.isLoading.value
     val errorMessage = homeViewModel.errorMessage.value
+    val currentUser = homeViewModel.currentUser.value
 
     LaunchedEffect(Unit) {
         homeViewModel.getCourses()
         homeViewModel.getDiscussions()
+        homeViewModel.fetchCurrentUser()
     }
 
     Column(
@@ -45,7 +47,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Welcome, John!",
+            text = "Welcome, ${currentUser?.firstName}",
             style = typography.titleLarge,
             fontWeight = FontWeight.Bold
         )

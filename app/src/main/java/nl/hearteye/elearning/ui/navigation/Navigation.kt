@@ -106,7 +106,7 @@ fun Navigation(navController: NavHostController) {
             }
             composable(NavRoutes.DISCUSSIONS.route) { DiscussionsScreen(navController = navController) }
             composable(NavRoutes.DISCUSSIONS_UPLOAD.route) {
-                DiscussionsUploadScreen(discussionViewModel = hiltViewModel())
+                DiscussionsUploadScreen(discussionViewModel = hiltViewModel(), navController = navController)
             }
             composable(NavRoutes.MORE.route) { MoreScreen() }
             composable(

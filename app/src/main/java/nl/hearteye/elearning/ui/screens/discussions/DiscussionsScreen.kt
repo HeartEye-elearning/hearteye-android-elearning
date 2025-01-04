@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -55,6 +56,23 @@ fun DiscussionsScreen(
         }
     }
 
+    val onScrollReachedEnd = {
+        val firstVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.firstOrNull()?.index
+        val totalItems = listState.layoutInfo.totalItemsCount
+
+        if (firstVisibleItemIndex != null && firstVisibleItemIndex + 3 >= totalItems && !isLoading.value) {
+            isLoading.value = true
+            currentPage.value++
+            discussionViewModel.getDiscussions(page = currentPage.value)
+        }
+    }
+
+    LaunchedEffect(discussions) {
+        if (discussions.isNotEmpty()) {
+            isLoading.value = false
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             SearchBar(
@@ -72,28 +90,14 @@ fun DiscussionsScreen(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxSize()
-            ) {
-                if (discussions.isEmpty() && errorMessage == null) {
-                    item {
-                        CircularProgressIndicator(
-                            color = ForegroundPrimary,
-                            modifier = Modifier.padding(top = 16.dp)
-                        )
-                    }
-                }
-
-                errorMessage?.let {
-                    item {
-                        ErrorView(message = "Error: $it") { }
-                    }
-                }
-
-                if (discussions.isNotEmpty()) {
+                    .onGloballyPositioned {
+                        onScrollReachedEnd()
+                    },
+                content = {
                     items(discussions) { discussionResponse ->
                         discussionResponse.content.forEach { discussion ->
                             val user = userCache[discussion.userId]
-                            val currentUser =
-                                userCache[discussionViewModel.userCache.value.keys.firstOrNull()]
+                            val currentUser = userCache[discussionViewModel.userCache.value.keys.firstOrNull()]
 
                             if (user == null) {
                                 LaunchedEffect(discussion.userId) {
@@ -125,17 +129,17 @@ fun DiscussionsScreen(
                             }
                         }
                     }
-                }
 
-                if (isLoading.value) {
-                    item {
-                        CircularProgressIndicator(
-                            color = ForegroundPrimary,
-                            modifier = Modifier.padding(16.dp)
-                        )
+                    if (isLoading.value) {
+                        item {
+                            CircularProgressIndicator(
+                                color = ForegroundPrimary,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
                     }
-                }
-            }
+                },
+            )
         }
 
         PlusButton(
@@ -159,3 +163,4 @@ fun DiscussionsScreen(
         }
     }
 }
+

@@ -40,7 +40,7 @@ class DiscussionViewModel @Inject constructor(
 
     fun getDiscussions(
         page: Int = 0,
-        size: Int = 10,
+        size: Int = 2,
         creator: Boolean = false,
         search: String? = null
     ) {
@@ -63,13 +63,14 @@ class DiscussionViewModel @Inject constructor(
         }
     }
 
-    fun createDiscussion(title: String, content: String, category: String) {
+    fun createDiscussion(title: String, content: String, category: String, onSuccess: () -> Unit) {
         _errorMessage.value = null
         val discussion = Discussion(title, content, category)
 
         viewModelScope.launch {
             try {
                 discussionRepository.createDiscussion(discussion)
+                onSuccess()
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to post discussion: ${e.message}"
             }
@@ -82,6 +83,9 @@ class DiscussionViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = userRepository.getUser(userId)
+                _userCache.value = _userCache.value.toMutableMap().apply {
+                    put(userId, user)
+                }
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to fetch user: ${e.message}"
             }
