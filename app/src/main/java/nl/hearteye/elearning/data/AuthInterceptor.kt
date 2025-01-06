@@ -20,11 +20,8 @@ class AuthInterceptor @Inject constructor(
 
         if (System.currentTimeMillis() > tokenExpirationTime) {
             if (System.currentTimeMillis() > refreshTokenExpirationTime) {
-                // If both tokens are expired, log the user out
                 Log.e("AuthInterceptor", "Both auth token and refresh token are expired")
                 clearUserSession()
-                // Return an unauthorized error response (or handle it as per your app's flow)
-                throw Exception("Authentication expired. Please log in again.")
             } else {
                 token = refreshToken
             }
