@@ -18,8 +18,8 @@ class DiscussionRepository @Inject constructor(
         discussionService.createDiscussion(entity)
     }
 
-    suspend fun getDiscussions(page: Int, size: Int, creator: Boolean = false, search: String? = null): DiscussionResponse {
-        val responseEntity = discussionService.getDiscussions(page, size, creator, search)
+    suspend fun getDiscussions(page: Int, size: Int, creator: Boolean = false, search: String? = null, category: String? = null): DiscussionResponse {
+        val responseEntity = discussionService.getDiscussions(page, size, creator, search, category)
         return DiscussionMapper.mapToModel(responseEntity)
     }
     suspend fun getDiscussionById(id: String): DiscussionDetail {

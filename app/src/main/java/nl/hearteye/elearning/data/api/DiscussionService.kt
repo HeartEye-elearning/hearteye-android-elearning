@@ -22,7 +22,8 @@ interface DiscussionService {
         @Query("page") page: Int,
         @Query("size") size: Int,
         @Query("creator") creator: Boolean? = null,
-        @Query("search") search: String? = null
+        @Query("search") search: String? = null,
+        @Query("category") category: String? = null,
     ): DiscussionResponseEntity
 
     @GET("forum-service/v1/forum/{id}")

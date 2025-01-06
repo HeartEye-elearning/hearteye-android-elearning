@@ -4,12 +4,30 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import android.content.SharedPreferences
 import android.util.Log
+import javax.inject.Inject
 
-class AuthInterceptor(private val sharedPreferences: SharedPreferences) : Interceptor {
+class AuthInterceptor @Inject constructor(
+    private val sharedPreferences: SharedPreferences
+) : Interceptor {
+
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = sharedPreferences.getString("auth_token", null)
-        if (token == null) {
-            Log.e("AuthInterceptor", "No auth token found")
+        var token = sharedPreferences.getString("auth_token", null)
+        val refreshToken = sharedPreferences.getString("refresh_token", null)
+
+
+        val tokenExpirationTime = sharedPreferences.getLong("token_expiration", 0L)
+        val refreshTokenExpirationTime = sharedPreferences.getLong("refresh_token_expiration", 0L)
+
+        if (System.currentTimeMillis() > tokenExpirationTime) {
+            if (System.currentTimeMillis() > refreshTokenExpirationTime) {
+                // If both tokens are expired, log the user out
+                Log.e("AuthInterceptor", "Both auth token and refresh token are expired")
+                clearUserSession()
+                // Return an unauthorized error response (or handle it as per your app's flow)
+                throw Exception("Authentication expired. Please log in again.")
+            } else {
+                token = refreshToken
+            }
         }
 
         val request = chain.request().newBuilder().apply {
@@ -20,5 +38,16 @@ class AuthInterceptor(private val sharedPreferences: SharedPreferences) : Interc
 
         return chain.proceed(request)
     }
+
+    private fun clearUserSession() {
+        sharedPreferences.edit()
+            .remove("auth_token")
+            .remove("refresh_token")
+            .remove("is_logged_in")
+            .remove("token_expiration")
+            .remove("refresh_token_expiration")
+            .apply()
+    }
 }
+
 

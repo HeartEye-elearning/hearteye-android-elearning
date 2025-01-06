@@ -27,7 +27,7 @@ fun PlusButton(navController: NavController, modifier: Modifier) {
     ) {
         Surface(
             modifier = Modifier
-                .size(40.dp)
+                .size(56.dp)
                 .background(ForegroundPrimary, shape = MaterialTheme.shapes.small)
                 .padding(6.dp),
             shape = MaterialTheme.shapes.small,

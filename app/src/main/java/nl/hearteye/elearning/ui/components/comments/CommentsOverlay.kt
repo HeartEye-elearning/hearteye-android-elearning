@@ -39,7 +39,6 @@ fun CommentsOverlay(
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.5f))
             .clickable(enabled = true) { onClose() }
-//            .wrapContentSize(Alignment.Center)
     ) {
         Box(
             modifier = Modifier

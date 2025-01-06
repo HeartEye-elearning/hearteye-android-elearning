@@ -42,13 +42,16 @@ class DiscussionViewModel @Inject constructor(
         page: Int = 0,
         size: Int = 1,
         creator: Boolean = false,
-        search: String? = null
+        search: String? = null,
+        category: String? = null,
     ) {
         _errorMessage.value = null
         viewModelScope.launch {
             try {
+                val uppercaseCategory = category?.uppercase()
+
                 val discussionsResponse =
-                    discussionRepository.getDiscussions(page, size, creator, search)
+                    discussionRepository.getDiscussions(page, size, creator, search, uppercaseCategory)
 
                 if (search != null) {
                     _discussions.value = listOf(discussionsResponse)
@@ -62,6 +65,8 @@ class DiscussionViewModel @Inject constructor(
             }
         }
     }
+
+
 
     fun createDiscussion(title: String, content: String, category: String, onSuccess: () -> Unit) {
         _errorMessage.value = null

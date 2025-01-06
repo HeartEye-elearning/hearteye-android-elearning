@@ -52,9 +52,14 @@ class LoginViewModel @Inject constructor(
 
     private fun saveUserLoginState(loginResponse: KeycloakLogin?) {
         loginResponse?.let {
+            val expirationTime = System.currentTimeMillis() + (it.expiresIn * 1000L)
+            val expirationTimeRefresh = System.currentTimeMillis() + (it.refreshExpiresIn * 1000L)
             sharedPreferences.edit()
                 .putString("auth_token", it.accessToken)
+                .putString("refresh_token", it.refreshToken)
                 .putBoolean("is_logged_in", true)
+                .putLong("token_expiration", expirationTime)
+                .putLong("refresh_token_expiration", expirationTimeRefresh)
                 .apply()
         }
     }
