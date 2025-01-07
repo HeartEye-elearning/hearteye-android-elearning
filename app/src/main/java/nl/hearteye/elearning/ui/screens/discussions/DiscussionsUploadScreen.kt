@@ -1,3 +1,6 @@
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -16,6 +20,8 @@ import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.navigation.NavRoutes
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionViewModel
+import nl.hearteye.elearning.ui.utils.uriToFile
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,11 +33,23 @@ fun DiscussionsUploadScreen(
     var postDescription by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+    var selectedPdfFile by remember { mutableStateOf<File?>(null) }
     val categories = listOf("FINDINGS", "INTERPRETATION", "TROUBLESHOOTING")
 
     val scrollState = rememberScrollState()
 
     val errorMessage by discussionViewModel.errorMessage
+
+    val context = LocalContext.current
+
+    val pickPdfLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            selectedPdfFile = uriToFile(context, it)
+            if (selectedPdfFile == null || !selectedPdfFile!!.exists()) {
+                Log.e("DiscussionsUploadScreen", "Invalid file selected.")
+            }
+        }
+    }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -46,8 +64,7 @@ fun DiscussionsUploadScreen(
             if (errorMessage != null) {
                 ErrorView(
                     message = errorMessage!!,
-                    onRetry = {
-                    }
+                    onRetry = {}
                 )
             }
 
@@ -56,9 +73,16 @@ fun DiscussionsUploadScreen(
                 horizontalArrangement = Arrangement.Start
             ) {
                 OutlinedButton(
-                    onClick = {
-                    },
+                    onClick = { pickPdfLauncher.launch("application/pdf") },
                     text = "Upload ECG"
+                )
+            }
+
+            selectedPdfFile?.let {
+                Text(
+                    text = "Selected File: ${it.name}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 8.dp)
                 )
             }
 
@@ -164,9 +188,9 @@ fun DiscussionsUploadScreen(
 
             RegularButton(
                 onClick = {
-                    if (postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory.isNotEmpty()) {
+                    if (postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory.isNotEmpty() && selectedPdfFile != null) {
                         discussionViewModel.createDiscussion(
-                            postTitle, postDescription, selectedCategory
+                            postTitle, postDescription, selectedCategory, selectedPdfFile!!
                         ) {
                             navController.navigate(NavRoutes.DISCUSSIONS.route)
                         }
@@ -174,9 +198,8 @@ fun DiscussionsUploadScreen(
                 },
                 text = "Post",
                 modifier = Modifier.fillMaxWidth(),
-                enabled = postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory.isNotEmpty()
+                enabled = postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory.isNotEmpty() && selectedPdfFile != null
             )
         }
     }
 }
-

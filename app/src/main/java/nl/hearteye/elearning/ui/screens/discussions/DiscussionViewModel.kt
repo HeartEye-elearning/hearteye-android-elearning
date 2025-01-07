@@ -1,11 +1,13 @@
 package nl.hearteye.elearning.ui.screens.discussions
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import nl.hearteye.elearning.data.model.Base64Content
 import nl.hearteye.elearning.data.model.Comment
 import nl.hearteye.elearning.data.model.Discussion
 import nl.hearteye.elearning.data.model.DiscussionDetail
@@ -13,6 +15,8 @@ import nl.hearteye.elearning.data.model.DiscussionResponse
 import nl.hearteye.elearning.data.model.User
 import nl.hearteye.elearning.data.repository.DiscussionRepository
 import nl.hearteye.elearning.data.repository.UserRepository
+import nl.hearteye.elearning.ui.utils.convertPdfToBase64
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -68,9 +72,40 @@ class DiscussionViewModel @Inject constructor(
 
 
 
-    fun createDiscussion(title: String, content: String, category: String, onSuccess: () -> Unit) {
+    fun createDiscussion(
+        title: String,
+        content: String,
+        category: String,
+        pdfFile: File,
+        onSuccess: () -> Unit
+    ) {
         _errorMessage.value = null
-        val discussion = Discussion(title, content, category)
+
+        if (!pdfFile.exists()) {
+            _errorMessage.value = "PDF file does not exist."
+            return
+        }
+        if (!pdfFile.canRead()) {
+            _errorMessage.value = "Cannot read the PDF file."
+            return
+        }
+
+        val base64String = convertPdfToBase64(pdfFile) ?: ""
+        if (base64String.isEmpty()) {
+            _errorMessage.value = "Failed to encode the file to Base64."
+            return
+        }
+
+        val base64Size = base64String.length
+        Log.d("createDiscussion", "Base64 string size: $base64Size bytes")
+
+        if (base64Size > 10485760) {
+            _errorMessage.value = "The Base64 string exceeds the 10 MB limit."
+            return
+        }
+
+        val base64Content = Base64Content(base64String, "application/pdf", pdfFile.name)
+        val discussion = Discussion(title, content, base64Content, category)
 
         viewModelScope.launch {
             try {

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
+import nl.hearteye.elearning.ui.components.popup.Popup
 import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
@@ -34,6 +37,8 @@ fun InformationPage(
     onStartQuiz: () -> Unit,
     isLastPage: Boolean
 ) {
+    val showQuizPopup = remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,14 +96,35 @@ fun InformationPage(
 
             if (isLastPage) {
                 RegularButton(
-                    onClick = onStartQuiz,
+                    onClick = { showQuizPopup.value = true },
                     text = "Start Quiz",
                     modifier = Modifier.weight(1f)
                 )
             }
         }
     }
+
+    if (showQuizPopup.value) {
+        Popup(
+            isVisible = showQuizPopup.value,
+            title = "Start the Quiz?",
+            text = "Are you ready to start the quiz? You will not be able to go back.",
+            confirmButtonText = "Start",
+            cancelButtonText = "Back",
+            onConfirm = {
+                onStartQuiz()
+                showQuizPopup.value = false
+            },
+            onCancel = {
+                showQuizPopup.value = false
+            },
+            onDismiss = {
+                showQuizPopup.value = false
+            }
+        )
+    }
 }
+
 
 
 

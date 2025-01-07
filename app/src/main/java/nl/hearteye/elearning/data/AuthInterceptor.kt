@@ -32,8 +32,15 @@ class AuthInterceptor @Inject constructor(
                 header("Authorization", "Bearer $it")
             }
         }.build()
-
-        return chain.proceed(request)
+        // Check if the request has a body and log it
+        val body = request.body
+        if (body != null) {
+            val buffer = okio.Buffer()
+            body.writeTo(buffer)
+            val bodyString = buffer.readUtf8()
+            Log.d("AuthInterceptor", "Request Body: $bodyString")  // Log the request body
+        }
+            return chain.proceed(request)
     }
 
     private fun clearUserSession() {

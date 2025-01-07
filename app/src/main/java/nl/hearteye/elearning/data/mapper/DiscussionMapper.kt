@@ -1,5 +1,6 @@
 package nl.hearteye.elearning.data.mapper
 
+import nl.hearteye.elearning.data.entity.Base64ContentEntity
 import nl.hearteye.elearning.data.entity.DiscussionContentEntity
 import nl.hearteye.elearning.data.entity.DiscussionEntity
 import nl.hearteye.elearning.data.entity.DiscussionResponseEntity
@@ -40,7 +41,12 @@ object DiscussionMapper {
         return DiscussionEntity(
             title = model.title,
             content = model.content,
-            category = model.category,
+            base64 = Base64ContentEntity(
+                base64 = model.base64Content.base64,
+                contentType = model.base64Content.contentType,
+                title = model.base64Content.title
+            ),
+            category = model.category
         )
     }
 }

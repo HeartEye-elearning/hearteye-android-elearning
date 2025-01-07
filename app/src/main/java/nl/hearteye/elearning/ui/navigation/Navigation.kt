@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import nl.hearteye.elearning.ui.components.navigation.navbar.NavBar
+import nl.hearteye.elearning.ui.components.popup.Popup
 import nl.hearteye.elearning.ui.components.topbar.TopBar
 import nl.hearteye.elearning.ui.screens.login.LoginScreen
 import nl.hearteye.elearning.ui.screens.login.LoginViewModel
@@ -39,23 +40,20 @@ fun Navigation(navController: NavHostController) {
     val isUserLoggedIn = loginViewModel.isUserLoggedIn()
     val isOnboardingCompleted = loginViewModel.isOnboardingCompleted.collectAsState(initial = false).value
 
+    val showPopup = remember { mutableStateOf(false) }
+
+    val onBackButtonClick = {
+        if (currentRoute == NavRoutes.COURSE_DETAIL.route) {
+            showPopup.value = true
+        }
+    }
+
     Scaffold(
         topBar = {
             if (currentRoute !in listOf(NavRoutes.LOGIN.route, NavRoutes.PRELOGIN.route, NavRoutes.ONBOARDING.route)) {
                 TopBar(
-                    showBackButton = currentRoute in listOf(
-                        NavRoutes.COURSE_DETAIL.route
-
-                    ),
-                    onBackButtonClick = {
-                        when (currentRoute) {
-                            NavRoutes.COURSE_DETAIL.route -> {
-                                navController.navigate(NavRoutes.COURSES.route) {
-                                    popUpTo(NavRoutes.COURSES.route) { inclusive = true }
-                                }
-                            }
-                        }
-                    }
+                    showBackButton = currentRoute in listOf(NavRoutes.COURSE_DETAIL.route),
+                    onBackButtonClick = onBackButtonClick
                 )
             }
         },
@@ -69,6 +67,7 @@ fun Navigation(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
+
         val startDestination = when {
             isUserLoggedIn && isOnboardingCompleted -> NavRoutes.HOME.route
             isUserLoggedIn -> NavRoutes.ONBOARDING.route
@@ -124,5 +123,28 @@ fun Navigation(navController: NavHostController) {
                 AnswerOverviewScreen(courseId = courseId, navController = navController)
             }
         }
+
+        if (showPopup.value) {
+            Popup(
+                isVisible = showPopup.value,
+                title = "Are you sure?",
+                text = "You will lose unsaved data. Do you want to go back?",
+                confirmButtonText = "Yes",
+                cancelButtonText = "No",
+                onConfirm = {
+                    navController.navigate(NavRoutes.COURSES.route) {
+                        popUpTo(NavRoutes.COURSES.route) { inclusive = true }
+                    }
+                    showPopup.value = false
+                },
+                onCancel = {
+                    showPopup.value = false
+                },
+                onDismiss = {
+                    showPopup.value = false
+                }
+            )
+        }
     }
 }
+
