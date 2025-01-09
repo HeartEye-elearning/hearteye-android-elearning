@@ -20,7 +20,6 @@ fun PdfViewer(pdfUrl: String, pageIndex: Int = 0) {
         pdfBitmap = renderPdfPage(context, pdfUrl, pageIndex)
     }
 
-    // When user clicks the image, toggle fullscreen
     pdfBitmap?.let { bitmap ->
         Image(
             bitmap = bitmap.asImageBitmap(),
@@ -28,16 +27,15 @@ fun PdfViewer(pdfUrl: String, pageIndex: Int = 0) {
             modifier = Modifier
                 .fillMaxSize()
                 .clickable {
-                    isFullScreen = true // Open the PDF in full-screen mode
+                    isFullScreen = true
                 }
         )
     }
 
-    // Full-screen view in landscape mode
     if (isFullScreen) {
         FullScreenPdfViewer(
             pdfUrl = pdfUrl,
-            onDismiss = { isFullScreen = false } // Close the full-screen view
+            onDismiss = { isFullScreen = false }
         )
     }
 }

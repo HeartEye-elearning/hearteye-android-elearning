@@ -67,7 +67,6 @@ fun CourseDetailScreen(
                 if (isCourseStarted.value && !hasCompletedInformationPages.value) {
                     val currentInformationPage =
                         courseDetail.informationPages.getOrNull(currentInformationPageIndex.intValue)
-                    Log.d("CourseDetail", "Image Locations: ${imageLocations.value}")
                     if (currentInformationPage != null) {
                         InformationPage(
                             title = courseDetail.title,

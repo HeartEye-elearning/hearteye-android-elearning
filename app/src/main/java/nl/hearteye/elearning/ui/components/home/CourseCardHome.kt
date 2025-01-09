@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import nl.hearteye.elearning.R
 import nl.hearteye.elearning.ui.theme.BackgroundBlue
 import nl.hearteye.elearning.ui.theme.ForegroundBlue
@@ -37,7 +38,8 @@ import nl.hearteye.elearning.ui.theme.typography
 fun CourseCardHome(
     title: String,
     time: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    image: String,
 ) {
     Card(
         modifier = Modifier
@@ -65,11 +67,10 @@ fun CourseCardHome(
                     .background(Color.White)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.quiz_cover),
+                    painter = rememberImagePainter(image),
                     contentDescription = "Course Cover",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(135.dp)
+                    modifier = Modifier.height(135.dp).fillMaxWidth(),
+
                 )
             }
 

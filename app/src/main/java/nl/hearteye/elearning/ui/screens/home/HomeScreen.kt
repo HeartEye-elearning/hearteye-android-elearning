@@ -51,7 +51,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
         ) {
             item {
                 Text(
-                    text = "Welcome, ${currentUser?.firstName}",
+                    text = "Welcome, ${currentUser?.firstName ?: ""}",
                     style = typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -65,6 +65,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
                 )
             }
 
+            // Courses section
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -86,7 +87,11 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
             }
 
             item {
-                if (!errorMessage.isNullOrEmpty()) {
+                if (homeViewModel.isLoading.value) {
+                    CircularProgressIndicator(
+                        color = ForegroundPrimary
+                    )
+                } else if (!errorMessage.isNullOrEmpty()) {
                     Text("Error: $errorMessage", color = Color.Red)
                 } else {
                     LazyRow(
@@ -97,7 +102,8 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
                             CourseCardHome(
                                 title = course.title,
                                 time = course.duration.toString(),
-                                onClick = { }
+                                onClick = { },
+                                image = course.imageContent.toString(),
                             )
                         }
                     }
@@ -125,16 +131,25 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
             }
 
             item {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(discussions) { discussionResponse ->
-                        discussionResponse.content.takeLast(3).forEach { discussion ->
-                            DiscussionCardHome(
-                                title = discussion.title,
-                                timeAgo = discussion.createdAt,
-                                onClick = { }
-                            )
+                if (homeViewModel.isLoading.value) {
+                    CircularProgressIndicator(
+                        color = ForegroundPrimary
+                    )
+                } else if (!errorMessage.isNullOrEmpty()) {
+                    Text("Error: $errorMessage", color = Color.Red)
+                } else {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(discussions) { discussionResponse ->
+                            discussionResponse.content.takeLast(3).forEach { discussion ->
+                                DiscussionCardHome(
+                                    title = discussion.title,
+                                    timeAgo = discussion.createdAt,
+                                    onClick = { },
+                                    image = discussion.imageLocation.toString()
+                                )
+                            }
                         }
                     }
                 }

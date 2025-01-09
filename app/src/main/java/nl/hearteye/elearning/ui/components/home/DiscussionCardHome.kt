@@ -28,8 +28,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import getTimeAgo
 import nl.hearteye.elearning.R
+import nl.hearteye.elearning.ui.components.pdf.PdfViewer
 import nl.hearteye.elearning.ui.theme.BackgroundBlue
 import nl.hearteye.elearning.ui.theme.ForegroundBlue
 import nl.hearteye.elearning.ui.theme.typography
@@ -38,7 +40,8 @@ import nl.hearteye.elearning.ui.theme.typography
 fun DiscussionCardHome(
     title: String,
     timeAgo: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    image: String
 ) {
     val timeAgo = getTimeAgo(timeAgo)
     Card(
@@ -66,13 +69,7 @@ fun DiscussionCardHome(
                     .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
                     .background(Color.White)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ecg_scan),
-                    contentDescription = "ECG Cover",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(135.dp)
-                )
+                PdfViewer(image)
             }
 
             Text(
