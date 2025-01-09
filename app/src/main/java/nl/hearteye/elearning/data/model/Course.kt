@@ -6,5 +6,6 @@ data class Course(
     val description: String,
     val duration: Int,
     val createdAt: String,
-    val imageLocation: String
+    val imageLocation: String,
+    var imageContent: String? = null
 )

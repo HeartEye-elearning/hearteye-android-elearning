@@ -13,13 +13,16 @@ data class CourseDetail(
 
 data class InformationPage(
     val id: String,
-    val content: String
+    val content: String,
+    val contentLocations: List<String>?,
+    var fetchedContent: List<Content>? = null
 )
 
 data class QuestionDetail(
     val id: String,
     val question: String,
     val answers: List<AnswerDetail>,
+    val imageLocation: String
 )
 
 data class AnswerDetail(

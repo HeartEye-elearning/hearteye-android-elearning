@@ -14,13 +14,15 @@ data class CourseDetailEntity(
 
 data class InformationPage(
     val id: String,
-    @Json(name = "content") val content: Map<String, String>
+    @Json(name = "content") val content: Map<String, String>,
+    @Json(name = "contentLocations") val contentLocations: List<String>?
 )
 
 data class Question(
     val id: String,
     @Json(name = "question") val question: Map<String, String>,
-    @Json(name = "answers") val answers: List<Answer>
+    @Json(name = "answers") val answers: List<Answer>,
+    @Json(name = "imageLocation") val imageLocation: String
 )
 
 data class Answer(

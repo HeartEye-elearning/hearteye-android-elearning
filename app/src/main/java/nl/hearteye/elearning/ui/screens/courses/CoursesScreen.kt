@@ -19,6 +19,7 @@ import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.components.searchbar.SearchBar
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 
+
 @Composable
 fun CoursesScreen(
     courseViewModel: CoursesViewModel = hiltViewModel(),
@@ -45,8 +46,8 @@ fun CoursesScreen(
                     color = ForegroundPrimary
                 )
             }
-            errorMessage != null -> {
 
+            errorMessage != null -> {
                 Column(modifier = Modifier.fillMaxSize()) {
                     SearchBar(
                         value = searchQuery.value,
@@ -59,6 +60,7 @@ fun CoursesScreen(
                     )
                 }
             }
+
             courses.isEmpty() -> {
                 Column(modifier = Modifier.fillMaxSize()) {
                     SearchBar(
@@ -67,8 +69,7 @@ fun CoursesScreen(
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
                     )
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -78,6 +79,7 @@ fun CoursesScreen(
                     }
                 }
             }
+
             else -> {
                 Column(modifier = Modifier.fillMaxSize()) {
                     SearchBar(
@@ -94,9 +96,16 @@ fun CoursesScreen(
                     ) {
                         items(courses.size) { index ->
                             val course = courses[index]
+
+                            val content = courseViewModel.getContentForCourse(course.id)
+                            if (content == null) {
+                                courseViewModel.getContent(course.imageLocation, course.id)
+                            }
+
                             CourseCard(
                                 title = course.title,
                                 time = "${course.duration}",
+                                imageLocation = content?.sasUrl ?: "",
                                 onClick = { onCourseSelected(course.id) }
                             )
                         }
@@ -106,4 +115,6 @@ fun CoursesScreen(
         }
     }
 }
+
+
 

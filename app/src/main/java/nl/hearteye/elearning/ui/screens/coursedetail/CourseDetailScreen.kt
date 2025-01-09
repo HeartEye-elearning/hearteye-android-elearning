@@ -1,5 +1,6 @@
 package nl.hearteye.elearning.ui.screens.coursedetail
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
@@ -31,9 +32,12 @@ fun CourseDetailScreen(
     val isQuizCompleted = remember { mutableStateOf(false) }
     val showQuizOverview = remember { mutableStateOf(false) }
 
+    val imageLocations = remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(Unit) {
         courseDetailViewModel.fetchCourseDetails(courseId)
     }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         when {
@@ -64,6 +68,7 @@ fun CourseDetailScreen(
                 if (isCourseStarted.value && !hasCompletedInformationPages.value) {
                     val currentInformationPage =
                         courseDetail.informationPages.getOrNull(currentInformationPageIndex.intValue)
+                    Log.d("CourseDetail", "Image Locations: ${imageLocations.value}")
                     if (currentInformationPage != null) {
                         InformationPage(
                             title = courseDetail.title,
@@ -76,7 +81,8 @@ fun CourseDetailScreen(
                                 hasCompletedInformationPages.value = true
                                 isQuizReady.value = true
                             },
-                            isLastPage = currentInformationPageIndex.intValue == courseDetail.informationPages.size - 1
+                            isLastPage = currentInformationPageIndex.intValue == courseDetail.informationPages.size - 1,
+                            imageLocations = currentInformationPage.fetchedContent?.firstOrNull()?.sasUrl ?: ""
                         )
                     }
                 }
@@ -126,5 +132,3 @@ fun CourseDetailScreen(
         }
     }
 }
-
-

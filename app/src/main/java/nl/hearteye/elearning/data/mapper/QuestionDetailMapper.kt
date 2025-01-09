@@ -13,9 +13,11 @@ object QuestionDetailMapper {
                 AnswerDetail(
                     id = answer.id,
                     content = answer.content[language] ?: "No answer available",
-                    correct = answer.correct
-                )
-            }
+                    correct = answer.correct,
+
+                    )
+            },
+            imageLocation = entity.imageLocation,
         )
     }
 }

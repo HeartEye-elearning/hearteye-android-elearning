@@ -26,7 +26,8 @@ object CourseDetailMapper {
     private fun mapInformationPage(entity: InformationPageEntity, language: String): InformationPage {
         return InformationPage(
             id = entity.id,
-            content = getLocalizedText(entity.content, language)
+            content = getLocalizedText(entity.content, language),
+            contentLocations = entity.contentLocations ?: emptyList()
         )
     }
 
@@ -34,7 +35,8 @@ object CourseDetailMapper {
         return QuestionDetail(
             id = entity.id,
             question = getLocalizedText(entity.question, language),
-            answers = entity.answers.map { mapAnswerDetail(it, language) }
+            answers = entity.answers.map { mapAnswerDetail(it, language) },
+            imageLocation = entity.imageLocation
         )
     }
 
