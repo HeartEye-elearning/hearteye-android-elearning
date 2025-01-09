@@ -97,15 +97,10 @@ fun CoursesScreen(
                         items(courses.size) { index ->
                             val course = courses[index]
 
-                            val content = courseViewModel.getContentForCourse(course.id)
-                            if (content == null) {
-                                courseViewModel.getContent(course.imageLocation, course.id)
-                            }
-
                             CourseCard(
                                 title = course.title,
                                 time = "${course.duration}",
-                                imageLocation = content?.sasUrl ?: "",
+                                imageLocation = course.imageContent ?: "",
                                 onClick = { onCourseSelected(course.id) }
                             )
                         }

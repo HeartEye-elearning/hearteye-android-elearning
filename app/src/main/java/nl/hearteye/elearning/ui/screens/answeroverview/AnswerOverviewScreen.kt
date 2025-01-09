@@ -8,13 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import nl.hearteye.elearning.data.store.DataStoreManager
-import nl.hearteye.elearning.ui.components.result.ResultDetailPage
-import nl.hearteye.elearning.ui.components.result.ResultPage
-import nl.hearteye.elearning.ui.components.result.ResultOverviewPage
+import nl.hearteye.elearning.ui.components.pdf.result.ResultDetailPage
+import nl.hearteye.elearning.ui.components.pdf.result.ResultPage
+import nl.hearteye.elearning.ui.components.pdf.result.ResultOverviewPage
 import nl.hearteye.elearning.ui.navigation.NavRoutes
 
 @Composable

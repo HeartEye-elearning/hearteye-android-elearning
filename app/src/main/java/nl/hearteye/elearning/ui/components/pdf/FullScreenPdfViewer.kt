@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.utils
+package nl.hearteye.elearning.ui.components.pdf
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.components.result
+package nl.hearteye.elearning.ui.components.pdf.result
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

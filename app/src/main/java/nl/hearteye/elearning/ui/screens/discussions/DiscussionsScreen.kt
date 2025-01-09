@@ -161,7 +161,8 @@ fun DiscussionsScreen(
                                     },
                                     discussionDetail = if (isExpanded) discussionDetail else null,
                                     isCurrentUser = currentUser?.id == discussion.userId,
-                                    onCommentsClick = { selectedDiscussionId.value = discussion.id }
+                                    onCommentsClick = { selectedDiscussionId.value = discussion.id },
+                                    imageLocation = discussion.imageLocation.toString()
                                 )
                             }
                         }

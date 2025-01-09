@@ -34,6 +34,7 @@ object DiscussionMapper {
             createdAt = entity.createdAt,
             fileLocation = entity.fileLocation,
             numOfComments = entity.numOfComments,
+            imageLocation = entity.imageLocation
         )
     }
 

@@ -1,4 +1,4 @@
-package nl.hearteye.elearning.ui.utils
+package nl.hearteye.elearning.ui.components.pdf
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import nl.hearteye.elearning.ui.utils.renderPdfPage
 
 @Composable
 fun PdfViewer(pdfUrl: String, pageIndex: Int = 0) {

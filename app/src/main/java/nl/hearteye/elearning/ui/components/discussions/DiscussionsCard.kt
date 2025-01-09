@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import nl.hearteye.elearning.R
 import nl.hearteye.elearning.data.model.DiscussionDetail
 import nl.hearteye.elearning.data.model.User
+import nl.hearteye.elearning.ui.components.pdf.PdfViewer
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionViewModel
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
@@ -44,6 +45,7 @@ fun DiscussionsCard(
     isCurrentUser: Boolean,
     onCommentsClick: () -> Unit,
     discussionViewModel: DiscussionViewModel = hiltViewModel(),
+    imageLocation: String
 ) {
     val ecgImage: Painter = painterResource(id = ecgImageResId)
     val timeAgo = getTimeAgo(postTime)
@@ -59,12 +61,7 @@ fun DiscussionsCard(
             .background(Color.White, shape = RoundedCornerShape(10.dp))
     ) {
         Column(modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)) {
-            Image(
-                painter = ecgImage,
-                contentDescription = "ECG Image",
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+            PdfViewer(imageLocation)
 
             Spacer(modifier = Modifier.height(8.dp))
 

@@ -7,12 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import nl.hearteye.elearning.data.mapper.ContentMapper
 import nl.hearteye.elearning.data.model.Base64Content
 import nl.hearteye.elearning.data.model.Comment
 import nl.hearteye.elearning.data.model.Discussion
 import nl.hearteye.elearning.data.model.DiscussionDetail
 import nl.hearteye.elearning.data.model.DiscussionResponse
 import nl.hearteye.elearning.data.model.User
+import nl.hearteye.elearning.data.repository.ContentRepository
 import nl.hearteye.elearning.data.repository.DiscussionRepository
 import nl.hearteye.elearning.data.repository.UserRepository
 import nl.hearteye.elearning.ui.utils.convertPdfToBase64
@@ -23,6 +25,7 @@ import javax.inject.Inject
 class DiscussionViewModel @Inject constructor(
     private val discussionRepository: DiscussionRepository,
     private val userRepository: UserRepository,
+    private val contentRepository: ContentRepository
 ) : ViewModel() {
 
     private val _errorMessage = mutableStateOf<String?>(null)
@@ -57,11 +60,28 @@ class DiscussionViewModel @Inject constructor(
                 val discussionsResponse =
                     discussionRepository.getDiscussions(page, size, creator, search, uppercaseCategory)
 
+                val updatedDiscussions = discussionsResponse.content.map { discussion ->
+                    if (discussion.fileLocation != null) {
+                        try {
+                            val contentEntity = contentRepository.getContent(discussion.fileLocation)
+                            val content = ContentMapper.map(contentEntity)
+                            Log.d("Discussions", "sasUrl: ${content.sasUrl}")
+                            discussion.copy(imageLocation = content.sasUrl)
+
+                        } catch (e: Exception) {
+                            _errorMessage.value = "Error fetching content: ${e.message}"
+                            discussion
+                        }
+                    } else {
+                        discussion
+                    }
+                }
+
                 if (search != null) {
-                    _discussions.value = listOf(discussionsResponse)
+                    _discussions.value = listOf(discussionsResponse.copy(content = updatedDiscussions))
                     currentPage = 0
                 } else {
-                    _discussions.value = _discussions.value + discussionsResponse
+                    _discussions.value = _discussions.value + discussionsResponse.copy(content = updatedDiscussions)
                     currentPage++
                 }
             } catch (e: Exception) {
@@ -161,19 +181,6 @@ class DiscussionViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _deleteResult.value = Result.failure(e)
-            }
-        }
-    }
-
-    fun fetchCurrentUser() {
-        viewModelScope.launch {
-            try {
-                val user = userRepository.getCurrentUser()
-                _userCache.value = _userCache.value.toMutableMap().apply {
-                    put(user.id, user)
-                }
-            } catch (e: Exception) {
-                _errorMessage.value = "Failed to fetch current user: ${e.message}"
             }
         }
     }

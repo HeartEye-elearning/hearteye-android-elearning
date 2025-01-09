@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,103 +38,108 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
         homeViewModel.fetchCurrentUser()
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            Text(
-                text = "Welcome, ${currentUser?.firstName}",
-                style = typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        item {
-            Text(
-                text = "Discover essential information for the HeartEye ECG",
-                style = typography.bodyLarge,
-                color = Color.Gray
-            )
-        }
-
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+    if (isLoading) {
+        CircularProgressIndicator(
+            color = ForegroundPrimary
+        )
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
                 Text(
-                    text = "Courses",
-                    style = typography.titleMedium,
+                    text = "Welcome, ${currentUser?.firstName}",
+                    style = typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
+            }
+
+            item {
                 Text(
-                    text = "View all courses",
-                    style = typography.bodyMedium,
-                    color = ForegroundPrimary,
-                    modifier = Modifier.clickable { }
+                    text = "Discover essential information for the HeartEye ECG",
+                    style = typography.bodyLarge,
+                    color = Color.Gray
                 )
             }
-        }
 
-        item {
-            if (isLoading) {
-                Text("Loading courses...", color = Color.Gray)
-            } else if (!errorMessage.isNullOrEmpty()) {
-                Text("Error: $errorMessage", color = Color.Red)
-            } else {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    items(minOf(courses.size, 3)) { index ->
-                        val course = courses[index]
-                        CourseCardHome(
-                            title = course.title,
-                            time = course.duration.toString(),
-                            onClick = { }
-                        )
+                    Text(
+                        text = "Courses",
+                        style = typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "View all courses",
+                        style = typography.bodyMedium,
+                        color = ForegroundPrimary,
+                        modifier = Modifier.clickable { }
+                    )
+                }
+            }
+
+            item {
+                if (!errorMessage.isNullOrEmpty()) {
+                    Text("Error: $errorMessage", color = Color.Red)
+                } else {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(minOf(courses.size, 3)) { index ->
+                            val course = courses[index]
+                            CourseCardHome(
+                                title = course.title,
+                                time = course.duration.toString(),
+                                onClick = { }
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Discussions",
-                    style = typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "View all discussions",
-                    style = typography.bodyMedium,
-                    color = ForegroundPrimary,
-                    modifier = Modifier.clickable { }
-                )
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Discussions",
+                        style = typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "View all discussions",
+                        style = typography.bodyMedium,
+                        color = ForegroundPrimary,
+                        modifier = Modifier.clickable { }
+                    )
+                }
             }
-        }
 
-        item {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(discussions) { discussionResponse ->
-                    discussionResponse.content.takeLast(3).forEach { discussion ->
-                        DiscussionCardHome(
-                            title = discussion.title,
-                            timeAgo = discussion.createdAt,
-                            onClick = { }
-                        )
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(discussions) { discussionResponse ->
+                        discussionResponse.content.takeLast(3).forEach { discussion ->
+                            DiscussionCardHome(
+                                title = discussion.title,
+                                timeAgo = discussion.createdAt,
+                                onClick = { }
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+

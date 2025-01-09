@@ -14,7 +14,7 @@ import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.popup.Popup
 import nl.hearteye.elearning.ui.theme.typography
-import nl.hearteye.elearning.ui.utils.PdfViewer
+import nl.hearteye.elearning.ui.components.pdf.PdfViewer
 
 @Composable
 fun InformationPage(

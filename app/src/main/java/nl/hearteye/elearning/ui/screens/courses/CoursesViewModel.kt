@@ -33,9 +33,6 @@ class CoursesViewModel @Inject constructor(
     private val _errorMessage = mutableStateOf<String?>(null)
     val errorMessage: State<String?> = _errorMessage
 
-    private val _contentMap = mutableStateOf<Map<String, Content>>(emptyMap())
-    val contentMap: State<Map<String, Content>> = _contentMap
-
     fun getCourses() {
         _isLoading.value = true
         _errorMessage.value = null
@@ -43,8 +40,16 @@ class CoursesViewModel @Inject constructor(
             try {
                 val savedLanguage = dataStoreManager.getSelectedLanguage() ?: "eng"
                 val fetchedCourses = courseRepository.getCourses(savedLanguage)
-                _courses.value = fetchedCourses
-                _filteredCourses.value = fetchedCourses
+
+                val updatedCourses = fetchedCourses.map { course ->
+                    val fetchedContentEntity = contentRepository.getContent(course.imageLocation)
+                    val fetchedContent = ContentMapper.map(fetchedContentEntity)
+
+                    course.copy(imageContent = fetchedContent.sasUrl)
+                }
+
+                _courses.value = updatedCourses
+                _filteredCourses.value = updatedCourses
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to load courses: ${e.message}"
             } finally {
@@ -61,28 +66,5 @@ class CoursesViewModel @Inject constructor(
                 course.title.contains(query, ignoreCase = true)
             }
         }
-    }
-
-    fun getContent(courseImageLocation: String, courseId: String) {
-        _isLoading.value = true
-        _errorMessage.value = null
-        viewModelScope.launch {
-            try {
-                val fetchedContentEntity = contentRepository.getContent(courseImageLocation)
-                val fetchedContent = ContentMapper.map(fetchedContentEntity)
-
-                _contentMap.value = _contentMap.value.toMutableMap().apply {
-                    this[courseId] = fetchedContent
-                }
-            } catch (e: Exception) {
-                _errorMessage.value = "Failed to load content: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    fun getContentForCourse(courseId: String): Content? {
-        return _contentMap.value[courseId]
     }
 }

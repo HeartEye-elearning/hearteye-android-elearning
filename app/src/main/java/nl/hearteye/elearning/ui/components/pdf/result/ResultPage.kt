@@ -1,11 +1,12 @@
-package nl.hearteye.elearning.ui.components.result
+package nl.hearteye.elearning.ui.components.pdf.result
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,25 +15,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import nl.hearteye.elearning.data.model.UserQuizStats
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
-import nl.hearteye.elearning.ui.components.quiz.answeroverviewcircle.AnswerOverviewCircle
 import nl.hearteye.elearning.ui.theme.ForegroundGray
+import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
-fun ResultOverviewPage(
+fun ResultPage(
+    score: Int,
     onRetryCourse: () -> Unit,
     onCloseCourse: () -> Unit,
-    onSeeQuestions: () -> Unit,
-    userQuizStats: UserQuizStats,
-    onCircleClick: (String) -> Unit
+    onSeeQuestions: () -> Unit
 ) {
-    val latestAttempt = userQuizStats.attempts.lastOrNull()
-    val answers = latestAttempt?.answers?.map { it.isCorrect to it.questionId } ?: emptyList()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -48,32 +45,70 @@ fun ResultOverviewPage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Questions overview",
+                text = "Results",
                 style = typography.titleMedium,
                 color = ForegroundGray,
                 fontWeight = FontWeight.Bold,
             )
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                modifier = Modifier.padding(16.dp),
+            Box(
+                modifier = Modifier.padding(top = 8.dp),
+                contentAlignment = Alignment.Center
             ) {
-                items(answers.size) { index ->
-                    val (isCorrect, questionId) = answers[index]
-                    Box(
-                        modifier = Modifier
-                            .aspectRatio(1f)
-                            .padding(2.dp)
-                            .clickable { onCircleClick(questionId) }
-                    ) {
-                        AnswerOverviewCircle(
-                            questionNumber = index + 1,
-                            questionId = questionId,
-                            isCorrect = isCorrect
-                        )
-                    }
-                }
+                CircularProgressIndicator(
+                    modifier = Modifier.size(70.dp),
+                    progress = score / 100f,
+                    color = ForegroundPrimary,
+                    strokeWidth = 10.dp,
+
+                )
+                Text(
+                    text = "$score/100",
+                    style = typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Green
+                )
             }
+
+            Text(
+                text = "Grade",
+                style = typography.bodyLarge,
+                color = ForegroundGray,
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = "Congratulations",
+                style = typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = ForegroundGray,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFFFA726))
+                    .padding(top = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Medal",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(40.dp)
+                )
+            }
+
+            Text(
+                text = "You have completed the course with a score of $score/100.",
+                style = typography.bodyLarge,
+                color = ForegroundGray,
+                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                textAlign = TextAlign.Center
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -94,7 +129,7 @@ fun ResultOverviewPage(
             )
 
             Text(
-                text = "See results →",
+                text = "See questions →",
                 style = typography.bodyLarge,
                 color = ForegroundGray,
                 modifier = Modifier
@@ -106,3 +141,4 @@ fun ResultOverviewPage(
         }
     }
 }
+

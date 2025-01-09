@@ -39,5 +39,6 @@ data class DiscussionContent(
     val category: String,
     val createdAt: String,
     val fileLocation: String?,
-    val numOfComments: Int
+    val numOfComments: Int,
+    val imageLocation: String?
 )

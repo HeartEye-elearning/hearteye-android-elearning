@@ -62,6 +62,7 @@ class HomeViewModel @Inject constructor(
         creator: Boolean = false,
         search: String? = null
     ) {
+        _isLoading.value = true
         _errorMessage.value = null
         viewModelScope.launch {
             try {
@@ -77,17 +78,23 @@ class HomeViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An unknown error occurred"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
     fun fetchCurrentUser() {
+        _isLoading.value = true
+        _errorMessage.value = null
         viewModelScope.launch {
             try {
                 val user = userRepository.getCurrentUser()
                 _currentUser.value = user
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to fetch current user: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
