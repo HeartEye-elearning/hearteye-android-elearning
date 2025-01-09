@@ -1,8 +1,12 @@
 package nl.hearteye.elearning.data.api
 
+import nl.hearteye.elearning.data.entity.ProfilePictureEntity
 import nl.hearteye.elearning.data.entity.UserEntity
 import nl.hearteye.elearning.data.entity.UserQuizStatsEntity
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface UserService {
@@ -20,6 +24,12 @@ interface UserService {
     suspend fun getUser(
         @Path("id") id: String,
     ): UserEntity
+
+    @PUT("user-service/v1/users/{id}/profile-picture")
+    suspend fun updateProfilePicture(
+        @Path("id") id: String,
+        @Body request: ProfilePictureEntity
+    ): Response<Unit>
 }
 
 

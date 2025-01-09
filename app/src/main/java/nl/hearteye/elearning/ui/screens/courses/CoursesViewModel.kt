@@ -42,10 +42,15 @@ class CoursesViewModel @Inject constructor(
                 val fetchedCourses = courseRepository.getCourses(savedLanguage)
 
                 val updatedCourses = fetchedCourses.map { course ->
-                    val fetchedContentEntity = contentRepository.getContent(course.imageLocation)
-                    val fetchedContent = ContentMapper.map(fetchedContentEntity)
+                    val imageContent = if (course.imageLocation != null) {
+                        val fetchedContentEntity = contentRepository.getContent(course.imageLocation.toString())
+                        val fetchedContent = ContentMapper.map(fetchedContentEntity)
+                        fetchedContent.sasUrl
+                    } else {
+                        null
+                    }
 
-                    course.copy(imageContent = fetchedContent.sasUrl)
+                    course.copy(imageContent = imageContent)
                 }
 
                 _courses.value = updatedCourses

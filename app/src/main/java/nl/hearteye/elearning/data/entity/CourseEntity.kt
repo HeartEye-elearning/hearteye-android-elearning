@@ -8,5 +8,5 @@ data class CourseEntity(
     @Json(name = "description") val description: Map<String, String>,
     @Json(name = "durationInMinutes") val durationInMinutes: Int,
     @Json(name = "createdAt") val createdAt: String,
-    @Json(name = "imageLocation") val imageLocation: String
+    @Json(name = "imageLocation") val imageLocation: String?
 )

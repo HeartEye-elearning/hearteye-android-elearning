@@ -38,7 +38,6 @@ fun CourseDetailScreen(
         courseDetailViewModel.fetchCourseDetails(courseId)
     }
 
-
     Box(modifier = Modifier.fillMaxSize()) {
         when {
             isLoading -> {
@@ -91,35 +90,37 @@ fun CourseDetailScreen(
                     val currentQuestion =
                         courseDetail.questions.getOrNull(currentQuizQuestionIndex.intValue)
                     if (currentQuestion != null) {
-                        QuestionPage(
-                            question = currentQuestion,
-                            currentQuestionIndex = currentQuizQuestionIndex.intValue,
-                            totalQuestions = courseDetail.questions.size,
-                            onNext = {
-                                if (currentQuizQuestionIndex.intValue < courseDetail.questions.size - 1) {
-                                    currentQuizQuestionIndex.intValue++
+                        key(currentQuizQuestionIndex.intValue) {
+                            QuestionPage(
+                                question = currentQuestion,
+                                currentQuestionIndex = currentQuizQuestionIndex.intValue,
+                                totalQuestions = courseDetail.questions.size,
+                                onNext = {
+                                    if (currentQuizQuestionIndex.intValue < courseDetail.questions.size - 1) {
+                                        currentQuizQuestionIndex.intValue++
+                                    }
+                                },
+                                onBack = {
+                                    if (currentQuizQuestionIndex.intValue > 0) {
+                                        currentQuizQuestionIndex.intValue--
+                                    }
+                                },
+                                canGoBack = currentQuizQuestionIndex.intValue > 0,
+                                canGoNext = currentQuizQuestionIndex.intValue < courseDetail.questions.size - 1,
+                                onSubmitAnswer = { answerId ->
+                                    courseDetailViewModel.submitAnswer(
+                                        quizId = courseDetail.id,
+                                        questionId = currentQuestion.id,
+                                        answerId = answerId
+                                    )
+                                },
+                                onCompleteQuiz = {
+                                    isQuizCompleted.value = true
+                                    showQuizOverview.value = true
+                                    courseDetailViewModel.finishQuiz(courseId)
                                 }
-                            },
-                            onBack = {
-                                if (currentQuizQuestionIndex.intValue > 0) {
-                                    currentQuizQuestionIndex.intValue--
-                                }
-                            },
-                            canGoBack = currentQuizQuestionIndex.intValue > 0,
-                            canGoNext = currentQuizQuestionIndex.intValue < courseDetail.questions.size - 1,
-                            onSubmitAnswer = { answerId ->
-                                courseDetailViewModel.submitAnswer(
-                                    quizId = courseDetail.id,
-                                    questionId = currentQuestion.id,
-                                    answerId = answerId
-                                )
-                            },
-                            onCompleteQuiz = {
-                                isQuizCompleted.value = true
-                                showQuizOverview.value = true
-                                courseDetailViewModel.finishQuiz(courseId)
-                            }
-                        )
+                            )
+                        }
                     }
                 }
 

@@ -20,6 +20,7 @@ import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.navigation.NavRoutes
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionViewModel
+import nl.hearteye.elearning.ui.theme.typography
 import nl.hearteye.elearning.ui.utils.uriToFile
 import java.io.File
 
@@ -42,19 +43,22 @@ fun DiscussionsUploadScreen(
 
     val context = LocalContext.current
 
-    val pickPdfLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            selectedPdfFile = uriToFile(context, it)
-            if (selectedPdfFile == null || !selectedPdfFile!!.exists()) {
-                Log.e("DiscussionsUploadScreen", "Invalid file selected.")
+    val pickPdfLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                selectedPdfFile = uriToFile(context, it)
+                if (selectedPdfFile == null || !selectedPdfFile!!.exists()) {
+                    Log.e("DiscussionsUploadScreen", "Invalid file selected.")
+                }
             }
         }
-    }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
-        .verticalScroll(scrollState)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(scrollState)
+    ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -72,18 +76,21 @@ fun DiscussionsUploadScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
-                OutlinedButton(
-                    onClick = { pickPdfLauncher.launch("application/pdf") },
-                    text = "Upload ECG"
-                )
-            }
+                Row {
+                    OutlinedButton(
+                        onClick = { pickPdfLauncher.launch("application/pdf") },
+                        text = "Upload ECG"
+                    )
+                }
 
-            selectedPdfFile?.let {
-                Text(
-                    text = "Selected File: ${it.name}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                Spacer(modifier = Modifier.width(8.dp))
+
+                selectedPdfFile?.let {
+                    Text(
+                        text = "Selected File: ${it.name}",
+                        style = typography.bodyMedium,
+                    )
+                }
             }
 
             Column(modifier = Modifier.fillMaxWidth()) {

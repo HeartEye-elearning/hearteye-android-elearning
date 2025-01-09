@@ -58,7 +58,7 @@ fun AnswerBar(
             .clip(RoundedCornerShape(10.dp))
             .background(color = backgroundColor, shape = RoundedCornerShape(10.dp))
             .border(2.dp, borderColor, shape = RoundedCornerShape(10.dp))
-            .height(50.dp)
+            .height(70.dp)
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable {
                 onCheckedChange(!isSelected)
@@ -74,6 +74,7 @@ fun AnswerBar(
                 .weight(1f)
                 .padding(end = 8.dp)
         )
+        Spacer(modifier = Modifier.width(4.dp))
         Box(
             modifier = Modifier
                 .size(24.dp)

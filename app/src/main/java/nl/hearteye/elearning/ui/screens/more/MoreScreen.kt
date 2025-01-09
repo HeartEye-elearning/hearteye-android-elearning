@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.outlined.Help
 import androidx.compose.material.icons.outlined.Info
@@ -35,11 +37,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberImagePainter
 import nl.hearteye.elearning.R
+import nl.hearteye.elearning.data.entity.ProfilePictureEntity
 import nl.hearteye.elearning.ui.components.more.MoreScreenItem
+import nl.hearteye.elearning.ui.components.popup.ProfilePicturePopUp
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
 
@@ -50,6 +54,8 @@ fun MoreScreen(
     val selectedLanguage = remember { mutableStateOf("English") }
     val currentUser = moreViewModel.currentUser.value
     val errorMessage = moreViewModel.errorMessage.value
+    val isProfilePopupOpen = remember { mutableStateOf(false) }
+    val profilePicture = remember { mutableStateOf<String?>(null) }  // To hold the new image
 
     LaunchedEffect(Unit) {
         moreViewModel.fetchCurrentUser()
@@ -61,7 +67,7 @@ fun MoreScreen(
         if (errorMessage != null) {
             Text(text = "Error: $errorMessage", color = Color.Red)
         } else {
-            CircularProgressIndicator(color = ForegroundPrimary,)
+            CircularProgressIndicator(color = ForegroundPrimary)
         }
     } else {
         Column(
@@ -76,14 +82,34 @@ fun MoreScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.profile_picture),
-                    contentDescription = "Profile Image",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .border(2.dp, Color.Gray, CircleShape)
-                )
+                val imageUrl = currentUser.profilePicture ?: R.drawable.profile_picture
+
+                Box(
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+                    Image(
+                        painter = rememberImagePainter(imageUrl),
+                        contentDescription = "Profile Image",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, Color.Gray, CircleShape)
+                    )
+
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit Profile Picture",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .padding(8.dp)
+                            .background(ForegroundPrimary, CircleShape)
+                            .clickable {
+                                isProfilePopupOpen.value = true
+                            }
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "${currentUser.firstName} ${currentUser.lastName}",
@@ -213,5 +239,18 @@ fun MoreScreen(
                 }
             }
         }
+
+        ProfilePicturePopUp(
+            isOpen = isProfilePopupOpen.value,
+            onDismiss = { isProfilePopupOpen.value = false },
+            onImageSelected = { base64Image ->
+                profilePicture.value = base64Image
+                currentUser?.let { user ->
+                    val profilePictureEntity = ProfilePictureEntity(base64Image, "image/png")
+                    moreViewModel.updateProfilePicture(user.id, profilePictureEntity)
+                }
+                isProfilePopupOpen.value = false
+            }
+        )
     }
 }

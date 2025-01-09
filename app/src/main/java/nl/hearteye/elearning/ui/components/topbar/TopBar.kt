@@ -65,7 +65,8 @@ fun TopBar(
                 contentDescription = "HeartEye Logo",
                 modifier = Modifier
                     .height(24.dp)
-                    .width(161.dp),
+                    .width(161.dp)
+                    .background(Color.Transparent),
                 contentScale = ContentScale.Fit
             )
         }

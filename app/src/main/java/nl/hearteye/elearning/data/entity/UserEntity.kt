@@ -7,5 +7,7 @@ data class UserEntity(
     @Json(name = "firstName") val firstName: String,
     @Json(name = "lastName") val lastName: String,
     @Json(name = "email") val email: String,
-    @Json(name = "role") val role: String
+    @Json(name = "profilePictureLocation") val profilePictureLocation: String?,
+    @Json(name = "role") val role: String,
+    @Json(name = "profilePicture") val profilePicture: String?
 )

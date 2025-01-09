@@ -10,7 +10,9 @@ object UserMapper {
             firstName = entity.firstName,
             lastName = entity.lastName,
             email = entity.email,
-            role = entity.role
+            profilePictureLocation = entity.profilePictureLocation,
+            role = entity.role,
+            profilePicture = entity.profilePicture
         )
     }
 }
