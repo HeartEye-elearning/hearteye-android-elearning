@@ -22,7 +22,8 @@ data class QuestionDetail(
     val id: String,
     val question: String,
     val answers: List<AnswerDetail>,
-    val imageLocation: String
+    val imageLocation: String?,
+    var fetchedImage: Content?
 )
 
 data class AnswerDetail(

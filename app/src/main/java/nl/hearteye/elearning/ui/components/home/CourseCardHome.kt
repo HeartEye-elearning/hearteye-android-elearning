@@ -26,13 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
-import nl.hearteye.elearning.R
 import nl.hearteye.elearning.ui.theme.BackgroundBlue
 import nl.hearteye.elearning.ui.theme.ForegroundBlue
 import nl.hearteye.elearning.ui.theme.typography
+import nl.hearteye.elearning.R
 
 @Composable
 fun CourseCardHome(
@@ -67,10 +66,15 @@ fun CourseCardHome(
                     .background(Color.White)
             ) {
                 Image(
-                    painter = rememberImagePainter(image),
+                    painter = rememberImagePainter(
+                        data = image,
+                        builder = {
+                            crossfade(true)
+                            placeholder(R.drawable.placeholder)
+                        }
+                    ),
                     contentDescription = "Course Cover",
                     modifier = Modifier.height(135.dp).fillMaxWidth(),
-
                 )
             }
 

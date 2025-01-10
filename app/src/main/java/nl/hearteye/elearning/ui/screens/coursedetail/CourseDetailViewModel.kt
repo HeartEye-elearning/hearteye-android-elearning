@@ -1,19 +1,17 @@
 package nl.hearteye.elearning.ui.screens.coursedetail
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import nl.hearteye.elearning.data.entity.ContentEntity
+import nl.hearteye.elearning.data.mapper.ContentMapper
 import nl.hearteye.elearning.data.model.CourseDetail
 import nl.hearteye.elearning.data.repository.ContentRepository
 import nl.hearteye.elearning.data.repository.CourseRepository
 import nl.hearteye.elearning.data.store.DataStoreManager
-import nl.hearteye.elearning.data.entity.ContentEntity
-import nl.hearteye.elearning.data.mapper.ContentMapper
-import nl.hearteye.elearning.data.model.Content
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,6 +32,18 @@ class CourseDetailViewModel @Inject constructor(
 
     private val _errorMessage = mutableStateOf<String?>(null)
     val errorMessage: State<String?> = _errorMessage
+
+    private val _quizId = mutableStateOf<String?>(null)
+    val quizId: State<String?> = _quizId
+
+    fun setQuizId(id: String) {
+        _quizId.value = id
+    }
+
+    fun getQuizId(): String? {
+        return _quizId.value
+    }
+
 
     fun fetchCourseDetails(courseId: String) {
         _isLoading.value = true
@@ -56,6 +66,21 @@ class CourseDetailViewModel @Inject constructor(
                         page.fetchedContent = fetchedContents
                     } else {
                         page.fetchedContent = emptyList()
+                    }
+                }
+
+                courseDetail.questions.forEach { question ->
+                    question.imageLocation?.let { imageLocation ->
+                        if (imageLocation.isNotBlank()) {
+                            try {
+                                val fetchedImage = contentRepository.getContent(imageLocation)
+                                fetchedImage?.let {
+                                    question.fetchedImage = ContentMapper.map(it)
+                                }
+                            } catch (e: Exception) {
+                                _errorMessage.value = "Failed to load image content: ${e.message}"
+                            }
+                        }
                     }
                 }
 

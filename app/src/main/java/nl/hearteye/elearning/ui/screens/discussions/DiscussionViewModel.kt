@@ -53,9 +53,14 @@ class DiscussionViewModel @Inject constructor(
         category: String? = null,
     ) {
         _errorMessage.value = null
+        if (page == 0) {
+            _discussions.value = emptyList()
+        }
         viewModelScope.launch {
             try {
-                val uppercaseCategory = category?.uppercase()
+                val uppercaseCategory = category
+                    ?.replace(" ", "_")
+                    ?.uppercase()
 
                 val discussionsResponse =
                     discussionRepository.getDiscussions(page, size, creator, search, uppercaseCategory)
@@ -77,18 +82,21 @@ class DiscussionViewModel @Inject constructor(
                     }
                 }
 
-                if (search != null) {
-                    _discussions.value = listOf(discussionsResponse.copy(content = updatedDiscussions))
-                    currentPage = 0
+                _discussions.value = if (page == 0) {
+                    listOf(discussionsResponse.copy(content = updatedDiscussions))
                 } else {
-                    _discussions.value = _discussions.value + discussionsResponse.copy(content = updatedDiscussions)
-                    currentPage++
+                    _discussions.value + discussionsResponse.copy(content = updatedDiscussions)
                 }
+
+                if (page == 0) currentPage = 0 else currentPage++
+
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An unknown error occurred"
             }
         }
     }
+
+
 
 
 
@@ -116,16 +124,10 @@ class DiscussionViewModel @Inject constructor(
             return
         }
 
-        val base64Size = base64String.length
-        Log.d("createDiscussion", "Base64 string size: $base64Size bytes")
-
-        if (base64Size > 10485760) {
-            _errorMessage.value = "The Base64 string exceeds the 10 MB limit."
-            return
-        }
+        val formattedCategory = category.uppercase().replace(" ", "_")
 
         val base64Content = Base64Content(base64String, "application/pdf", pdfFile.name)
-        val discussion = Discussion(title, content, base64Content, category)
+        val discussion = Discussion(title, content, base64Content, formattedCategory)
 
         viewModelScope.launch {
             try {

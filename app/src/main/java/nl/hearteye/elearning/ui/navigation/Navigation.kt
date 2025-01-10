@@ -23,6 +23,7 @@ import nl.hearteye.elearning.ui.screens.login.LoginViewModel
 import nl.hearteye.elearning.ui.screens.login.PreLoginScreen
 import nl.hearteye.elearning.ui.screens.answeroverview.AnswerOverviewScreen
 import nl.hearteye.elearning.ui.screens.coursedetail.CourseDetailScreen
+import nl.hearteye.elearning.ui.screens.coursedetail.CourseDetailViewModel
 import nl.hearteye.elearning.ui.screens.courses.CoursesScreen
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionsScreen
 import nl.hearteye.elearning.ui.screens.home.HomeScreen
@@ -41,6 +42,8 @@ fun Navigation(navController: NavHostController) {
     val isOnboardingCompleted = loginViewModel.isOnboardingCompleted.collectAsState(initial = false).value
 
     val showPopup = remember { mutableStateOf(false) }
+
+    val courseDetailViewModel: CourseDetailViewModel = hiltViewModel()
 
     val onBackButtonClick = {
         if (currentRoute == NavRoutes.COURSE_DETAIL.route) {
@@ -96,7 +99,7 @@ fun Navigation(navController: NavHostController) {
                 OnboardingScreen(navController)
             }
             composable(NavRoutes.HOME.route) {
-                HomeScreen(homeViewModel = hiltViewModel())
+                HomeScreen(homeViewModel = hiltViewModel(), navController = navController)
             }
             composable(NavRoutes.COURSES.route) {
                 CoursesScreen(onCourseSelected = { courseId ->
@@ -132,6 +135,9 @@ fun Navigation(navController: NavHostController) {
                 confirmButtonText = "Yes",
                 cancelButtonText = "No",
                 onConfirm = {
+                    val quizId = courseDetailViewModel.getQuizId()
+                    courseDetailViewModel.finishQuiz(quizId.toString())
+
                     navController.navigate(NavRoutes.COURSES.route) {
                         popUpTo(NavRoutes.COURSES.route) { inclusive = true }
                     }

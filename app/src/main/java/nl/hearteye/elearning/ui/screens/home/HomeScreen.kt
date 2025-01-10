@@ -19,13 +19,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import nl.hearteye.elearning.ui.components.home.CourseCardHome
 import nl.hearteye.elearning.ui.components.home.DiscussionCardHome
+import nl.hearteye.elearning.ui.navigation.NavRoutes
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel(), navController: NavController) {
     val courses = homeViewModel.courses.value
     val discussions = homeViewModel.discussions.value
     val isLoading = homeViewModel.isLoading.value
@@ -65,7 +67,6 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
                 )
             }
 
-            // Courses section
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -81,13 +82,15 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
                         text = "View all courses",
                         style = typography.bodyMedium,
                         color = ForegroundPrimary,
-                        modifier = Modifier.clickable { }
+                        modifier = Modifier.clickable {
+                            navController.navigate(NavRoutes.COURSES.route)
+                        }
                     )
                 }
             }
 
             item {
-                if (homeViewModel.isLoading.value) {
+                if (homeViewModel.isCoursesLoading.value) {
                     CircularProgressIndicator(
                         color = ForegroundPrimary
                     )
@@ -102,7 +105,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
                             CourseCardHome(
                                 title = course.title,
                                 time = course.duration.toString(),
-                                onClick = { },
+                                onClick = {navController.navigate(NavRoutes.COURSES.route) },
                                 image = course.imageContent.toString(),
                             )
                         }
@@ -125,13 +128,15 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
                         text = "View all discussions",
                         style = typography.bodyMedium,
                         color = ForegroundPrimary,
-                        modifier = Modifier.clickable { }
+                        modifier = Modifier.clickable {
+                            navController.navigate(NavRoutes.DISCUSSIONS.route)
+                        }
                     )
                 }
             }
 
             item {
-                if (homeViewModel.isLoading.value) {
+                if (homeViewModel.isDiscussionsLoading.value) {
                     CircularProgressIndicator(
                         color = ForegroundPrimary
                     )
@@ -146,7 +151,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
                                 DiscussionCardHome(
                                     title = discussion.title,
                                     timeAgo = discussion.createdAt,
-                                    onClick = { },
+                                    onClick = { navController.navigate(NavRoutes.DISCUSSIONS.route) },
                                     image = discussion.imageLocation.toString()
                                 )
                             }

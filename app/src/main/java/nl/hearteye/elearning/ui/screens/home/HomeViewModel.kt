@@ -42,8 +42,15 @@ class HomeViewModel @Inject constructor(
     private val _currentUser = mutableStateOf<User?>(null)
     val currentUser: State<User?> = _currentUser
 
+    private val _isCoursesLoading = mutableStateOf(false)
+    val isCoursesLoading: State<Boolean> = _isCoursesLoading
+
+    private val _isDiscussionsLoading = mutableStateOf(false)
+    val isDiscussionsLoading: State<Boolean> = _isDiscussionsLoading
+
+
     fun getCourses() {
-        _isLoading.value = true
+        _isCoursesLoading.value = true
         _errorMessage.value = null
         viewModelScope.launch {
             try {
@@ -66,20 +73,19 @@ class HomeViewModel @Inject constructor(
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to load courses: ${e.message}"
             } finally {
-                _isLoading.value = false
+                _isCoursesLoading.value = false
             }
         }
     }
 
-    private var currentPage = 0
-
     fun getDiscussions(
-        page: Int = 0, // Always fetch the first page
-        size: Int = 3, // Fetch exactly 3 discussions
+        page: Int = 0,
+        size: Int = 3,
         creator: Boolean = false,
         search: String? = null,
         category: String? = null,
     ) {
+        _isDiscussionsLoading.value = true
         _errorMessage.value = null
         viewModelScope.launch {
             try {
@@ -107,6 +113,8 @@ class HomeViewModel @Inject constructor(
                 _discussions.value = listOf(discussionsResponse.copy(content = updatedDiscussions))
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An unknown error occurred"
+            } finally {
+                _isDiscussionsLoading.value = false
             }
         }
     }

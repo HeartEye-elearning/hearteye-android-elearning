@@ -25,14 +25,15 @@ import nl.hearteye.elearning.ui.theme.typography
 @Composable
 fun ResultDetailPage(
     onBack: () -> Unit,
-    questionDetails: QuestionDetailEntity?
+    questionDetails: QuestionDetailEntity?,
+    language: String
 ) {
     if (questionDetails == null) {
         CircularProgressIndicator()
         return
     }
 
-    val questionText = questionDetails.question["eng"] ?: "No question available"
+    val questionText = questionDetails.question[language] ?: "No question available"
 
     Column(
         modifier = Modifier
@@ -65,7 +66,7 @@ fun ResultDetailPage(
                 .padding(16.dp)
         ) {
             questionDetails.answers.forEach { answer ->
-                val answerText = answer.content["eng"] ?: answer.content.toString()
+                val answerText = answer.content[language] ?: answer.content.toString()
                 AnswerBar(
                     id = answer.id,
                     answer = answerText,

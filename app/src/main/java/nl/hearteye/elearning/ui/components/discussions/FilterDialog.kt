@@ -1,4 +1,5 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,15 +14,18 @@ import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.theme.BackgroundPrimary
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
+import nl.hearteye.elearning.ui.utils.CategoryOption
 
 @Composable
 fun FilterDialog(
+    selectedCategory: String?,
+    showMyPostsOnly: Boolean,
     onClose: () -> Unit,
     onFilterChange: (category: String?, showMyPostsOnly: Boolean) -> Unit
 ) {
-    var showMyPostsOnly by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf<String?>(null) }  // Single category selection
-    val categoryOptions = listOf("Findings", "Case studies", "Interpretation", "Troubleshooting", "Best practices")
+    var localShowMyPostsOnly by remember { mutableStateOf(showMyPostsOnly) }
+    var localSelectedCategory by remember { mutableStateOf(selectedCategory) }
+    val categoryOptions = CategoryOption.values().toList()
 
     Box(
         modifier = Modifier
@@ -67,8 +71,8 @@ fun FilterDialog(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
-                    checked = showMyPostsOnly,
-                    onCheckedChange = { showMyPostsOnly = it },
+                    checked = localShowMyPostsOnly,
+                    onCheckedChange = { localShowMyPostsOnly = it },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = ForegroundPrimary,
                         checkedTrackColor = ForegroundPrimary.copy(alpha = 0.5f),
@@ -91,16 +95,21 @@ fun FilterDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = selectedCategory == category,  // Check if this category is selected
-                            onClick = { selectedCategory = category },  // Set selected category
+                            selected = localSelectedCategory == category.name,
+                            onClick = {
+                                localSelectedCategory = if (localSelectedCategory == category.name) null else category.name
+                            },
                             colors = RadioButtonDefaults.colors(
                                 selectedColor = ForegroundPrimary,
                                 unselectedColor = ForegroundPrimary.copy(alpha = 0.5f)
                             )
                         )
                         Text(
-                            text = category,
-                            style = typography.bodyLarge
+                            text = category.displayName,
+                            style = typography.bodyLarge,
+                            modifier = Modifier.clickable {
+                                localSelectedCategory = if (localSelectedCategory == category.name) null else category.name
+                            }
                         )
                     }
                 }
@@ -110,7 +119,7 @@ fun FilterDialog(
 
             RegularButton(
                 onClick = {
-                    onFilterChange(selectedCategory, showMyPostsOnly)
+                    onFilterChange(localSelectedCategory, localShowMyPostsOnly)
                     onClose()
                 },
                 text = "Apply",
@@ -119,4 +128,5 @@ fun FilterDialog(
         }
     }
 }
+
 

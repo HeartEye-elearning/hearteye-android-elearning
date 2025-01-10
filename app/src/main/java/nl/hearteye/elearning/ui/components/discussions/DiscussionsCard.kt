@@ -7,17 +7,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,10 +29,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import nl.hearteye.elearning.R
 import nl.hearteye.elearning.data.model.DiscussionDetail
 import nl.hearteye.elearning.data.model.User
+import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
+import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.pdf.PdfViewer
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionViewModel
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
 import nl.hearteye.elearning.ui.theme.typography
+
 
 @Composable
 fun DiscussionsCard(
@@ -47,10 +53,16 @@ fun DiscussionsCard(
     discussionViewModel: DiscussionViewModel = hiltViewModel(),
     imageLocation: String
 ) {
-    val ecgImage: Painter = painterResource(id = ecgImageResId)
     val timeAgo = getTimeAgo(postTime)
 
     val canDelete = isCurrentUser || user.role in listOf("ADMIN", "SUPER_CARDIOLOGIST")
+
+    val showDeleteDialog = remember { mutableStateOf(false) }
+
+    val deleteDiscussion = {
+        discussionViewModel.deleteDiscussion(discussionId)
+        showDeleteDialog.value = false
+    }
 
     Column(
         modifier = Modifier
@@ -98,7 +110,7 @@ fun DiscussionsCard(
                         modifier = Modifier
                             .graphicsLayer(rotationZ = 90f)
                             .clickable {
-                                discussionViewModel.deleteDiscussion(discussionId)
+                                showDeleteDialog.value = true
                             }
                     )
                 }
@@ -168,7 +180,26 @@ fun DiscussionsCard(
             }
         }
     }
+
+    if (showDeleteDialog.value) {
+        AlertDialog(
+            containerColor = Color.White,
+            onDismissRequest = { showDeleteDialog.value = false },
+            title = { Text("Delete Discussion") },
+            text = { Text("Are you sure you want to delete this discussion?") },
+            confirmButton = {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedButton(onClick = { showDeleteDialog.value = false }, modifier = Modifier.weight(1f), text = "Cancel")
+                    RegularButton(onClick = deleteDiscussion, modifier = Modifier.weight(1f), text = "Delete")
+
+                }
+            },
+            dismissButton = {},
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }
-
-
 

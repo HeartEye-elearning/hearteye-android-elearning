@@ -1,6 +1,7 @@
 package nl.hearteye.elearning.data.entity
 
 import com.squareup.moshi.Json
+import nl.hearteye.elearning.data.model.Content
 
 data class CourseDetailEntity(
     val id: String,
@@ -22,7 +23,8 @@ data class Question(
     val id: String,
     @Json(name = "question") val question: Map<String, String>,
     @Json(name = "answers") val answers: List<Answer>,
-    @Json(name = "imageLocation") val imageLocation: String
+    @Json(name = "imageLocation") val imageLocation: String?,
+    @Json(name = "fetchedImage") val fetchedImage: Content?,
 )
 
 data class Answer(

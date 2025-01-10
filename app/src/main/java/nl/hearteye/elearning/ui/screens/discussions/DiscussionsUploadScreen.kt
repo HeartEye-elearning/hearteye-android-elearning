@@ -21,6 +21,7 @@ import nl.hearteye.elearning.ui.components.error.ErrorView
 import nl.hearteye.elearning.ui.navigation.NavRoutes
 import nl.hearteye.elearning.ui.screens.discussions.DiscussionViewModel
 import nl.hearteye.elearning.ui.theme.typography
+import nl.hearteye.elearning.ui.utils.CategoryOption
 import nl.hearteye.elearning.ui.utils.uriToFile
 import java.io.File
 
@@ -32,10 +33,9 @@ fun DiscussionsUploadScreen(
 ) {
     var postTitle by remember { mutableStateOf("") }
     var postDescription by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf<CategoryOption?>(null) }
     var expanded by remember { mutableStateOf(false) }
     var selectedPdfFile by remember { mutableStateOf<File?>(null) }
-    val categories = listOf("FINDINGS", "INTERPRETATION", "TROUBLESHOOTING")
 
     val scrollState = rememberScrollState()
 
@@ -141,7 +141,7 @@ fun DiscussionsUploadScreen(
                 Text(text = "Category", style = MaterialTheme.typography.titleSmall)
                 Text(
                     text = "Choose the category that best fits your post.",
-                    style = MaterialTheme.typography.bodySmall
+                    style = typography.bodySmall
                 )
                 ExposedDropdownMenuBox(
                     expanded = expanded,
@@ -149,8 +149,8 @@ fun DiscussionsUploadScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextField(
-                        value = selectedCategory,
-                        onValueChange = { selectedCategory = it },
+                        value = selectedCategory?.displayName ?: "",
+                        onValueChange = {},
                         modifier = Modifier
                             .fillMaxWidth()
                             .menuAnchor()
@@ -159,7 +159,7 @@ fun DiscussionsUploadScreen(
                         readOnly = true,
                         placeholder = {
                             Text(
-                                text = if (selectedCategory.isEmpty()) "Category" else "",
+                                text = if (selectedCategory == null) "Category" else "",
                                 color = Color.Gray
                             )
                         },
@@ -175,9 +175,9 @@ fun DiscussionsUploadScreen(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        categories.forEach { category ->
+                        CategoryOption.values().forEach { category ->
                             DropdownMenuItem(
-                                text = { Text(text = category) },
+                                text = { Text(text = category.displayName) },
                                 onClick = {
                                     selectedCategory = category
                                     expanded = false
@@ -195,9 +195,9 @@ fun DiscussionsUploadScreen(
 
             RegularButton(
                 onClick = {
-                    if (postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory.isNotEmpty() && selectedPdfFile != null) {
+                    if (postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory != null && selectedPdfFile != null) {
                         discussionViewModel.createDiscussion(
-                            postTitle, postDescription, selectedCategory, selectedPdfFile!!
+                            postTitle, postDescription, selectedCategory!!.name, selectedPdfFile!!
                         ) {
                             navController.navigate(NavRoutes.DISCUSSIONS.route)
                         }
@@ -205,8 +205,9 @@ fun DiscussionsUploadScreen(
                 },
                 text = "Post",
                 modifier = Modifier.fillMaxWidth(),
-                enabled = postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory.isNotEmpty() && selectedPdfFile != null
+                enabled = postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory != null && selectedPdfFile != null
             )
         }
     }
 }
+

@@ -11,12 +11,14 @@ import nl.hearteye.elearning.data.model.User
 import nl.hearteye.elearning.data.repository.UserRepository
 import nl.hearteye.elearning.data.model.UserQuizStats
 import nl.hearteye.elearning.data.repository.CourseRepository
+import nl.hearteye.elearning.data.store.DataStoreManager
 import javax.inject.Inject
 
 @HiltViewModel
 class AnswerOverviewViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val courseRepository: CourseRepository
+    private val courseRepository: CourseRepository,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     private val _userQuizStats = MutableStateFlow<UserQuizStats?>(null)
@@ -33,6 +35,11 @@ class AnswerOverviewViewModel @Inject constructor(
 
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
+
+    suspend fun getSelectedLanguage(): String {
+        val savedLanguage = dataStoreManager.getSelectedLanguage() ?: "eng"
+        return savedLanguage
+    }
 
     fun fetchCurrentUser() {
         viewModelScope.launch {

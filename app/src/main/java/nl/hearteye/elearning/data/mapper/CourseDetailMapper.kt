@@ -36,7 +36,8 @@ object CourseDetailMapper {
             id = entity.id,
             question = getLocalizedText(entity.question, language),
             answers = entity.answers.map { mapAnswerDetail(it, language) },
-            imageLocation = entity.imageLocation
+            imageLocation = entity.imageLocation,
+            fetchedImage = entity.fetchedImage
         )
     }
 

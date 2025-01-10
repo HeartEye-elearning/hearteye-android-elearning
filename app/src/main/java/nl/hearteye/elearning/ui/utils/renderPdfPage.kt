@@ -8,11 +8,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.URL
+import java.util.UUID
 
 suspend fun renderPdfPage(context: Context, pdfUrl: String, pageIndex: Int = 0): Bitmap? {
     return withContext(Dispatchers.IO) {
         try {
-            val file = File(context.cacheDir, "temp.pdf")
+            val uniqueFileName = UUID.randomUUID().toString() + ".pdf"
+            val file = File(context.cacheDir, uniqueFileName)
+
             if (file.exists()) {
                 file.delete()
             }
@@ -29,8 +32,8 @@ suspend fun renderPdfPage(context: Context, pdfUrl: String, pageIndex: Int = 0):
             val parcelFileDescriptor =
                 ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
             val pdfRenderer = PdfRenderer(parcelFileDescriptor)
-            val pdfPage = pdfRenderer.openPage(pageIndex)
 
+            val pdfPage = pdfRenderer.openPage(pageIndex)
             val bitmap = Bitmap.createBitmap(pdfPage.width, pdfPage.height, Bitmap.Config.ARGB_8888)
             pdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
 

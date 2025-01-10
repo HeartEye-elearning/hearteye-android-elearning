@@ -26,6 +26,7 @@ fun AnswerOverviewScreen(
     val error by viewModel.error.collectAsState()
     val questionDetails by viewModel.questionDetails.collectAsState()
     val currentUser by viewModel.currentUser.collectAsState()
+    var selectedLanguage by remember { mutableStateOf("eng") }
 
     LaunchedEffect(Unit) {
         viewModel.fetchCurrentUser()
@@ -34,11 +35,13 @@ fun AnswerOverviewScreen(
     LaunchedEffect(currentUser) {
         currentUser?.let {
             viewModel.fetchScoreForUser(courseId)
+            selectedLanguage = viewModel.getSelectedLanguage()
         }
     }
 
     var selectedQuestionId by remember { mutableStateOf<String?>(null) }
     var currentScreen by remember { mutableStateOf(Screen.ResultPage) }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         when {
@@ -100,7 +103,8 @@ fun AnswerOverviewScreen(
                             onBack = {
                                 selectedQuestionId = null
                                 currentScreen = Screen.ResultOverview
-                            }
+                            },
+                            language = selectedLanguage
                         )
                     }
                 }

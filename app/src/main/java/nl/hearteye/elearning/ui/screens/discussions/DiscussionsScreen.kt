@@ -43,7 +43,6 @@ fun DiscussionsScreen(
     navController: NavController
 ) {
     val discussions = discussionViewModel.discussions.value
-    val errorMessage = discussionViewModel.errorMessage.value
     val userCache = discussionViewModel.userCache.value
     val discussionDetail = discussionViewModel.discussionDetail.value
     val searchQuery = discussionViewModel.searchQuery.value
@@ -52,6 +51,8 @@ fun DiscussionsScreen(
     val expandedDiscussionId = remember { mutableStateOf<String?>(null) }
     val isLoading = remember { mutableStateOf(false) }
     val currentPage = remember { mutableStateOf(0) }
+    val selectedCategory = remember { mutableStateOf<String?>(null) }
+    val showMyPostsOnly = remember { mutableStateOf(false) }
 
     val selectedDiscussionId = remember { mutableStateOf<String?>(null) }
 
@@ -203,11 +204,17 @@ fun DiscussionsScreen(
 
         if (showFilterDialog.value) {
             FilterDialog(
+                selectedCategory = selectedCategory.value,
+                showMyPostsOnly = showMyPostsOnly.value,
                 onClose = { showFilterDialog.value = false },
-                onFilterChange = { category, showMyPostsOnly ->
+                onFilterChange = { category, showMyPosts ->
+                    selectedCategory.value = category
+                    showMyPostsOnly.value = showMyPosts
+                    currentPage.value = 0
                     discussionViewModel.getDiscussions(
+                        page = 0,
                         category = category,
-                        creator = showMyPostsOnly
+                        creator = showMyPosts
                     )
                     showFilterDialog.value = false
                 }

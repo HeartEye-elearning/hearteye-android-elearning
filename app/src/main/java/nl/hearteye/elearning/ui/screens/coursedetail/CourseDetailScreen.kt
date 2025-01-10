@@ -32,10 +32,12 @@ fun CourseDetailScreen(
     val isQuizCompleted = remember { mutableStateOf(false) }
     val showQuizOverview = remember { mutableStateOf(false) }
 
-    val imageLocations = remember { mutableStateOf<String?>(null) }
-
     LaunchedEffect(Unit) {
         courseDetailViewModel.fetchCourseDetails(courseId)
+    }
+
+    LaunchedEffect(courseDetail) {
+        courseDetailViewModel.setQuizId(courseId)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -116,8 +118,10 @@ fun CourseDetailScreen(
                                 onCompleteQuiz = {
                                     isQuizCompleted.value = true
                                     showQuizOverview.value = true
+                                    Log.d("QuizCompletion", "Finishing quiz for courseId: $courseId")
                                     courseDetailViewModel.finishQuiz(courseId)
-                                }
+                                },
+                                image = currentQuestion.fetchedImage
                             )
                         }
                     }
