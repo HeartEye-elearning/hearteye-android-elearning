@@ -47,7 +47,6 @@ fun InformationPage(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
-
                 .padding(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -65,7 +64,10 @@ fun InformationPage(
                     style = typography.bodyLarge,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-                PdfViewer(pdfUrl = imageLocations)
+
+                if (imageLocations.isNotEmpty()) {
+                    PdfViewer(pdfUrl = imageLocations)
+                }
             }
         }
 
@@ -126,4 +128,3 @@ fun InformationPage(
         )
     }
 }
-

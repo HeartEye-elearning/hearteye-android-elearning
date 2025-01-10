@@ -71,12 +71,10 @@ class MoreViewModel @Inject constructor(
             try {
                 val user = userRepository.getCurrentUser()
 
-                // Only attempt to fetch the profile picture if profilePictureLocation is not null
                 if (user.profilePictureLocation != null) {
                     try {
                         val content = contentRepository.getContent(user.profilePictureLocation)
 
-                        // Set the user with the profile picture URL
                         _currentUser.value = user.copy(profilePicture = content.sasUrl)
                     } catch (e: Exception) {
                         _errorMessage.value = "Failed to fetch profile picture: ${e.message}"

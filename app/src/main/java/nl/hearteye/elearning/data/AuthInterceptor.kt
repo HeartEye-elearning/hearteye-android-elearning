@@ -32,13 +32,12 @@ class AuthInterceptor @Inject constructor(
                 header("Authorization", "Bearer $it")
             }
         }.build()
-        // Check if the request has a body and log it
         val body = request.body
         if (body != null) {
             val buffer = okio.Buffer()
             body.writeTo(buffer)
             val bodyString = buffer.readUtf8()
-            Log.d("AuthInterceptor", "Request Body: $bodyString")  // Log the request body
+            Log.d("AuthInterceptor", "Request Body: $bodyString")
         }
             return chain.proceed(request)
     }

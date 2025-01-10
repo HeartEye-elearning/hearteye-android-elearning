@@ -55,7 +55,7 @@ fun MoreScreen(
     val currentUser = moreViewModel.currentUser.value
     val errorMessage = moreViewModel.errorMessage.value
     val isProfilePopupOpen = remember { mutableStateOf(false) }
-    val profilePicture = remember { mutableStateOf<String?>(null) }  // To hold the new image
+    val profilePicture = remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         moreViewModel.fetchCurrentUser()
