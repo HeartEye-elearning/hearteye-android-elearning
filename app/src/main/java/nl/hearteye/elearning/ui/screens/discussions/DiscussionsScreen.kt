@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,7 +32,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import nl.hearteye.elearning.R
 import nl.hearteye.elearning.ui.components.buttons.PlusButton
 import nl.hearteye.elearning.ui.components.comments.CommentsOverlay
 import nl.hearteye.elearning.ui.components.searchbar.SearchBar
@@ -57,6 +57,12 @@ fun DiscussionsScreen(
     val selectedDiscussionId = remember { mutableStateOf<String?>(null) }
 
     val showFilterDialog = remember { mutableStateOf(false) }
+
+    val currentUser = discussionViewModel.currentUser.value
+
+    LaunchedEffect(Unit) {
+        discussionViewModel.fetchCurrentUser()
+    }
 
     LaunchedEffect(searchQuery) {
         currentPage.value = 0
@@ -129,40 +135,36 @@ fun DiscussionsScreen(
                     items(discussions) { discussionResponse ->
                         discussionResponse.content.forEach { discussion ->
                             val user = userCache[discussion.userId]
-                            val currentUser =
-                                userCache[discussionViewModel.userCache.value.keys.firstOrNull()]
+                            val isExpanded = expandedDiscussionId.value == discussion.id
 
                             if (user == null) {
-                                LaunchedEffect(discussion.userId) {
+                                LaunchedEffect(Unit) {
                                     discussionViewModel.getUser(discussion.userId)
                                 }
-                            } else {
-                                val isExpanded = expandedDiscussionId.value == discussion.id
-
-                                DiscussionsCard(
-                                    user = user,
-                                    postTime = discussion.createdAt,
-                                    postTitle = discussion.title,
-                                    postContent = if (isExpanded) discussion.content else discussion.content.take(
-                                        100
-                                    ),
-                                    ecgImageResId = R.drawable.ecg_scan,
-                                    discussionId = discussion.id,
-                                    isExpanded = isExpanded,
-                                    onReadMoreClick = { discussionId ->
-                                        if (expandedDiscussionId.value == discussionId) {
-                                            expandedDiscussionId.value = null
-                                        } else {
-                                            expandedDiscussionId.value = discussionId
-                                            discussionViewModel.getDiscussionById(discussionId)
-                                        }
-                                    },
-                                    discussionDetail = if (isExpanded) discussionDetail else null,
-                                    isCurrentUser = currentUser?.id == discussion.userId,
-                                    onCommentsClick = { selectedDiscussionId.value = discussion.id },
-                                    imageLocation = discussion.imageLocation.toString()
-                                )
                             }
+
+                            DiscussionsCard(
+                                user = user,
+                                postTime = discussion.createdAt,
+                                postTitle = discussion.title,
+                                postContent = if (isExpanded) discussion.content else discussion.content.take(100),
+                                discussionId = discussion.id,
+                                isExpanded = isExpanded,
+                                onReadMoreClick = { discussionId ->
+                                    if (expandedDiscussionId.value == discussionId) {
+                                        expandedDiscussionId.value = null
+                                    } else {
+                                        expandedDiscussionId.value = discussionId
+                                        discussionViewModel.getDiscussionById(discussionId)
+                                    }
+                                },
+                                discussionDetail = if (isExpanded) discussionDetail else null,
+                                currentUser = currentUser,
+                                onCommentsClick = {
+                                    selectedDiscussionId.value = discussion.id
+                                },
+                                imageLocation = discussion.imageLocation.toString()
+                            )
                         }
                     }
 

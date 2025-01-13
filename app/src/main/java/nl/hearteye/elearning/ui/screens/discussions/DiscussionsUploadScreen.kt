@@ -48,7 +48,6 @@ fun DiscussionsUploadScreen(
             uri?.let {
                 selectedPdfFile = uriToFile(context, it)
                 if (selectedPdfFile == null || !selectedPdfFile!!.exists()) {
-                    Log.e("DiscussionsUploadScreen", "Invalid file selected.")
                 }
             }
         }

@@ -61,7 +61,9 @@ fun CourseCard(
                 Text(
                     text = title,
                     style = typography.bodyLarge,
-                    color = Color.Black
+                    color = Color.Black,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
             }
 

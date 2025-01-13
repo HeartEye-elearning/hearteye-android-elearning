@@ -49,7 +49,6 @@ class CoursesViewModel @Inject constructor(
                     } else {
                         null
                     }
-
                     course.copy(imageContent = imageContent)
                 }
 

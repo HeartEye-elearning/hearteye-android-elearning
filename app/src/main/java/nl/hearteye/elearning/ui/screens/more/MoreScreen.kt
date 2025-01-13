@@ -1,5 +1,6 @@
 package nl.hearteye.elearning.ui.screens.more
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -82,7 +83,7 @@ fun MoreScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val imageUrl = currentUser.profilePicture ?: R.drawable.profile_picture
+                val imageUrl = currentUser.profilePicture ?: R.drawable.profile_picture_placeholder
 
                 Box(
                     contentAlignment = Alignment.BottomEnd
@@ -244,10 +245,14 @@ fun MoreScreen(
             isOpen = isProfilePopupOpen.value,
             onDismiss = { isProfilePopupOpen.value = false },
             onImageSelected = { base64Image ->
-                profilePicture.value = base64Image
-                currentUser?.let { user ->
-                    val profilePictureEntity = ProfilePictureEntity(base64Image, "image/png")
-                    moreViewModel.updateProfilePicture(user.id, profilePictureEntity)
+            },
+            onConfirm = { base64Image ->
+                if (!base64Image.isNullOrEmpty()) {
+                    profilePicture.value = base64Image
+                    currentUser.let { user ->
+                        val profilePictureEntity = ProfilePictureEntity(base64Image, "image/png")
+                        moreViewModel.updateProfilePicture(user.id, profilePictureEntity)
+                    }
                 }
                 isProfilePopupOpen.value = false
             }

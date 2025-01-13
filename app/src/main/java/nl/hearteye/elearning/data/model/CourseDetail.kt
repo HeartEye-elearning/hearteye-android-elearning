@@ -8,7 +8,8 @@ data class CourseDetail(
     val informationPages: List<InformationPage>,
     val questionCount: Int,
     val durationInMinutes: Int,
-    val questions: List<QuestionDetail>
+    val questions: List<QuestionDetail>,
+    val isMain: Boolean
 )
 
 data class InformationPage(

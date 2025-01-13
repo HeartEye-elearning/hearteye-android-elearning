@@ -73,6 +73,7 @@ fun CommentInput(
             }
         }
 
+        // TextField and upload button in the row below the "Replying to" bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()

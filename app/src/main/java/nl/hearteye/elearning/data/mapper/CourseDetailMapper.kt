@@ -19,7 +19,8 @@ object CourseDetailMapper {
             informationPages = entity.informationPages.map { mapInformationPage(it, language) },
             questions = entity.questions.map { mapQuestionDetail(it, language) },
             questionCount = entity.questions.size,
-            durationInMinutes = entity.durationInMinutes
+            durationInMinutes = entity.durationInMinutes,
+            isMain = entity.isMain
         )
     }
 

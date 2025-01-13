@@ -17,7 +17,6 @@ fun uriToFile(context: Context, uri: Uri): File? {
         outputStream.close()
         return tempFile
     } catch (e: Exception) {
-        Log.e("uriToFile", "Error converting URI to file: ${e.message}")
         return null
     }
 }

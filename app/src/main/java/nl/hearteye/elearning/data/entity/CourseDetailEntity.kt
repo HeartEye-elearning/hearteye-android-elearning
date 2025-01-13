@@ -10,7 +10,8 @@ data class CourseDetailEntity(
     @Json(name = "informationPages") val informationPages: List<InformationPage>,
     @Json(name = "questions") val questions: List<Question>,
     @Json(name = "durationInMinutes") val durationInMinutes: Int,
-    @Json(name = "isActive") val isActive: Boolean
+    @Json(name = "isActive") val isActive: Boolean,
+    @Json(name = "isMain") val isMain: Boolean
 )
 
 data class InformationPage(

@@ -6,7 +6,8 @@ data class DiscussionEntity(
     @Json(name = "title") val title: String,
     @Json(name = "content") val content: String,
     @Json(name = "base64") val base64: Base64ContentEntity,
-    @Json(name = "category") val category: String
+    @Json(name = "category") val category: String,
+    @Json(name = "profileImage") val profileImage: String?
 )
 
 data class Base64ContentEntity(

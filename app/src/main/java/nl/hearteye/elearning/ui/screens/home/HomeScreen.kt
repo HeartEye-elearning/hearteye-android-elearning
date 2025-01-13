@@ -33,6 +33,8 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel(), navController: Na
     val isLoading = homeViewModel.isLoading.value
     val errorMessage = homeViewModel.errorMessage.value
     val currentUser = homeViewModel.currentUser.value
+    val courseErrorMessage = homeViewModel.courseErrorMessage
+    val discussionsErrorMessage = homeViewModel.discussionsErrorMessage
 
     LaunchedEffect(Unit) {
         homeViewModel.getCourses()
@@ -95,7 +97,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel(), navController: Na
                         color = ForegroundPrimary
                     )
                 } else if (!errorMessage.isNullOrEmpty()) {
-                    Text("Error: $errorMessage", color = Color.Red)
+                    Text("Error: $courseErrorMessage", color = Color.Red)
                 } else {
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -141,7 +143,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel(), navController: Na
                         color = ForegroundPrimary
                     )
                 } else if (!errorMessage.isNullOrEmpty()) {
-                    Text("Error: $errorMessage", color = Color.Red)
+                    Text("Error: $discussionsErrorMessage", color = Color.Red)
                 } else {
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)

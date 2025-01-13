@@ -14,13 +14,11 @@ class AuthInterceptor @Inject constructor(
         var token = sharedPreferences.getString("auth_token", null)
         val refreshToken = sharedPreferences.getString("refresh_token", null)
 
-
         val tokenExpirationTime = sharedPreferences.getLong("token_expiration", 0L)
         val refreshTokenExpirationTime = sharedPreferences.getLong("refresh_token_expiration", 0L)
 
         if (System.currentTimeMillis() > tokenExpirationTime) {
             if (System.currentTimeMillis() > refreshTokenExpirationTime) {
-                Log.e("AuthInterceptor", "Both auth token and refresh token are expired")
                 clearUserSession()
             } else {
                 token = refreshToken
@@ -32,14 +30,14 @@ class AuthInterceptor @Inject constructor(
                 header("Authorization", "Bearer $it")
             }
         }.build()
-        val body = request.body
-        if (body != null) {
-            val buffer = okio.Buffer()
-            body.writeTo(buffer)
-            val bodyString = buffer.readUtf8()
-            Log.d("AuthInterceptor", "Request Body: $bodyString")
+
+        val response = chain.proceed(request)
+
+        if (response.code == 401) {
+            clearUserSession()
         }
-            return chain.proceed(request)
+
+        return response
     }
 
     private fun clearUserSession() {
@@ -52,5 +50,3 @@ class AuthInterceptor @Inject constructor(
             .apply()
     }
 }
-
-

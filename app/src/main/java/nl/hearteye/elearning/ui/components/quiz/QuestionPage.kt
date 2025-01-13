@@ -143,6 +143,7 @@ fun QuestionPage(
                         onClick = {
                             selectedAnswer.value?.let { answerId ->
                                 onSubmitAnswer(answerId)
+
                                 if (currentQuestionIndex == totalQuestions - 1) {
                                     onCompleteQuiz()
                                 } else {

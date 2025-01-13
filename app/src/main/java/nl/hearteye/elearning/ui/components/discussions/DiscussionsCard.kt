@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,11 +21,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberImagePainter
 import nl.hearteye.elearning.R
 import nl.hearteye.elearning.data.model.DiscussionDetail
 import nl.hearteye.elearning.data.model.User
@@ -39,23 +39,23 @@ import nl.hearteye.elearning.ui.theme.typography
 
 @Composable
 fun DiscussionsCard(
-    user: User,
+    user: User?,
     postTime: String,
     postTitle: String,
     postContent: String,
-    ecgImageResId: Int,
     discussionId: String,
     isExpanded: Boolean,
     onReadMoreClick: (String) -> Unit,
     discussionDetail: DiscussionDetail?,
-    isCurrentUser: Boolean,
+    currentUser: User?,
     onCommentsClick: () -> Unit,
     discussionViewModel: DiscussionViewModel = hiltViewModel(),
     imageLocation: String
 ) {
     val timeAgo = getTimeAgo(postTime)
 
-    val canDelete = isCurrentUser || user.role in listOf("ADMIN", "SUPER_CARDIOLOGIST")
+    val canDelete =
+        currentUser?.role in listOf("ADMIN", "SUPER_CARDIOLOGIST") || currentUser?.id == user?.id
 
     val showDeleteDialog = remember { mutableStateOf(false) }
 
@@ -63,6 +63,7 @@ fun DiscussionsCard(
         discussionViewModel.deleteDiscussion(discussionId)
         showDeleteDialog.value = false
     }
+
 
     Column(
         modifier = Modifier
@@ -82,7 +83,8 @@ fun DiscussionsCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.profile_picture),
+                    painter = rememberImagePainter(user?.profilePicture ?: R.drawable.placeholder,
+                    ),
                     contentDescription = "User Profile",
                     modifier = Modifier
                         .size(30.dp)
@@ -91,7 +93,7 @@ fun DiscussionsCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${user.firstName} ${user.lastName}",
+                    text = "${user?.firstName} ${user?.lastName}",
                     style = typography.titleMedium,
                 )
                 Spacer(modifier = Modifier.width(4.dp))
@@ -192,8 +194,16 @@ fun DiscussionsCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    OutlinedButton(onClick = { showDeleteDialog.value = false }, modifier = Modifier.weight(1f), text = "Cancel")
-                    RegularButton(onClick = deleteDiscussion, modifier = Modifier.weight(1f), text = "Delete")
+                    OutlinedButton(
+                        onClick = { showDeleteDialog.value = false },
+                        modifier = Modifier.weight(1f),
+                        text = "Cancel"
+                    )
+                    RegularButton(
+                        onClick = deleteDiscussion,
+                        modifier = Modifier.weight(1f),
+                        text = "Delete"
+                    )
 
                 }
             },

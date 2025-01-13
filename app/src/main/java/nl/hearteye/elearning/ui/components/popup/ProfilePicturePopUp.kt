@@ -1,8 +1,5 @@
 package nl.hearteye.elearning.ui.components.popup
 
-import android.app.Activity
-import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -21,16 +18,17 @@ import nl.hearteye.elearning.ui.utils.convertUriToBase64
 fun ProfilePicturePopUp(
     isOpen: Boolean,
     onDismiss: () -> Unit,
-    onImageSelected: (String) -> Unit
+    onImageSelected: (String) -> Unit,
+    onConfirm: (String?) -> Unit
 ) {
     val context = LocalContext.current
+    var selectedImageBase64: String? = null
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
             uri?.let {
-                val base64String = convertUriToBase64(it, context.contentResolver)
-                Log.d("ProfilePicturePopUp", "Selected Image Base64: $base64String")
-                onImageSelected(base64String)
+                selectedImageBase64 = convertUriToBase64(it, context.contentResolver)
             }
         }
     )
@@ -44,18 +42,25 @@ fun ProfilePicturePopUp(
                     Text("Select a PNG image to upload.")
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = {
-                        launcher.launch("image/*")
+                        launcher.launch("image/png")
                     }) {
                         Text("Choose Image")
                     }
                 }
             },
             confirmButton = {
+                Button(onClick = {
+                    onConfirm(selectedImageBase64)
+                }) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
                 Button(onClick = onDismiss) {
                     Text("Cancel")
                 }
-            },
-            dismissButton = null
+            }
         )
     }
 }
+

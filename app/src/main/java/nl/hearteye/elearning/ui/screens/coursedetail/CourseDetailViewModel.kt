@@ -1,5 +1,6 @@
 package nl.hearteye.elearning.ui.screens.coursedetail
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -57,9 +58,8 @@ class CourseDetailViewModel @Inject constructor(
                     if (!page.contentLocations.isNullOrEmpty()) {
                         val fetchedContents = page.contentLocations.mapNotNull { location ->
                             try {
-                                contentRepository.getContent(location)?.let { ContentMapper.map(it) }
+                                contentRepository.getContent(location).let { ContentMapper.map(it) }
                             } catch (e: Exception) {
-                                _errorMessage.value = "Failed to load content: ${e.message}"
                                 null
                             }
                         }
@@ -74,7 +74,7 @@ class CourseDetailViewModel @Inject constructor(
                         if (imageLocation.isNotBlank()) {
                             try {
                                 val fetchedImage = contentRepository.getContent(imageLocation)
-                                fetchedImage?.let {
+                                fetchedImage.let {
                                     question.fetchedImage = ContentMapper.map(it)
                                 }
                             } catch (e: Exception) {
@@ -105,12 +105,12 @@ class CourseDetailViewModel @Inject constructor(
         }
     }
 
-    fun finishQuiz(quizId: String) {
+    fun finishQuiz(courseId: String) {
         _isLoading.value = true
         _errorMessage.value = null
         viewModelScope.launch {
             try {
-                courseRepository.finishQuiz(quizId)
+                courseRepository.finishQuiz(courseId)
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to finish quiz: ${e.message}"
             } finally {

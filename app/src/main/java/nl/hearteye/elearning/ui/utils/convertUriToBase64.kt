@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 fun convertUriToBase64(uri: Uri, contentResolver: ContentResolver): String {
-    // Use ContentResolver to get an InputStream for the URI
     val inputStream: InputStream = contentResolver.openInputStream(uri) ?: return ""
     val byteArrayOutputStream = ByteArrayOutputStream()
 
@@ -20,7 +19,6 @@ fun convertUriToBase64(uri: Uri, contentResolver: ContentResolver): String {
 
     inputStream.close()
 
-    // Convert byte array to Base64 string
     val fileBytes = byteArrayOutputStream.toByteArray()
     return Base64.encodeToString(fileBytes, Base64.DEFAULT)
 }

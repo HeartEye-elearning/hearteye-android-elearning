@@ -80,7 +80,6 @@ class MoreViewModel @Inject constructor(
                         _errorMessage.value = "Failed to fetch profile picture: ${e.message}"
                     }
                 } else {
-                    Log.d("d", "no profile picture")
                     _currentUser.value = user
                 }
             } catch (e: Exception) {
@@ -93,16 +92,23 @@ class MoreViewModel @Inject constructor(
     fun updateProfilePicture(id: String, profilePictureEntity: ProfilePictureEntity) {
         viewModelScope.launch {
             try {
+
                 val response: Response<Unit> = userRepository.updateProfilePicture(id, profilePictureEntity)
 
                 if (response.isSuccessful) {
                     _profilePictureUpdateResult.value = Result.success(Unit)
+                    fetchCurrentUser()
                 } else {
-                    _profilePictureUpdateResult.value = Result.failure(Exception("Profile picture update failed"))
+                    _profilePictureUpdateResult.value = Result.failure(
+                        Exception("Profile picture update failed with status code: ${response.code()}")
+                    )
                 }
             } catch (e: Exception) {
-                _profilePictureUpdateResult.value = Result.failure(Exception("Failed to update profile picture: ${e.message}"))
+                _profilePictureUpdateResult.value = Result.failure(
+                    Exception("Failed to update profile picture: ${e.message}")
+                )
             }
         }
     }
+
 }

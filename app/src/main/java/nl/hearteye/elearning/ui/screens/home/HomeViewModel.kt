@@ -1,6 +1,5 @@
 package nl.hearteye.elearning.ui.screens.home
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -39,6 +38,12 @@ class HomeViewModel @Inject constructor(
     private val _errorMessage = mutableStateOf<String?>(null)
     val errorMessage: State<String?> = _errorMessage
 
+    private val _courseErrorMessage = mutableStateOf<String?>(null)
+    val courseErrorMessage: State<String?> = _courseErrorMessage
+
+    private val _discussionsErrorMessage = mutableStateOf<String?>(null)
+    val discussionsErrorMessage: State<String?> = _discussionsErrorMessage
+
     private val _currentUser = mutableStateOf<User?>(null)
     val currentUser: State<User?> = _currentUser
 
@@ -51,27 +56,30 @@ class HomeViewModel @Inject constructor(
 
     fun getCourses() {
         _isCoursesLoading.value = true
-        _errorMessage.value = null
+        _courseErrorMessage.value = null
         viewModelScope.launch {
             try {
                 val savedLanguage = dataStoreManager.getSelectedLanguage() ?: "eng"
                 val fetchedCourses = courseRepository.getCourses(savedLanguage)
 
                 val updatedCourses = fetchedCourses.map { course ->
-                    val imageContent = if (course.imageLocation != null) {
-                        val fetchedContentEntity = contentRepository.getContent(course.imageLocation.toString())
-                        val fetchedContent = ContentMapper.map(fetchedContentEntity)
-                        fetchedContent.sasUrl
+                    if (course.imageLocation != null) {
+                        try {
+                            val fetchedContentEntity = contentRepository.getContent(course.imageLocation.toString())
+                            val fetchedContent = ContentMapper.map(fetchedContentEntity)
+
+                            course.copy(imageContent = fetchedContent.sasUrl)
+                        } catch (e: Exception) {
+                            _courseErrorMessage.value = "Error fetching content: ${e.message}"
+                            course
+                        }
                     } else {
-                        null
+                        course
                     }
-
-                    course.copy(imageContent = imageContent)
                 }
-
                 _courses.value = updatedCourses
             } catch (e: Exception) {
-                _errorMessage.value = "Failed to load courses: ${e.message}"
+                _courseErrorMessage.value = e.message ?: "An unknown error occurred"
             } finally {
                 _isCoursesLoading.value = false
             }
@@ -86,7 +94,7 @@ class HomeViewModel @Inject constructor(
         category: String? = null,
     ) {
         _isDiscussionsLoading.value = true
-        _errorMessage.value = null
+        _discussionsErrorMessage.value = null
         viewModelScope.launch {
             try {
                 val uppercaseCategory = category?.uppercase()
@@ -99,10 +107,10 @@ class HomeViewModel @Inject constructor(
                         try {
                             val contentEntity = contentRepository.getContent(discussion.fileLocation)
                             val content = ContentMapper.map(contentEntity)
-                            Log.d("Discussions", "sasUrl: ${content.sasUrl}")
+
                             discussion.copy(imageLocation = content.sasUrl)
                         } catch (e: Exception) {
-                            _errorMessage.value = "Error fetching content: ${e.message}"
+                            _discussionsErrorMessage.value = "Error fetching content: ${e.message}"
                             discussion
                         }
                     } else {
@@ -112,7 +120,7 @@ class HomeViewModel @Inject constructor(
 
                 _discussions.value = listOf(discussionsResponse.copy(content = updatedDiscussions))
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "An unknown error occurred"
+                _discussionsErrorMessage.value = e.message ?: "An unknown error occurred"
             } finally {
                 _isDiscussionsLoading.value = false
             }

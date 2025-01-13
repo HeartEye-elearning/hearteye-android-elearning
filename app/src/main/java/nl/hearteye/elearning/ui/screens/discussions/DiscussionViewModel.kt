@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import nl.hearteye.elearning.data.mapper.ContentMapper
 import nl.hearteye.elearning.data.model.Base64Content
@@ -43,6 +45,12 @@ class DiscussionViewModel @Inject constructor(
     val _searchQuery = mutableStateOf<String>("")
     val searchQuery: State<String> = _searchQuery
 
+    private val _userState = MutableStateFlow<User?>(null)
+    val userState: StateFlow<User?> = _userState
+
+    private val _currentUser = mutableStateOf<User?>(null)
+    val currentUser: State<User?> = _currentUser
+
     private var currentPage = 0
 
     fun getDiscussions(
@@ -70,7 +78,6 @@ class DiscussionViewModel @Inject constructor(
                         try {
                             val contentEntity = contentRepository.getContent(discussion.fileLocation)
                             val content = ContentMapper.map(contentEntity)
-                            Log.d("Discussions", "sasUrl: ${content.sasUrl}")
                             discussion.copy(imageLocation = content.sasUrl)
 
                         } catch (e: Exception) {
@@ -95,10 +102,6 @@ class DiscussionViewModel @Inject constructor(
             }
         }
     }
-
-
-
-
 
     fun createDiscussion(
         title: String,
@@ -127,7 +130,7 @@ class DiscussionViewModel @Inject constructor(
         val formattedCategory = category.uppercase().replace(" ", "_")
 
         val base64Content = Base64Content(base64String, "application/pdf", pdfFile.name)
-        val discussion = Discussion(title, content, base64Content, formattedCategory)
+        val discussion = Discussion(title, content, base64Content, formattedCategory, null)
 
         viewModelScope.launch {
             try {
@@ -145,11 +148,29 @@ class DiscussionViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = userRepository.getUser(userId)
+                val contentEntity = contentRepository.getContent(user.profilePictureLocation.toString())
+                val content = ContentMapper.map(contentEntity)
+                val updatedUser = user.copy(profilePicture = content.sasUrl)
                 _userCache.value = _userCache.value.toMutableMap().apply {
-                    put(userId, user)
+                    put(userId, updatedUser)
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to fetch user: ${e.message}"
+            }
+        }
+    }
+
+
+
+    fun fetchCurrentUser() {
+        _errorMessage.value = null
+        viewModelScope.launch {
+            try {
+                val user = userRepository.getCurrentUser()
+                _currentUser.value = user
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to fetch current user: ${e.message}"
+            } finally {
             }
         }
     }

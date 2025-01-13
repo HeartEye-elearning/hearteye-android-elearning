@@ -47,7 +47,8 @@ object DiscussionMapper {
                 contentType = model.base64Content.contentType,
                 title = model.base64Content.title
             ),
-            category = model.category
+            category = model.category,
+            profileImage = model.profileImage
         )
     }
 }

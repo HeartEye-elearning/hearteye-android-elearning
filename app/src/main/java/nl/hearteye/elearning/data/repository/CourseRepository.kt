@@ -6,6 +6,7 @@ import nl.hearteye.elearning.data.mapper.CourseDetailMapper
 import nl.hearteye.elearning.data.mapper.CourseMapper
 import nl.hearteye.elearning.data.model.Course
 import nl.hearteye.elearning.data.model.CourseDetail
+import retrofit2.Response
 import javax.inject.Inject
 
 class CourseRepository @Inject constructor(
@@ -34,10 +35,7 @@ class CourseRepository @Inject constructor(
         return courseService.getQuestionDetails(quizId, questionId)
     }
 
-    suspend fun finishQuiz(quizId: String) {
-        val response = courseService.finishQuiz(quizId)
-        if (!response.isSuccessful) {
-            throw Exception("Failed to finish quiz: ${response.errorBody()?.string()}")
-        }
+    suspend fun finishQuiz(courseId: String): Response<Unit> {
+        return courseService.finishQuiz(courseId)
     }
 }

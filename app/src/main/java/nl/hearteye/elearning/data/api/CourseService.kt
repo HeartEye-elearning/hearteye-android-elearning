@@ -31,5 +31,7 @@ interface CourseService {
     ): QuestionDetailEntity
 
     @PUT("quiz-service/v1/quizzes/{id}/finish")
-    suspend fun finishQuiz(@Path("id") quizId: String): Response<Unit>
+    suspend fun finishQuiz(
+        @Path("id") courseId: String
+    ): Response<Unit>
 }

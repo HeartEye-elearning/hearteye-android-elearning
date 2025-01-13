@@ -14,7 +14,8 @@ object CourseMapper {
             description = description,
             duration = entity.durationInMinutes,
             createdAt = entity.createdAt,
-            imageLocation = entity.imageLocation
+            imageLocation = entity.imageLocation,
+            isMain = entity.isMain
         )
     }
 }
