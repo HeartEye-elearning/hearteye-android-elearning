@@ -36,7 +36,7 @@ fun DiscussionsUploadScreen(
     var selectedCategory by remember { mutableStateOf<CategoryOption?>(null) }
     var expanded by remember { mutableStateOf(false) }
     var selectedPdfFile by remember { mutableStateOf<File?>(null) }
-
+    var loading by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
     val errorMessage by discussionViewModel.errorMessage
@@ -195,16 +195,18 @@ fun DiscussionsUploadScreen(
             RegularButton(
                 onClick = {
                     if (postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory != null && selectedPdfFile != null) {
+                        loading = true
                         discussionViewModel.createDiscussion(
                             postTitle, postDescription, selectedCategory!!.name, selectedPdfFile!!
                         ) {
+                            loading = false
                             navController.navigate(NavRoutes.DISCUSSIONS.route)
                         }
                     }
                 },
-                text = "Post",
+                text = if (loading) "Loading..." else "Post",
                 modifier = Modifier.fillMaxWidth(),
-                enabled = postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory != null && selectedPdfFile != null
+                enabled = !loading && postTitle.isNotBlank() && postDescription.isNotBlank() && selectedCategory != null && selectedPdfFile != null
             )
         }
     }

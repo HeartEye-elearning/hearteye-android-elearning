@@ -250,8 +250,7 @@ fun MoreScreen(
                 if (!base64Image.isNullOrEmpty()) {
                     profilePicture.value = base64Image
                     currentUser.let { user ->
-                        val profilePictureEntity = ProfilePictureEntity(base64Image, "image/png")
-                        moreViewModel.updateProfilePicture(user.id, profilePictureEntity)
+                        moreViewModel.updateProfilePicture(user.id, base64Image)
                     }
                 }
                 isProfilePopupOpen.value = false

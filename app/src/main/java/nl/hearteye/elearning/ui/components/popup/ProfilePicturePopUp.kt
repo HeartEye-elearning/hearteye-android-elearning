@@ -9,10 +9,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import nl.hearteye.elearning.ui.utils.convertUriToBase64
+import nl.hearteye.elearning.ui.utils.cropAndConvertToBase64
 
 @Composable
 fun ProfilePicturePopUp(
@@ -22,13 +24,14 @@ fun ProfilePicturePopUp(
     onConfirm: (String?) -> Unit
 ) {
     val context = LocalContext.current
-    var selectedImageBase64: String? = null
+    val selectedImageBase64 = remember { mutableStateOf<String?>(null) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
             uri?.let {
-                selectedImageBase64 = convertUriToBase64(it, context.contentResolver)
+                val base64 = cropAndConvertToBase64(it, context)
+                selectedImageBase64.value = base64
             }
         }
     )
@@ -39,18 +42,20 @@ fun ProfilePicturePopUp(
             title = { Text("Upload Profile Picture") },
             text = {
                 Column {
-                    Text("Select a PNG image to upload.")
+                    Text("Select a PNG or JPG image to upload.")
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = {
-                        launcher.launch("image/png")
-                    }) {
+                    Button(onClick = { launcher.launch("image/png") }) {
                         Text("Choose Image")
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    selectedImageBase64.value?.let {
+                        Text("Image selected (Base64 length: ${it.length})")
                     }
                 }
             },
             confirmButton = {
                 Button(onClick = {
-                    onConfirm(selectedImageBase64)
+                    onConfirm(selectedImageBase64.value)
                 }) {
                     Text("Confirm")
                 }

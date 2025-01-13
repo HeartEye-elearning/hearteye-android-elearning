@@ -83,7 +83,7 @@ fun DiscussionsCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Image(
-                    painter = rememberImagePainter(user?.profilePicture ?: R.drawable.placeholder,
+                    painter = rememberImagePainter(user?.profilePicture ?: R.drawable.profile_picture_placeholder,
                     ),
                     contentDescription = "User Profile",
                     modifier = Modifier
@@ -93,7 +93,7 @@ fun DiscussionsCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${user?.firstName} ${user?.lastName}",
+                    text = if (user?.firstName == null || user?.lastName == null) "Loading . . ." else "${user.firstName} ${user.lastName}",
                     style = typography.titleMedium,
                 )
                 Spacer(modifier = Modifier.width(4.dp))

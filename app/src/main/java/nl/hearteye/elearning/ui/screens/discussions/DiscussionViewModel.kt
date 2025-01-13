@@ -1,6 +1,5 @@
 package nl.hearteye.elearning.ui.screens.discussions
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -53,17 +52,23 @@ class DiscussionViewModel @Inject constructor(
 
     private var currentPage = 0
 
+    private val _loading = mutableStateOf(false)
+    val loading: State<Boolean> = _loading
+
     fun getDiscussions(
         page: Int = 0,
-        size: Int = 1,
+        size: Int = 3,
         creator: Boolean = false,
         search: String? = null,
         category: String? = null,
     ) {
         _errorMessage.value = null
+        _loading.value = true
+
         if (page == 0) {
             _discussions.value = emptyList()
         }
+
         viewModelScope.launch {
             try {
                 val uppercaseCategory = category
@@ -99,6 +104,8 @@ class DiscussionViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An unknown error occurred"
+            } finally {
+                _loading.value = false
             }
         }
     }
@@ -148,9 +155,15 @@ class DiscussionViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = userRepository.getUser(userId)
-                val contentEntity = contentRepository.getContent(user.profilePictureLocation.toString())
-                val content = ContentMapper.map(contentEntity)
-                val updatedUser = user.copy(profilePicture = content.sasUrl)
+
+                val updatedUser = if (user.profilePictureLocation != null) {
+                    val contentEntity = contentRepository.getContent(user.profilePictureLocation.toString())
+                    val content = ContentMapper.map(contentEntity)
+                    user.copy(profilePicture = content.sasUrl)
+                } else {
+                    user
+                }
+
                 _userCache.value = _userCache.value.toMutableMap().apply {
                     put(userId, updatedUser)
                 }
@@ -198,6 +211,7 @@ class DiscussionViewModel @Inject constructor(
                 val response = discussionRepository.deleteDiscussion(discussionId)
                 if (response.isSuccessful) {
                     _deleteResult.value = Result.success(true)
+                    _discussions.value = emptyList()
                     getDiscussions()
                 } else {
                     _deleteResult.value = Result.failure(Exception("Failed to delete"))

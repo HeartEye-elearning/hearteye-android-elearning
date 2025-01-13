@@ -1,6 +1,5 @@
 package nl.hearteye.elearning.ui.screens.coursedetail
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
@@ -79,7 +78,7 @@ fun CourseDetailScreen(
                                 isQuizReady.value = true
                             },
                             isLastPage = currentInformationPageIndex.intValue == courseDetail.informationPages.size - 1,
-                            imageLocations = currentInformationPage.fetchedContent?.firstOrNull()?.sasUrl ?: ""
+                            imageLocations = currentInformationPage.fetchedContent?.firstOrNull()
                         )
                     }
                 }

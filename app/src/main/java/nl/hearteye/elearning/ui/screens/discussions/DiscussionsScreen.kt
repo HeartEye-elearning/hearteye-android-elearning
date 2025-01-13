@@ -2,6 +2,7 @@ package nl.hearteye.elearning.ui.screens.discussions
 
 import DiscussionsCard
 import FilterDialog
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,10 +47,10 @@ fun DiscussionsScreen(
     val userCache = discussionViewModel.userCache.value
     val discussionDetail = discussionViewModel.discussionDetail.value
     val searchQuery = discussionViewModel.searchQuery.value
+    var isLoading = discussionViewModel.loading.value
     val listState = rememberLazyListState()
 
     val expandedDiscussionId = remember { mutableStateOf<String?>(null) }
-    val isLoading = remember { mutableStateOf(false) }
     val currentPage = remember { mutableStateOf(0) }
     val selectedCategory = remember { mutableStateOf<String?>(null) }
     val showMyPostsOnly = remember { mutableStateOf(false) }
@@ -73,8 +74,8 @@ fun DiscussionsScreen(
         val firstVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.firstOrNull()?.index
         val totalItems = listState.layoutInfo.totalItemsCount
 
-        if (firstVisibleItemIndex != null && firstVisibleItemIndex + 3 >= totalItems && !isLoading.value) {
-            isLoading.value = true
+        if (firstVisibleItemIndex != null && firstVisibleItemIndex + 3 >= totalItems && !isLoading) {
+            isLoading = true
             currentPage.value++
             discussionViewModel.getDiscussions(page = currentPage.value)
         }
@@ -82,7 +83,7 @@ fun DiscussionsScreen(
 
     LaunchedEffect(discussions) {
         if (discussions.isNotEmpty()) {
-            isLoading.value = false
+            isLoading = false
         }
     }
 
@@ -135,13 +136,15 @@ fun DiscussionsScreen(
                     items(discussions) { discussionResponse ->
                         discussionResponse.content.forEach { discussion ->
                             val user = userCache[discussion.userId]
-                            val isExpanded = expandedDiscussionId.value == discussion.id
+                            val isUserFetched = user != null
 
-                            if (user == null) {
-                                LaunchedEffect(Unit) {
+                            if (!isUserFetched) {
+                                LaunchedEffect(discussion.userId) {
                                     discussionViewModel.getUser(discussion.userId)
                                 }
                             }
+                            val isExpanded = expandedDiscussionId.value == discussion.id
+
 
                             DiscussionsCard(
                                 user = user,
@@ -168,7 +171,7 @@ fun DiscussionsScreen(
                         }
                     }
 
-                    if (isLoading.value) {
+                    if (isLoading) {
                         item {
                             CircularProgressIndicator(
                                 color = ForegroundPrimary,

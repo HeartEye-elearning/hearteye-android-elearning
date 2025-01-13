@@ -89,14 +89,16 @@ class MoreViewModel @Inject constructor(
     }
 
 
-    fun updateProfilePicture(id: String, profilePictureEntity: ProfilePictureEntity) {
+    fun updateProfilePicture(id: String, base64Image: String) {
         viewModelScope.launch {
             try {
-
+                val profilePictureEntity = ProfilePictureEntity(base64Image, "image/png")
                 val response: Response<Unit> = userRepository.updateProfilePicture(id, profilePictureEntity)
 
                 if (response.isSuccessful) {
                     _profilePictureUpdateResult.value = Result.success(Unit)
+                    _currentUser.value = null
+
                     fetchCurrentUser()
                 } else {
                     _profilePictureUpdateResult.value = Result.failure(

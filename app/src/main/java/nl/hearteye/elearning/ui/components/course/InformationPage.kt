@@ -1,5 +1,6 @@
 package nl.hearteye.elearning.ui.components.course
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
+import nl.hearteye.elearning.data.model.Content
 import nl.hearteye.elearning.ui.components.buttons.OutlinedButton
 import nl.hearteye.elearning.ui.components.buttons.RegularButton
 import nl.hearteye.elearning.ui.components.pdf.PdfViewer
@@ -31,7 +34,7 @@ fun InformationPage(
     canGoNext: Boolean,
     onStartQuiz: () -> Unit,
     isLastPage: Boolean,
-    imageLocations: String
+    imageLocations: Content?
 ) {
     val showQuizPopup = remember { mutableStateOf(false) }
 
@@ -65,8 +68,23 @@ fun InformationPage(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                if (imageLocations.isNotEmpty()) {
-                    PdfViewer(pdfUrl = imageLocations)
+                if (imageLocations != null && imageLocations.contentType.isNotEmpty()) {
+                    when (imageLocations.contentType) {
+                        "application/pdf" -> {
+                            PdfViewer(pdfUrl = imageLocations.sasUrl)
+                        }
+                        "image/png", "image/jpeg" -> {
+                            Image(
+                                painter = rememberImagePainter(data = imageLocations.sasUrl),
+                                contentDescription = "Course Image",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                            )
+                        }
+                        else -> {
+                        }
+                    }
                 }
             }
         }
