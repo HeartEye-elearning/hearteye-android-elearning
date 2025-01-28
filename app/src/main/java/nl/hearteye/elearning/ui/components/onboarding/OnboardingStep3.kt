@@ -100,8 +100,6 @@ fun OnboardingStep3(onContinueClick: (String) -> Unit, onBackClick: () -> Unit) 
                             isLanguageSelected.value = true
                         }
                         .padding(top = 8.dp, start = 16.dp, end = 16.dp)
-                        .shadow(5.dp, shape = RoundedCornerShape(10.dp))
-                        .clip(RoundedCornerShape(10.dp))
                         .width(100.dp)
                         .height(70.dp)
                 ) {
@@ -129,8 +127,6 @@ fun OnboardingStep3(onContinueClick: (String) -> Unit, onBackClick: () -> Unit) 
                             isLanguageSelected.value = true
                         }
                         .padding(top = 8.dp, start = 16.dp, end = 16.dp)
-                        .shadow(5.dp, shape = RoundedCornerShape(10.dp))
-                        .clip(RoundedCornerShape(10.dp))
                         .width(100.dp)
                         .height(70.dp)
                 ) {

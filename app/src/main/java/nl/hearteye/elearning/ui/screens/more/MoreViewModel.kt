@@ -40,6 +40,7 @@ class MoreViewModel @Inject constructor(
         sharedPreferences.edit()
             .remove("auth_token")
             .remove("is_logged_in")
+            .remove("")
             .apply()
 
         viewModelScope.launch {

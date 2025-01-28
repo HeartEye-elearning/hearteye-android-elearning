@@ -1,6 +1,5 @@
 package nl.hearteye.elearning.ui.screens.more
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import nl.hearteye.elearning.R
-import nl.hearteye.elearning.data.entity.ProfilePictureEntity
 import nl.hearteye.elearning.ui.components.more.MoreScreenItem
 import nl.hearteye.elearning.ui.components.popup.ProfilePicturePopUp
 import nl.hearteye.elearning.ui.theme.ForegroundPrimary
@@ -187,7 +185,7 @@ fun MoreScreen(
                             tint = Color.Black,
                             modifier = Modifier.size(24.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(16.dp))
                         Text(
                             text = selectedLanguage.value,
                             style = typography.bodyMedium,

@@ -70,7 +70,7 @@ fun DiscussionCardHome(
                 text = title,
                 style = typography.bodyLarge,
                 color = Color.Black,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
             Row(
